@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Multiple Connections &mdash; Paris  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+
+  
+    <link rel="stylesheet" href="sphinx_rtd_theme.css" tppabs="https://media.readthedocs.org/css/sphinx_rtd_theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Paris  documentation" href="index.html"/>
+        <link rel="prev" title="Migrations" href="migrations.html"/> 
+
+  
+  <script src="modernizr.min.js" tppabs="http://paris.readthedocs.io/en/latest/_static/js/modernizr.min.js"></script>
+
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="http://paris.readthedocs.io/en/latest/connections.html" />
+
+<link rel="stylesheet" href="readthedocs-doc-embed.css" tppabs="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="text/javascript" src="readthedocs-data.js" tppabs="http://paris.readthedocs.io/en/latest/_static/readthedocs-data.js"></script>
+
+<!-- Add page-specific data, which must exist in the page js, not global -->
+<script type="text/javascript">
+READTHEDOCS_DATA['page'] = 'connections' 		
+READTHEDOCS_DATA['source_suffix'] = '.rst'
+</script>
+
+<script type="text/javascript" src="readthedocs-dynamic-include.js" tppabs="http://paris.readthedocs.io/en/latest/_static/readthedocs-dynamic-include.js"></script>
+
+<!-- end RTD <extrahead> --></head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" tppabs="http://paris.readthedocs.io/en/latest/index.html" class="icon icon-home"> Paris
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="http://paris.readthedocs.io/en/latest/search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html" tppabs="http://paris.readthedocs.io/en/latest/philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html" tppabs="http://paris.readthedocs.io/en/latest/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html" tppabs="http://paris.readthedocs.io/en/latest/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html" tppabs="http://paris.readthedocs.io/en/latest/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="associations.html" tppabs="http://paris.readthedocs.io/en/latest/associations.html">Associations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="querying.html" tppabs="http://paris.readthedocs.io/en/latest/querying.html">Querying</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html" tppabs="http://paris.readthedocs.io/en/latest/filters.html">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transactions.html" tppabs="http://paris.readthedocs.io/en/latest/transactions.html">Transactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html" tppabs="http://paris.readthedocs.io/en/latest/validation.html">A word on validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrations.html" tppabs="http://paris.readthedocs.io/en/latest/migrations.html">Migrations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Multiple Connections</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html" tppabs="http://paris.readthedocs.io/en/latest/index.html">Paris</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" tppabs="http://paris.readthedocs.io/en/latest/index.html">Docs</a> &raquo;</li>
+        
+      <li>Multiple Connections</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="javascript:if(confirm('https://github.com/j4mie/paris/blob/master/docs/connections.rst  \n\n该文件未被 Teleport Pro 下载，因为 是一个使用未支持协议的地址(例如: gopher)。  \n\n你想要从服务器打开它吗?'))window.location='https://github.com/j4mie/paris/blob/master/docs/connections.rst'" tppabs="https://github.com/j4mie/paris/blob/master/docs/connections.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="multiple-connections">
+<h1>Multiple Connections<a class="headerlink" href="#multiple-connections" title="Permalink to this headline">露</a></h1>
+<p>Paris now works with multiple database conections (and necessarily relies on an updated version of Idiorm that also supports multiple connections). Database connections are identified by a string name, and default to <code class="docutils literal"><span class="pre">OrmWrapper::DEFAULT_CONNECTION</span></code> (which is really <code class="docutils literal"><span class="pre">ORM::DEFAULT_CONNECTION</span></code>).</p>
+<p>See <a class="reference external" href="javascript:if(confirm('http://github.com/j4mie/idiorm/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://github.com/j4mie/idiorm/'" tppabs="http://github.com/j4mie/idiorm/">Idiorm鈥檚 documentation</a> for information about configuring multiple connections.</p>
+<p>The connection to use can be specified in two separate ways. To indicate a default connection key for a subclass of <code class="docutils literal"><span class="pre">Model</span></code>, create a public static property in your model class called <code class="docutils literal"><span class="pre">$_connection_name</span></code>.</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// A named connection, where &#39;alternate&#39; is an arbitray key name</span>
+<span class="nx">ORM</span><span class="o">::</span><span class="na">configure</span><span class="p">(</span><span class="s1">&#39;sqlite:./example2.db&#39;</span><span class="p">,</span> <span class="k">null</span><span class="p">,</span> <span class="s1">&#39;alternate&#39;</span><span class="p">);</span>
+
+<span class="k">class</span> <span class="nc">SomeClass</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="nv">$_connection_name</span> <span class="o">=</span> <span class="s1">&#39;alternate&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The connection to use can also be specified as an optional additional parameter to <code class="docutils literal"><span class="pre">OrmWrapper::for_table()</span></code>, or to <code class="docutils literal"><span class="pre">Model::factory()</span></code>. This will override the default setting (if any) found in the <code class="docutils literal"><span class="pre">$_connection_name</span></code> static property.</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$person</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;Author&#39;</span><span class="p">,</span> <span class="s1">&#39;alternate&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1">// Uses connection named &#39;alternate&#39;</span>
+</pre></div>
+</div>
+<p>The connection can be changed after a model is populated, should that be necessary:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$person</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;Author&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>     <span class="c1">// Uses default connection</span>
+<span class="nv">$person</span><span class="o">-&gt;</span><span class="na">orm</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;Author&#39;</span><span class="p">,</span> <span class="s1">&#39;alternate&#39;</span><span class="p">);</span>  <span class="c1">// Switches to connection named &#39;alternate&#39;</span>
+<span class="nv">$person</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="s1">&#39;Foo&#39;</span><span class="p">;</span>
+<span class="nv">$person</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>                                     <span class="c1">// *Should* now save through the updated connection</span>
+</pre></div>
+</div>
+<p>Queries across multiple connections are not supported. However, as the Paris methods <code class="docutils literal"><span class="pre">has_one</span></code>, <code class="docutils literal"><span class="pre">has_many</span></code> and <code class="docutils literal"><span class="pre">belongs_to</span></code> don&#8217;t require joins, these <em>should</em> work as expected, even when the objects on opposite sides of the relation belong to diffrent connections. The <code class="docutils literal"><span class="pre">has_many_through</span></code> relationship requires joins, and so will not reliably work across different connections.</p>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="migrations.html" tppabs="http://paris.readthedocs.io/en/latest/migrations.html" class="btn btn-neutral" title="Migrations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Jamie Matthews and Simon Holywell.
+      
+        <span class="commit">
+          Revision <code>ec43a1f7</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="javascript:if(confirm('http://sphinx-doc.org/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://sphinx-doc.org/'" tppabs="http://sphinx-doc.org/">Sphinx</a> using a <a href="javascript:if(confirm('https://github.com/snide/sphinx_rtd_theme  \n\n该文件未被 Teleport Pro 下载，因为 是一个使用未支持协议的地址(例如: gopher)。  \n\n你想要从服务器打开它吗?'))window.location='https://github.com/snide/sphinx_rtd_theme'" tppabs="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="javascript:if(confirm('https://readthedocs.org/  \n\n该文件未被 Teleport Pro 下载，因为 是一个使用未支持协议的地址(例如: gopher)。  \n\n你想要从服务器打开它吗?'))window.location='https://readthedocs.org/'" tppabs="https://readthedocs.org/">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="index.htm" tppabs="http://paris.readthedocs.io/en/latest/">latest</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/stable/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://paris.readthedocs.io/en/stable/'" tppabs="http://paris.readthedocs.io/en/stable/">stable</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/v1.4.2/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://paris.readthedocs.io/en/v1.4.2/'" tppabs="http://paris.readthedocs.io/en/v1.4.2/">v1.4.2</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/v1.3.0/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://paris.readthedocs.io/en/v1.3.0/'" tppabs="http://paris.readthedocs.io/en/v1.3.0/">v1.3.0</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/develop/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://paris.readthedocs.io/en/develop/'" tppabs="http://paris.readthedocs.io/en/develop/">develop</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="javascript:if(confirm('http://readthedocs.org/projects/paris/downloads/pdf/latest/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://readthedocs.org/projects/paris/downloads/pdf/latest/'" tppabs="http://readthedocs.org/projects/paris/downloads/pdf/latest/">pdf</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://readthedocs.org/projects/paris/downloads/htmlzip/latest/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://readthedocs.org/projects/paris/downloads/htmlzip/latest/'" tppabs="http://readthedocs.org/projects/paris/downloads/htmlzip/latest/">htmlzip</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://readthedocs.org/projects/paris/downloads/epub/latest/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://readthedocs.org/projects/paris/downloads/epub/latest/'" tppabs="http://readthedocs.org/projects/paris/downloads/epub/latest/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="javascript:if(confirm('http://readthedocs.org/projects/paris/?fromdocs=paris  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://readthedocs.org/projects/paris/?fromdocs=paris'" tppabs="http://readthedocs.org/projects/paris/?fromdocs=paris">Project Home</a>
+          </dd>
+          <dd>
+            <a href="javascript:if(confirm('http://readthedocs.org/builds/paris/?fromdocs=paris  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://readthedocs.org/builds/paris/?fromdocs=paris'" tppabs="http://readthedocs.org/builds/paris/?fromdocs=paris">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="javascript:if(confirm('http://www.readthedocs.org/  \n\n该文件未被 Teleport Pro 下载，因为 它位于起始地址以设置的边界以外的域或路径中。  \n\n你想要从服务器打开它吗?'))window.location='http://www.readthedocs.org/'" tppabs="http://www.readthedocs.org/">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="jquery-2.0.3.min.js" tppabs="https://media.readthedocs.org/javascript/jquery/jquery-2.0.3.min.js"></script>
+      <script type="text/javascript" src="jquery-migrate-1.2.1.min.js" tppabs="https://media.readthedocs.org/javascript/jquery/jquery-migrate-1.2.1.min.js"></script>
+      <script type="text/javascript" src="underscore.js" tppabs="https://media.readthedocs.org/javascript/underscore.js"></script>
+      <script type="text/javascript" src="doctools.js" tppabs="https://media.readthedocs.org/javascript/doctools.js"></script>
+      <script type="text/javascript" src="readthedocs-doc-embed.js" tppabs="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
+
+  
+
+  
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

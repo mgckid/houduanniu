@@ -1,0 +1,576 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Associations &mdash; Paris  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+
+  
+    <link rel="stylesheet" href="sphinx_rtd_theme.css" tppabs="https://media.readthedocs.org/css/sphinx_rtd_theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Paris  documentation" href="index.html"/>
+        <link rel="next" title="Querying" href="querying.html"/>
+        <link rel="prev" title="Models" href="models.html"/> 
+
+  
+  <script src="modernizr.min.js" tppabs="http://paris.readthedocs.io/en/latest/_static/js/modernizr.min.js"></script>
+
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="http://paris.readthedocs.io/en/latest/associations.html" />
+
+<link rel="stylesheet" href="readthedocs-doc-embed.css" tppabs="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="text/javascript" src="readthedocs-data.js" tppabs="http://paris.readthedocs.io/en/latest/_static/readthedocs-data.js"></script>
+
+<!-- Add page-specific data, which must exist in the page js, not global -->
+<script type="text/javascript">
+READTHEDOCS_DATA['page'] = 'associations' 		
+READTHEDOCS_DATA['source_suffix'] = '.rst'
+</script>
+
+<script type="text/javascript" src="readthedocs-dynamic-include.js" tppabs="http://paris.readthedocs.io/en/latest/_static/readthedocs-dynamic-include.js"></script>
+
+<!-- end RTD <extrahead> --></head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" tppabs="http://paris.readthedocs.io/en/latest/index.html" class="icon icon-home"> Paris
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="http://paris.readthedocs.io/en/latest/search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html" tppabs="http://paris.readthedocs.io/en/latest/philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html" tppabs="http://paris.readthedocs.io/en/latest/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html" tppabs="http://paris.readthedocs.io/en/latest/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html" tppabs="http://paris.readthedocs.io/en/latest/models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Associations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#one-to-one">One-to-one</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#one-to-many">One-to-many</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#many-to-many">Many-to-many</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#has-one">Has-one</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#has-many">Has many</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#belongs-to">Belongs to</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#has-many-through">Has many through</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overriding-defaults">Overriding defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="querying.html" tppabs="http://paris.readthedocs.io/en/latest/querying.html">Querying</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html" tppabs="http://paris.readthedocs.io/en/latest/filters.html">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transactions.html" tppabs="http://paris.readthedocs.io/en/latest/transactions.html">Transactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html" tppabs="http://paris.readthedocs.io/en/latest/validation.html">A word on validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrations.html" tppabs="http://paris.readthedocs.io/en/latest/migrations.html">Migrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connections.html" tppabs="http://paris.readthedocs.io/en/latest/connections.html">Multiple Connections</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html" tppabs="http://paris.readthedocs.io/en/latest/index.html">Paris</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" tppabs="http://paris.readthedocs.io/en/latest/index.html">Docs</a> &raquo;</li>
+        
+      <li>Associations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="javascript:if(confirm('https://github.com/j4mie/paris/blob/master/docs/associations.rst  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ÊÇÒ»¸öÊ¹ÓÃÎ´Ö§³ÖÐ­ÒéµÄµØÖ·(ÀýÈç: gopher)¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='https://github.com/j4mie/paris/blob/master/docs/associations.rst'" tppabs="https://github.com/j4mie/paris/blob/master/docs/associations.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="associations">
+<h1>Associations<a class="headerlink" href="#associations" title="Permalink to this headline">Â¶</a></h1>
+<p>Paris provides a simple API for one-to-one, one-to-many and many-to-many
+relationships (associations) between models. It takes a different
+approach to many other ORMs, which use associative arrays to add
+configuration metadata about relationships to model classes. These
+arrays can often be deeply nested and complex, and are therefore quite
+error-prone.</p>
+<p>Instead, Paris treats the act of querying across a relationship as a
+<em>behaviour</em>, and supplies a family of helper methods to help generate
+such queries. These helper methods should be called from within
+<em>methods</em> on your model classes which are named to describe the
+relationship. These methods return ORM instances (rather than actual
+Model instances) and so, if necessary, the relationship query can be
+modified and added to before it is run.</p>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">Â¶</a></h2>
+<p>The following list summarises the associations provided by Paris, and
+explains which helper method supports each type of association:</p>
+<div class="section" id="one-to-one">
+<h3>One-to-one<a class="headerlink" href="#one-to-one" title="Permalink to this headline">Â¶</a></h3>
+<p>Use <code class="docutils literal"><span class="pre">has_one</span></code> in the base, and <code class="docutils literal"><span class="pre">belongs_to</span></code> in the associated model.</p>
+</div>
+<div class="section" id="one-to-many">
+<h3>One-to-many<a class="headerlink" href="#one-to-many" title="Permalink to this headline">Â¶</a></h3>
+<p>Use <code class="docutils literal"><span class="pre">has_many</span></code> in the base, and <code class="docutils literal"><span class="pre">belongs_to</span></code> in the associated
+model.</p>
+</div>
+<div class="section" id="many-to-many">
+<h3>Many-to-many<a class="headerlink" href="#many-to-many" title="Permalink to this headline">Â¶</a></h3>
+<p>Use <code class="docutils literal"><span class="pre">has_many_through</span></code> in both the base and associated models.</p>
+<p>Below, each association helper method is discussed in detail.</p>
+</div>
+</div>
+<div class="section" id="has-one">
+<h2>Has-one<a class="headerlink" href="#has-one" title="Permalink to this headline">Â¶</a></h2>
+<p>One-to-one relationships are implemented using the <code class="docutils literal"><span class="pre">has_one</span></code> method.
+For example, say we have a <code class="docutils literal"><span class="pre">User</span></code> model. Each user has a single
+<code class="docutils literal"><span class="pre">Profile</span></code>, and so the <code class="docutils literal"><span class="pre">user</span></code> table should be associated with the
+<code class="docutils literal"><span class="pre">profile</span></code> table. To be able to find the profile for a particular user,
+we should add a method called <code class="docutils literal"><span class="pre">profile</span></code> to the <code class="docutils literal"><span class="pre">User</span></code> class (note
+that the method name here is arbitrary, but should describe the
+relationship). This method calls the protected <code class="docutils literal"><span class="pre">has_one</span></code> method
+provided by Paris, passing in the class name of the related object. The
+<code class="docutils literal"><span class="pre">profile</span></code> method should return an ORM instance ready for (optional)
+further filtering.</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Profile</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">profile</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_one</span><span class="p">(</span><span class="s1">&#39;Profile&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Select a particular user from the database</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">(</span><span class="nv">$user_id</span><span class="p">);</span>
+
+<span class="c1">// Find the profile associated with the user</span>
+<span class="nv">$profile</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">profile</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>By default, Paris assumes that the foreign key column on the related
+table has the same name as the current (base) table, with <code class="docutils literal"><span class="pre">_id</span></code>
+appended. In the example above, Paris will look for a foreign key column
+called <code class="docutils literal"><span class="pre">user_id</span></code> on the table used by the <code class="docutils literal"><span class="pre">Profile</span></code> class. To
+override this behaviour, add a second argument to your <code class="docutils literal"><span class="pre">has_one</span></code> call,
+passing the name of the column to use.</p>
+<dl class="docutils">
+<dt>In addition, Paris assumes that the foreign key column in the current (base)</dt>
+<dd>table is the primary key column of the base table. In the example above,</dd>
+</dl>
+<p>Paris will use the column called <code class="docutils literal"><span class="pre">user_id</span></code> (assuming <code class="docutils literal"><span class="pre">user_id</span></code> is the
+primary key for the user table) in the base table (in this case the user table)
+as the foreign key column in the base table. To override this behaviour,
+add a third argument to your <code class="docutils literal"><span class="pre">has_one</span> <span class="pre">call</span></code>, passing the name of the column
+you intend to use as the foreign key column in the base table.</p>
+</div>
+<div class="section" id="has-many">
+<h2>Has many<a class="headerlink" href="#has-many" title="Permalink to this headline">Â¶</a></h2>
+<p>One-to-many relationships are implemented using the <code class="docutils literal"><span class="pre">has_many</span></code> method.
+For example, say we have a <code class="docutils literal"><span class="pre">User</span></code> model. Each user has several
+<code class="docutils literal"><span class="pre">Post</span></code> objects. The <code class="docutils literal"><span class="pre">user</span></code> table should be associated with the
+<code class="docutils literal"><span class="pre">post</span></code> table. To be able to find the posts for a particular user, we
+should add a method called <code class="docutils literal"><span class="pre">posts</span></code> to the <code class="docutils literal"><span class="pre">User</span></code> class (note that
+the method name here is arbitrary, but should describe the
+relationship). This method calls the protected <code class="docutils literal"><span class="pre">has_many</span></code> method
+provided by Paris, passing in the class name of the related objects.
+<strong>Pass the model class name literally, not a pluralised version</strong>. The
+<code class="docutils literal"><span class="pre">posts</span></code> method should return an ORM instance ready for (optional)
+further filtering.</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">posts</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_many</span><span class="p">(</span><span class="s1">&#39;Post&#39;</span><span class="p">);</span> <span class="c1">// Note we use the model name literally - not a pluralised version</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Select a particular user from the database</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">(</span><span class="nv">$user_id</span><span class="p">);</span>
+
+<span class="c1">// Find the posts associated with the user</span>
+<span class="nv">$posts</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">posts</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">find_many</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>By default, Paris assumes that the foreign key column on the related
+table has the same name as the current (base) table, with <code class="docutils literal"><span class="pre">_id</span></code>
+appended. In the example above, Paris will look for a foreign key column
+called <code class="docutils literal"><span class="pre">user_id</span></code> on the table used by the <code class="docutils literal"><span class="pre">Post</span></code> class. To override
+this behaviour, add a second argument to your <code class="docutils literal"><span class="pre">has_many</span></code> call, passing
+the name of the column to use.</p>
+<p>In addition, Paris assumes that the foreign key column in the current (base)
+table is the primary key column of the base table. In the example above, Paris
+will use the column called <code class="docutils literal"><span class="pre">user_id</span></code> (assuming <code class="docutils literal"><span class="pre">user_id</span></code> is the primary key
+for the user table) in the base table (in this case the user table) as the
+foreign key column in the base table. To override this behaviour, add a third
+argument to your <code class="docutils literal"><span class="pre">has_many</span> <span class="pre">call</span></code>, passing the name of the column you intend
+to use as the foreign key column in the base table.</p>
+</div>
+<div class="section" id="belongs-to">
+<h2>Belongs to<a class="headerlink" href="#belongs-to" title="Permalink to this headline">Â¶</a></h2>
+<p>The â€˜other sideâ€™ of <code class="docutils literal"><span class="pre">has_one</span></code> and <code class="docutils literal"><span class="pre">has_many</span></code> is <code class="docutils literal"><span class="pre">belongs_to</span></code>. This
+method call takes identical parameters as these methods, but assumes the
+foreign key is on the <em>current</em> (base) table, not the related table.</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Profile</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">belongs_to</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Select a particular profile from the database</span>
+<span class="nv">$profile</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;Profile&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">(</span><span class="nv">$profile_id</span><span class="p">);</span>
+
+<span class="c1">// Find the user associated with the profile</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nv">$profile</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Again, Paris makes an assumption that the foreign key on the current
+(base) table has the same name as the related table with <code class="docutils literal"><span class="pre">_id</span></code>
+appended. In the example above, Paris will look for a column named
+<code class="docutils literal"><span class="pre">user_id</span></code>. To override this behaviour, pass a second argument to the
+<code class="docutils literal"><span class="pre">belongs_to</span></code> method, specifying the name of the column on the current
+(base) table to use.</p>
+<p>Paris also makes an assumption that the foreign key in the associated (related)
+table is the primary key column of the related table. In the example above,
+Paris will look for a column named <code class="docutils literal"><span class="pre">user_id</span></code> in the user table (the related
+table in this example). To override this behaviour, pass a third argument to
+the belongs_to method, specifying the name of the column in the related table
+to use as the foreign key column in the related table.</p>
+</div>
+<div class="section" id="has-many-through">
+<h2>Has many through<a class="headerlink" href="#has-many-through" title="Permalink to this headline">Â¶</a></h2>
+<p>Many-to-many relationships are implemented using the
+<code class="docutils literal"><span class="pre">has_many_through</span></code> method. This method has only one required argument:
+the name of the related model. Supplying further arguments allows us to
+override default behaviour of the method.</p>
+<p>For example, say we have a <code class="docutils literal"><span class="pre">Book</span></code> model. Each <code class="docutils literal"><span class="pre">Book</span></code> may have
+several <code class="docutils literal"><span class="pre">Author</span></code> objects, and each <code class="docutils literal"><span class="pre">Author</span></code> may have written several
+<code class="docutils literal"><span class="pre">Books</span></code>. To be able to find the authors for a particular book, we
+should first create an intermediary model. The name for this model
+should be constructed by concatenating the names of the two related
+classes, in alphabetical order. In this case, our classes are called
+<code class="docutils literal"><span class="pre">Author</span></code> and <code class="docutils literal"><span class="pre">Book</span></code>, so the intermediate model should be called
+<code class="docutils literal"><span class="pre">AuthorBook</span></code>.</p>
+<p>We should then add a method called <code class="docutils literal"><span class="pre">authors</span></code> to the <code class="docutils literal"><span class="pre">Book</span></code> class
+(note that the method name here is arbitrary, but should describe the
+relationship). This method calls the protected <code class="docutils literal"><span class="pre">has_many_through</span></code>
+method provided by Paris, passing in the class name of the related
+objects. <strong>Pass the model class name literally, not a pluralised
+version</strong>. The <code class="docutils literal"><span class="pre">authors</span></code> method should return an ORM instance ready
+for (optional) further filtering.</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">class</span> <span class="nc">Author</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">books</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_many_through</span><span class="p">(</span><span class="s1">&#39;Book&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Book</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">authors</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_many_through</span><span class="p">(</span><span class="s1">&#39;Author&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">AuthorBook</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-php"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="c1">// Select a particular book from the database</span>
+<span class="nv">$book</span> <span class="o">=</span> <span class="nx">Model</span><span class="o">::</span><span class="na">factory</span><span class="p">(</span><span class="s1">&#39;Book&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">find_one</span><span class="p">(</span><span class="nv">$book_id</span><span class="p">);</span>
+
+<span class="c1">// Find the authors associated with the book</span>
+<span class="nv">$authors</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="na">authors</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">find_many</span><span class="p">();</span>
+
+<span class="c1">// Get the first author</span>
+<span class="nv">$first_author</span> <span class="o">=</span> <span class="nv">$authors</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+<span class="c1">// Find all the books written by this author</span>
+<span class="nv">$first_author_books</span> <span class="o">=</span> <span class="nv">$first_author</span><span class="o">-&gt;</span><span class="na">books</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">find_many</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="section" id="overriding-defaults">
+<h3>Overriding defaults<a class="headerlink" href="#overriding-defaults" title="Permalink to this headline">Â¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">has_many_through</span></code> method takes up to six arguments, which allow
+us to progressively override default assumptions made by the method.</p>
+<p><strong>First argument: associated model name</strong> - this is mandatory and should
+be the name of the model we wish to select across the association.</p>
+<p><strong>Second argument: intermediate model name</strong> - this is optional and
+defaults to the names of the two associated models, sorted
+alphabetically and concatenated.</p>
+<p><strong>Third argument: custom key to base table on intermediate table</strong> -
+this is optional, and defaults to the name of the base table with
+<code class="docutils literal"><span class="pre">_id</span></code> appended.</p>
+<p><strong>Fourth argument: custom key to associated table on intermediate
+table</strong> - this is optional, and defaults to the name of the associated
+table with <code class="docutils literal"><span class="pre">_id</span></code> appended.</p>
+<p><strong>Fifth argument: foreign key column in the base table</strong> -
+this is optional, and defaults to the name of the primary key column in
+the base table.</p>
+<p><strong>Sixth argument: foreign key column in the associated table</strong> -
+this is optional, and defaults to the name of the primary key column
+in the associated table.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="querying.html" tppabs="http://paris.readthedocs.io/en/latest/querying.html" class="btn btn-neutral float-right" title="Querying" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="models.html" tppabs="http://paris.readthedocs.io/en/latest/models.html" class="btn btn-neutral" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Jamie Matthews and Simon Holywell.
+      
+        <span class="commit">
+          Revision <code>ec43a1f7</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="javascript:if(confirm('http://sphinx-doc.org/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://sphinx-doc.org/'" tppabs="http://sphinx-doc.org/">Sphinx</a> using a <a href="javascript:if(confirm('https://github.com/snide/sphinx_rtd_theme  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ÊÇÒ»¸öÊ¹ÓÃÎ´Ö§³ÖÐ­ÒéµÄµØÖ·(ÀýÈç: gopher)¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='https://github.com/snide/sphinx_rtd_theme'" tppabs="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="javascript:if(confirm('https://readthedocs.org/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ÊÇÒ»¸öÊ¹ÓÃÎ´Ö§³ÖÐ­ÒéµÄµØÖ·(ÀýÈç: gopher)¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='https://readthedocs.org/'" tppabs="https://readthedocs.org/">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="index.htm" tppabs="http://paris.readthedocs.io/en/latest/">latest</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/stable/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://paris.readthedocs.io/en/stable/'" tppabs="http://paris.readthedocs.io/en/stable/">stable</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/v1.4.2/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://paris.readthedocs.io/en/v1.4.2/'" tppabs="http://paris.readthedocs.io/en/v1.4.2/">v1.4.2</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/v1.3.0/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://paris.readthedocs.io/en/v1.3.0/'" tppabs="http://paris.readthedocs.io/en/v1.3.0/">v1.3.0</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://paris.readthedocs.io/en/develop/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://paris.readthedocs.io/en/develop/'" tppabs="http://paris.readthedocs.io/en/develop/">develop</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="javascript:if(confirm('http://readthedocs.org/projects/paris/downloads/pdf/latest/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://readthedocs.org/projects/paris/downloads/pdf/latest/'" tppabs="http://readthedocs.org/projects/paris/downloads/pdf/latest/">pdf</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://readthedocs.org/projects/paris/downloads/htmlzip/latest/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://readthedocs.org/projects/paris/downloads/htmlzip/latest/'" tppabs="http://readthedocs.org/projects/paris/downloads/htmlzip/latest/">htmlzip</a></dd>
+        
+          <dd><a href="javascript:if(confirm('http://readthedocs.org/projects/paris/downloads/epub/latest/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://readthedocs.org/projects/paris/downloads/epub/latest/'" tppabs="http://readthedocs.org/projects/paris/downloads/epub/latest/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="javascript:if(confirm('http://readthedocs.org/projects/paris/?fromdocs=paris  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://readthedocs.org/projects/paris/?fromdocs=paris'" tppabs="http://readthedocs.org/projects/paris/?fromdocs=paris">Project Home</a>
+          </dd>
+          <dd>
+            <a href="javascript:if(confirm('http://readthedocs.org/builds/paris/?fromdocs=paris  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://readthedocs.org/builds/paris/?fromdocs=paris'" tppabs="http://readthedocs.org/builds/paris/?fromdocs=paris">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="javascript:if(confirm('http://www.readthedocs.org/  \n\n¸ÃÎÄ¼þÎ´±» Teleport Pro ÏÂÔØ£¬ÒòÎª ËüÎ»ÓÚÆðÊ¼µØÖ·ÒÔÉèÖÃµÄ±ß½çÒÔÍâµÄÓò»òÂ·¾¶ÖÐ¡£  \n\nÄãÏëÒª´Ó·þÎñÆ÷´ò¿ªËüÂð?'))window.location='http://www.readthedocs.org/'" tppabs="http://www.readthedocs.org/">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="jquery-2.0.3.min.js" tppabs="https://media.readthedocs.org/javascript/jquery/jquery-2.0.3.min.js"></script>
+      <script type="text/javascript" src="jquery-migrate-1.2.1.min.js" tppabs="https://media.readthedocs.org/javascript/jquery/jquery-migrate-1.2.1.min.js"></script>
+      <script type="text/javascript" src="underscore.js" tppabs="https://media.readthedocs.org/javascript/underscore.js"></script>
+      <script type="text/javascript" src="doctools.js" tppabs="https://media.readthedocs.org/javascript/doctools.js"></script>
+      <script type="text/javascript" src="readthedocs-doc-embed.js" tppabs="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
+
+  
+
+  
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
