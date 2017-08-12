@@ -17,7 +17,7 @@ use Core\DB;
 class CmsPostModel extends BaseModel
 {
 
-    public $tableName = 'cms_posts';
+    public $tableName = 'cms_post';
     public $pk = 'id';
 
     /**
@@ -277,7 +277,7 @@ class CmsPostModel extends BaseModel
         $extend_data = [];
         foreach ($model_defined as $value) {
             switch ($value['belong_to_table']) {
-                case 'cms_posts':
+                case 'cms_post':
                     if (isset($request_data[$value['value']])) {
                         $cms_post_data[$value['value']] = $request_data[$value['value']];
                     }

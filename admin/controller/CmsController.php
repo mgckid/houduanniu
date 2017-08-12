@@ -34,7 +34,7 @@ class CmsController extends UserBaseController
     {
         if (IS_POST) {
             $logic = new DictionarryLogic();
-            $request_data = $logic->getRequestData('cms_categorys', 'table');
+            $request_data = $logic->getRequestData('cms_category', 'table');
             $model = new CmsCategorysModel();
             $result = $model->addCategory($request_data);
             if (!$result) {
@@ -47,7 +47,7 @@ class CmsController extends UserBaseController
             #表单数据
             {
                 $dictionaryLogic = new DictionarryLogic();
-                $form_init = $dictionaryLogic->getFormInit('cms_categorys', 'table');
+                $form_init = $dictionaryLogic->getFormInit('cms_category', 'table');
             }
             #自定义枚举值
             {
@@ -151,7 +151,6 @@ class CmsController extends UserBaseController
             if ($id) {
                 $post_result = $cmsPostModel->getRecordById($id);
             }
-
             #获取栏目信息
             $category_result = [];
             $cmsCategoryModel = new CmsCategorysModel();
@@ -223,7 +222,7 @@ class CmsController extends UserBaseController
         $list = treeStructForLevel($all_category_result);
         #获取列表字段
         $dictionarylogic = new DictionarryLogic();
-        $list_init = $dictionarylogic->getListInit('cms_categorys');
+        $list_init = $dictionarylogic->getListInit('cms_category');
         #完善列表字段枚举值
         {
             #父级栏目
@@ -292,7 +291,7 @@ class CmsController extends UserBaseController
         $fetch_row = 20; #每页条数
         #获取列表字段
         $dictionaryLogic = new DictionarryLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_posts');
+        $list_init = $dictionaryLogic->getListInit('cms_post');
         #获取列表数据
         $model = new CmsPostModel();
         #统计记录数
@@ -337,7 +336,7 @@ class CmsController extends UserBaseController
         $list = $model->getRecordList($orm, $page->getOffset(), $fetch_row, FALSE);
         #获取列表字段
         $dictionaryLogic = new DictionarryLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_posts');
+        $list_init = $dictionaryLogic->getListInit('cms_post');
         #完善列表字段枚举值
         {
             #父级栏目
@@ -670,7 +669,7 @@ class CmsController extends UserBaseController
         $cmsPostTagModel->delete_many();
         $post_tag_result = $cmsAttributeModel->table_alias('a')
             ->select_expr('a.*')
-            ->left_join('cms_posts', ['a.post_id', '=', 'p.post_id'], 'p')
+            ->left_join('cms_post', ['a.post_id', '=', 'p.post_id'], 'p')
             ->where('p.deleted', 0)
             ->where('a.field', 'post_tag')
             ->find_array();
