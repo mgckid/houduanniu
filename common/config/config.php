@@ -22,6 +22,7 @@ return array(
     'SUB_DOMAIN_RULES' => [
         'blog' => 'blog',
         'admin' => 'admin',
+        'api'=>'api'
     ],
     /*http请求设置 结束*/
 
