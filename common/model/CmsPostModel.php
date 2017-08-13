@@ -52,6 +52,7 @@ class CmsPostModel extends BaseModel
         return $result;
     }
 
+
     /**
      * 获取文章信息
      * @param type $id 文章id
@@ -300,7 +301,7 @@ class CmsPostModel extends BaseModel
                 throw new \Exception('文档主记录添加失败');
             }
             if ($extend_data) {
-                foreach ($extend_data as  $value) {
+                foreach ($extend_data as $value) {
                     $result = $this->addCmsPostExtendData($value['table_name'], $value['post_id'], $value['field'], $value['value']);
                     if (!$result) {
                         throw new \Exception('文档扩展记录添加失败');
@@ -339,6 +340,65 @@ class CmsPostModel extends BaseModel
             }
         }
         return $cms_post_result;
+    }
+    /**改版后****/
+    /**
+     * 获取文章列表
+     * @param type $condition 条件
+     * @param type $offset 偏移量
+     * @param type $limit 获取条数
+     * @param type $forCount 统计
+     * @param type $field 字段
+     * @return type
+     */
+    public function getPostList($orm = '', $offset, $limit, $forCount = false, $inclue_extend = false, $order_by = 'a.id', $sort = 'desc', $field = 'a.*')
+    {
+        $orm = $this->getOrm($orm)->where('a.deleted', 0)
+            ->table_alias('a')
+            ->select_expr($field)
+            ->left_outer_join('cms_category', array('a.category_id', '=', 'c.id'), 'c');
+        #排序
+        if ($sort == 'desc') {
+            $orm = $orm->order_by_desc($order_by);
+        } elseif ($sort == 'asc') {
+            $orm = $orm->order_by_asc($order_by);
+        }
+        if ($forCount) {
+            $result = $orm->count();
+        } else {
+            $result = $orm
+                ->limit($limit)
+                ->offset($offset)
+                ->order_by_desc('id')
+                ->find_array();
+            if ($result && $inclue_extend) {
+                foreach ($result as $key => $value) {
+                    $value['extend_attrbute'] = $this->getPostExtendAttrbute($value['post_id']);
+                    $result[$key] = $value;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 获取文档扩展属性
+     * @param $post_id
+     * @return array
+     */
+    public function getPostExtendAttrbute($post_id)
+    {
+        $result = $this->for_table('cms_post_extend_attribute')
+            ->use_id_column('id')
+            ->select_expr('field,value')
+            ->where('post_id', $post_id)
+            ->find_array();
+        if ($result) {
+            $field = array_column($result, 'field');
+            $value = array_column($result, 'value');
+            $result = array_combine($field, $value);
+        }
+        return $result;
     }
 
 }
