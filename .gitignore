@@ -2,3 +2,4 @@ upload
 /common/config/db.php
 /web/index.php
 .idea
+cache

@@ -8,6 +8,8 @@
 
 namespace houduanniu\api;
 
+use houduanniu\base\Application;
+
 class Controller
 {
     const
@@ -91,20 +93,24 @@ class Controller
     public function __construct()
     {
         header("Content-type: application/json");
+        if(Application::cache()->isCached($this->getCacheKey())){
+            echo Application::cache()->retrieve($this->getCacheKey());
+            exit();
+        }
     }
 
-    public function response($data = null, $http_code = null, $messaage = null)
+    public function response($data = null, $http_code = null, $messaage = null, $cached = false)
     {
         ob_start();
         // If the HTTP status is not null, then cast as an integer
-        if ($http_code !== null) {
+        if (!empty($http_code)) {
             // So as to be safe later on in the process
             $http_code = (int)$http_code;
         }
         // Set the output as null by default
         $output = null;
         // If data is null and no HTTP status code provided, then display, error and exit
-        if ($data === null && $http_code === null) {
+        if (empty($data) && empty($http_code)) {
             $http_code = self::S404_NOT_FOUND;
         }
         if (!empty($http_code) && empty($messaage)) {
@@ -115,8 +121,22 @@ class Controller
             'message' => $messaage,
             'data' => $data,
         ];
-        die(json_encode($output, JSON_UNESCAPED_UNICODE));
+        $return = json_encode($output, JSON_UNESCAPED_UNICODE);
+        if ($cached) {;
+            Application::cache()->store($this->getCacheKey(), $return, 300);
+        }
+        echo $return;
+        exit();
+    }
 
+    public function getCacheKey()
+    {
+        $_get = $_GET;
+        $_post = $_POST;
+        ksort($_get);
+        ksort($_post);
+        $cache_key = md5(json_encode($_get) . json_encode($_post));
+        return $cache_key;
     }
 
 } 

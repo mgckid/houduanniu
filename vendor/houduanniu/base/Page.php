@@ -187,10 +187,11 @@ EOT;
             $href = 'href="javascript:void(0)" onclick="' . $this->ajaxfunction . '(' . $p . ')"';
         } else {
 
-            $_GET['p'] = $p;
+            $_get = $_GET;
+            $_get['p'] = $p;
             //  $requestUrl = preg_replace("[\/p\/\d*]", '', $requestUrl);  //去掉p
             $requestUrl = join('/', [Application::getController(),Application::getAction()]);
-            $requestUrl = U($requestUrl, $_GET);
+            $requestUrl = U($requestUrl, $_get);
             $href = 'href="' . $requestUrl . '"';
         }
         return $href;

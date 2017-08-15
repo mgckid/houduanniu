@@ -37,6 +37,6 @@ class ArticleController extends Controller
         $count = $cmsPostModel->getPostList('', '', '', true);
         $page = new Page($count, $p, $page_size);
         $result = $cmsPostModel->getPostList('', $page->getOffset(), $page->getPageSize(), false, true);
-        $this->response($result, self::S200_OK);
+        $this->response($result, self::S200_OK,null,true);
     }
 }
