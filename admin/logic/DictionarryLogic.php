@@ -11,7 +11,7 @@ namespace app\logic;
 use app\model\CmsFieldModel;
 use app\model\CmsModelModel;
 use app\model\DictionaryModel;
-use houduanniu\base\Controller;
+use houduanniu\web\Controller;
 use houduanniu\base\Model;
 
 class DictionarryLogic extends Controller

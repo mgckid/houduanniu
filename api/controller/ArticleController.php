@@ -10,7 +10,7 @@ namespace app\controller;
 
 
 use app\model\CmsPostModel;
-use houduanniu\base\Controller;
+use houduanniu\web\Controller;
 use houduanniu\base\Page;
 
 class ArticleController extends Controller
@@ -22,7 +22,6 @@ class ArticleController extends Controller
             'p' => 'required|integer',
             'page_size' => 'required|integer',
             'model_type' => 'required|in:article',
-            'inclue_extend' => 'integer|in:0,1',
         ];
         $map = [
             'p' => '当前页数',
@@ -35,9 +34,8 @@ class ArticleController extends Controller
         }
         $p = $_REQUEST['p'];
         $page_size = $_REQUEST['page_size'];
-        $inclue_extend = isset($_REQUEST['inclue_extend']) ? intval($_REQUEST['inclue_extend']) : 0;
         $count = $cmsPostModel->getPostList('', '', '', true);
         $page = new Page($count, $p, $page_size);
-        $result = $cmsPostModel->getPostList('', $page->getOffset(), $page->getPageSize(), false, $inclue_extend);
+        $result = $cmsPostModel->getPostList('', $page->getOffset(), $page->getPageSize(), false, true);
     }
 }

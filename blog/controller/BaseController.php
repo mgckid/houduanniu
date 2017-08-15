@@ -13,7 +13,7 @@ use app\model\SiteConfigModel;
 use app\model\SiteSetModel;
 use app\model\CmsCategoryModel;
 use app\model\FlinkModel;
-use houduanniu\base\Controller;
+use houduanniu\web\Controller;
 use houduanniu\web\View;
 use houduanniu\base\Application;
 

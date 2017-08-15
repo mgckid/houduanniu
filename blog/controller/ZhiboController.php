@@ -9,7 +9,7 @@
 namespace app\controller;
 
 
-use houduanniu\base\Controller;
+use houduanniu\web\Controller;
 use houduanniu\web\View;
 use houduanniu\base\Application;
 

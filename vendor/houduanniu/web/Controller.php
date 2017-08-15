@@ -8,8 +8,8 @@
  * Time: 17:23
  */
 
-namespace houduanniu\base;
-use houduanniu\base\Application as app;
+namespace houduanniu\web;
+use houduanniu\base\Application;
 class Controller
 {
     public $environment;
@@ -17,7 +17,7 @@ class Controller
     function __construct()
     {
         #获取环境模式
-        $this->environment = app::config()->get('ENVIRONMENT');
+        $this->environment = Application::config()->get('ENVIRONMENT');
     }
 
     /**
