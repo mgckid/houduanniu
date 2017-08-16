@@ -195,12 +195,12 @@ class Application
      * 缓存组件
      * @return  Cache
      */
-    static function cache()
+    static function cache($cache_name = null)
     {
         if (!self::register()->has('cache')) {
             self::register()->set('cache', (new Cache())->setCachePath(__PROJECT__ . '/cache/'));
         }
-        return self::register()->get('cache');
+        return self::register()->get('cache')->setCache($cache_name);
     }
 
     /**
@@ -210,7 +210,7 @@ class Application
     static function segment()
     {
         if (!self::register()->has('segment')) {
-            self::session()->setCookieParams(array('lifetime' => 1800*24));
+            self::session()->setCookieParams(array('lifetime' => 1800 * 24));
             $secure_key = self::config()->get('SEGMENT_KEY');
             self::register()->set('segment', self::session()->getSegment($secure_key));
         }

@@ -15,28 +15,58 @@ use houduanniu\base\Page;
 
 class ArticleController extends Controller
 {
+    /**
+     * 获取文章列表
+     * @access public
+     * @author furong
+     * @return void
+     * @since
+     * @abstract
+     */
     public function articleList()
     {
         $cmsPostModel = new CmsPostModel();
         $rules = [
             'p' => 'required|integer',
             'page_size' => 'required|integer',
-            'model_type' => 'required|in:article',
+//            'model_type' => 'required|in:article',
         ];
         $map = [
             'p' => '当前页数',
             'page_size' => '每页记录条数',
-            'model_type' => '模型类型'
+//            'model_type' => '模型类型'
         ];
         $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
         if (false == $validate->passes()) {
-            die($validate->messages()->first());
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $p = $_REQUEST['p'];
         $page_size = $_REQUEST['page_size'];
         $count = $cmsPostModel->getPostList('', '', '', true);
         $page = new Page($count, $p, $page_size);
         $result = $cmsPostModel->getPostList('', $page->getOffset(), $page->getPageSize(), false, true);
-        $this->response($result, self::S200_OK,null,true);
+        $this->response($result, self::S200_OK, null, true);
+    }
+
+    public function article()
+    {
+        $cmsPostModel = new CmsPostModel();
+        $rules = [
+            'post_id' => 'required|numeric',
+        ];
+        $map = [
+            'post_id' => '文档id'
+        ];
+        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        if (false == $validate->passes()) {
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+        }
+        $post_id = $_REQUEST['post_id'];
+        $result = $cmsPostModel->getPostsInfo($post_id);
+        if ($result) {
+            $this->response($result, self::S200_OK, null, true);
+        } else {
+            $this->response(null, self::S404_NOT_FOUND);
+        }
     }
 }

@@ -7,7 +7,7 @@
  * Time: 上午11: 32
  * UEditor编辑器通用上传类
  */
-namespace app\lib\Ueditor;
+namespace app\library\Ueditor;
 class Uploader
 {
     private $fileField; //文件域名

@@ -11,6 +11,7 @@
  * @license BSD http://www.opensource.org/licenses/bsd-license.php
  */
 namespace houduanniu\base;
+
 use Exceptions\Http\Server\InternalServerErrorException;
 
 class Cache
@@ -64,10 +65,16 @@ class Cache
      */
     public function isCached($key)
     {
+        $return = false;
         if (false != $this->_loadCache()) {
             $cachedData = $this->_loadCache();
-            return isset($cachedData[$key]['data']);
+            if (isset($cachedData[$key]['data'])) {
+                if (!$this->_checkExpired($cachedData[$key]['time'], $cachedData[$key]['expire'])) {
+                    $return = true;
+                }
+            }
         }
+        return $return;
     }
 
     /**
@@ -274,7 +281,9 @@ class Cache
      */
     public function setCachePath($path)
     {
-        $this->_cachepath = $path;
+        if(!empty($path)){
+            $this->_cachepath = $path;
+        }
         return $this;
     }
 
@@ -296,7 +305,9 @@ class Cache
      */
     public function setCache($name)
     {
-        $this->_cachename = $name;
+        if(!empty($name)){
+            $this->_cachename = $name;
+        }
         return $this;
     }
 
@@ -318,7 +329,9 @@ class Cache
      */
     public function setExtension($ext)
     {
-        $this->_extension = $ext;
+        if(!empty($ext)){
+            $this->_extension = $ext;
+        }
         return $this;
     }
 

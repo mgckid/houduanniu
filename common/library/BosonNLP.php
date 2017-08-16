@@ -7,7 +7,7 @@
  * Time: 9:34
  */
 
-namespace houduanniu\base;
+namespace app\library;
 
 
 class BosonNLP
@@ -89,9 +89,9 @@ class BosonNLP
         curl_setopt_array($ch, $curlOpt);
         $result = curl_exec($ch);
         curl_close($ch);
-        if($result){
-            return json_decode($result,true);
-        }else{
+        if ($result) {
+            return json_decode($result, true);
+        } else {
             return false;
         }
     }

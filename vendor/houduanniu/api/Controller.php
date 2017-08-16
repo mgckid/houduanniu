@@ -92,15 +92,15 @@ class Controller
 
     public function __construct()
     {
-        header("Content-type: application/json");
-        if(Application::cache()->isCached($this->getCacheKey())){
-            echo Application::cache()->retrieve($this->getCacheKey());
+        if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
+            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
             exit();
         }
     }
 
     public function response($data = null, $http_code = null, $messaage = null, $cached = false)
     {
+        header("Content-type: application/json;charset=utf-8");
         ob_start();
         // If the HTTP status is not null, then cast as an integer
         if (!empty($http_code)) {
@@ -122,11 +122,16 @@ class Controller
             'data' => $data,
         ];
         $return = json_encode($output, JSON_UNESCAPED_UNICODE);
-        if ($cached) {;
-            Application::cache()->store($this->getCacheKey(), $return, 300);
+        if ($cached) {
+            Application::cache($this->getCacheName())->store($this->getCacheKey(), $return, 300);
         }
         echo $return;
         exit();
+    }
+
+    public function errorResponse($messaage = null, $http_code = self::S400_BAD_REQUEST)
+    {
+        $this->response(null, $http_code, $messaage);
     }
 
     public function getCacheKey()
@@ -137,6 +142,10 @@ class Controller
         ksort($_post);
         $cache_key = md5(json_encode($_get) . json_encode($_post));
         return $cache_key;
+    }
+
+    public function getCacheName(){
+        return json_encode(Application::getRouter());
     }
 
 } 

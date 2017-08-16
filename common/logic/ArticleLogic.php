@@ -11,7 +11,7 @@ namespace app\logic;
 
 use app\controller\UserBaseController;
 use Overtrue\Pinyin\Pinyin;
-use houduanniu\base\BosonNLP;
+use app\library\BosonNLP;
 
 class ArticleLogic extends UserBaseController
 {

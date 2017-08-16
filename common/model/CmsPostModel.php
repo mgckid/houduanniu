@@ -341,6 +341,7 @@ class CmsPostModel extends BaseModel
         }
         return $cms_post_result;
     }
+
     /**改版后****/
     /**
      * 获取文章列表
@@ -399,6 +400,15 @@ class CmsPostModel extends BaseModel
             $result = array_combine($field, $value);
         }
         return $result;
+    }
+
+    public function getPostsInfo($post_id){
+        $post_info=[];
+        $result = $this->orm()->where('post_id',$post_id)->find_one();
+        if($result){
+            $post_info = $this->getRecordById($result['id']);
+        }
+        return $post_info;
     }
 
 }
