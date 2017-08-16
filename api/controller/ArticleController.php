@@ -29,12 +29,10 @@ class ArticleController extends Controller
         $rules = [
             'p' => 'required|integer',
             'page_size' => 'required|integer',
-//            'model_type' => 'required|in:article',
         ];
         $map = [
             'p' => '当前页数',
             'page_size' => '每页记录条数',
-//            'model_type' => '模型类型'
         ];
         $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
         if (false == $validate->passes()) {
