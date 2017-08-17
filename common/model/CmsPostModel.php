@@ -72,33 +72,6 @@ class CmsPostModel extends BaseModel
         return $result->as_array();;
     }
 
-    /**
-     * 根据条件获取内容信息
-     * @access public
-     * @author furong
-     * @param $condition
-     * @param $field
-     * @return bool
-     * @since 2017年4月26日 10:11:55
-     * @abstract
-     */
-    public function getPostInfo($condition, $field = 'a.*')
-    {
-        $orm = $this->orm();
-        if ($condition) {
-            foreach ($condition as $key => $value) {
-                $orm = call_user_func_array(array($orm, $key), $value);
-            }
-        }
-        $result = $orm->table_alias('a')
-            ->select_expr($field)
-            ->left_outer_join('cms_category', array('a.column_id', '=', 'c.id'), 'c')
-            ->find_one();
-        if (!$result) {
-            return false;
-        }
-        return $result->as_array();
-    }
 
 
     /**
