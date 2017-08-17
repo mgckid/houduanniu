@@ -111,7 +111,7 @@ class BaseModel extends Model
      * @since 2017年7月28日 09:49:20
      * @abstract
      */
-    public function getAllRecord($field = '*', $orm = '')
+    public function getAllRecord($orm = '', $field = '*')
     {
         return $this->getOrm($orm)->select_expr($field)->find_array();
     }

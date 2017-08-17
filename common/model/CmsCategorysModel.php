@@ -15,43 +15,6 @@ class CmsCategorysModel extends BaseModel
     protected $pk = 'id';
 
 
-
-    /**
-     * 添加网站
-     *
-     * @access public
-     * @author furong
-     * @param $data
-     * @return bool
-     * @since ${DATE}
-     * @abstract
-     */
-    public function addCategory($data)
-    {
-        $data['modified'] = getDateTime();
-        $model = $this->orm();
-        $return = false;
-        if (empty($data['id'])) {
-            unset($data['id']);
-            #添加
-            $data['created'] = getDateTime();
-            $return = $model->create($data)
-                ->save();
-            $return = $model->id();
-        } else {
-            #修改
-            $id = $data['id'];
-            $result = $model->find_one($id);
-            if ($result) {
-                $return = $result->set($data)
-                    ->save();
-            } else {
-                $this->setMessage('栏目不存在');
-            }
-        }
-        return $return;
-    }
-
     /**
      * 获取栏目列表
      * @return array
@@ -77,7 +40,7 @@ class CmsCategorysModel extends BaseModel
      */
     public function deleteColumn($id)
     {
-        $cateList = $this->getColumnList([],'id,name,pid');
+        $cateList = $this->getColumnList([], 'id,name,pid');
         $obj = $this->orm()
             ->select(array('id', 'pid'))
             ->where('id', $id)
@@ -96,7 +59,7 @@ class CmsCategorysModel extends BaseModel
             return FALSE;
         }
         #查找子栏目
-        $sonRecord = treeStructForLayer($cateList,$id);
+        $sonRecord = treeStructForLayer($cateList, $id);
         if (!empty($sonRecord)) {
             $this->setMessage('请先删除子栏目');
             return FALSE;
@@ -111,22 +74,6 @@ class CmsCategorysModel extends BaseModel
         return TRUE;
     }
 
-    /**
-     * 获取栏目信息
-     * @param type $id 文章id
-     * @param type $field 字段名
-     * @return type
-     */
-    public function getCateInfoById($id, $field = "*")
-    {
-        $result = $this->orm()
-            ->select_expr($field)
-            ->find_one($id);
-        if (!$result) {
-            return false;
-        }
-        return $result->as_array();
-    }
 
     /**
      * 根据条件获取栏目信息

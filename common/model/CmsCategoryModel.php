@@ -79,26 +79,22 @@ class CmsCategoryModel extends BaseModel
      */
     public function deleteColumn($id)
     {
-        $cateList = $this->getColumnList([],'id,name,pid');
-        $obj = $this->orm()
-            ->select(array('id', 'pid'))
-            ->where('id', $id)
-            ->find_one();
-        $record = $obj->as_array();
+        $cateList = $this->getAllRecord('', 'id,name,pid');
+        $record = $this->getRecordInfoById($id);
         if (!$record) {
             $this->setMessage('栏目不存在');
             return FALSE;
         }
+        $cmsPostModel = new CmsPostModel();
         #查找栏目下的文章
-        $articleCount = $this->for_table('cms_post')
-            ->where(array('column_id' => $record['id']))
-            ->count();
+        $orm = $cmsPostModel->orm()->where(array('category_id' => $record['id']));
+        $articleCount = $cmsPostModel->getRecordList($orm,'','',true);
         if ($articleCount > 0) {
             $this->setMessage('该栏目下还有文章');
             return FALSE;
         }
         #查找子栏目
-        $sonRecord = treeStructForLayer($cateList,$id);
+        $sonRecord = treeStructForLayer($cateList, $id);
         if (!empty($sonRecord)) {
             $this->setMessage('请先删除子栏目');
             return FALSE;

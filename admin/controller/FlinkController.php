@@ -30,7 +30,7 @@ class FlinkController extends UserBaseController
             $request_data = $logic->getRequestData('site_link', 'table');
 
             $FlinkModel = new FlinkModel();
-            $result = $FlinkModel->addFlink($request_data);
+            $result = $FlinkModel->addRecord($request_data);
             if ($result) {
                 $this->ajaxSuccess('友情链接添加成功');
             } else {
@@ -45,9 +45,8 @@ class FlinkController extends UserBaseController
             $result = [];
             if ($id) {
                 $FlinkModel = new FlinkModel();
-                $result = $FlinkModel->getFlinkByID($id);
+                $result = $FlinkModel->getRecordInfoById($id);
             }
-
             Form::getInstance()->form_schema($form_init)->form_data($result);
             #面包屑导航
             $this->crumb(array(

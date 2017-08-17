@@ -36,7 +36,7 @@ class CmsController extends UserBaseController
             $logic = new DictionarryLogic();
             $request_data = $logic->getRequestData('cms_category', 'table');
             $model = new CmsCategorysModel();
-            $result = $model->addCategory($request_data);
+            $result = $model->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail();
             } else {
@@ -80,7 +80,7 @@ class CmsController extends UserBaseController
             {
                 $result = [];
                 if ($id) {
-                    $result = $cmsCategoryModel->getCateInfoById($id);
+                    $result = $cmsCategoryModel->getRecordInfoById($id);
                 }
             }
 

@@ -7,7 +7,7 @@
                     <label class="col-sm-2 control-label">操作</label>
 
                     <div class="col-sm-10">
-                        <button type="submit" data-power="Operation/addFlink" class="btn btn-success ">保存</button>
+                        <button type="submit" data-power="Flink/addFlink" class="btn btn-success ">保存</button>
                         <button type="reset" class="btn btn-danger ml10">重置</button>
                     </div>
                 </div>
