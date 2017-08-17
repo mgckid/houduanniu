@@ -270,7 +270,7 @@ class CmsPostModel extends BaseModel
         #获取模型信息
         $model_id = $request_data['model_id'];
         $cmsModelModel = new CmsModelModel();
-        $model_result = $cmsModelModel->getRecordById($model_id);
+        $model_result = $cmsModelModel->getRecordInfoById($model_id);
         #获取模型定义
         $dictionaryLogic = new DictionarryLogic();
         $model_defined = $dictionaryLogic->getModelDefined($model_result['value']);
@@ -319,13 +319,13 @@ class CmsPostModel extends BaseModel
     }
 
 
-    public function getRecordById($id, $filed = '*')
+    public function getRecordInfoById($id, $filed = '*')
     {
-        $cms_post_result = parent::getRecordById($id);
+        $cms_post_result = parent::getRecordInfoById($id);
         #获取模型信息
         $model_id = $cms_post_result['model_id'];
         $cmsModelModel = new CmsModelModel();
-        $model_result = $cmsModelModel->getRecordById($model_id);
+        $model_result = $cmsModelModel->getRecordInfoById($model_id);
         #获取模型定义
         $dictionaryLogic = new DictionarryLogic();
         $model_defined = $dictionaryLogic->getModelDefined($model_result['value']);
@@ -406,7 +406,7 @@ class CmsPostModel extends BaseModel
         $post_info=[];
         $result = $this->orm()->where('post_id',$post_id)->find_one();
         if($result){
-            $post_info = $this->getRecordById($result['id']);
+            $post_info = $this->getRecordInfoById($result['id']);
         }
         return $post_info;
     }

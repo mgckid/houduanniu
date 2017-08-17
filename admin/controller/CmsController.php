@@ -127,7 +127,7 @@ class CmsController extends UserBaseController
             #获取模型信息
             $model_id = isset($_POST['model_id']) ? intval($_POST['model_id']) : 0;
             $cmsModelModel = new CmsModelModel();
-            $model_result = $cmsModelModel->getRecordById($model_id);
+            $model_result = $cmsModelModel->getRecordInfoById($model_id);
             if (!$model_result) {
                 $this->ajaxSuccess('内容模型不存在');
             }
@@ -149,13 +149,13 @@ class CmsController extends UserBaseController
             $post_result = [];
             $cmsPostModel = new CmsPostModel();
             if ($id) {
-                $post_result = $cmsPostModel->getRecordById($id);
+                $post_result = $cmsPostModel->getRecordInfoById($id);
             }
             #获取栏目信息
             $category_result = [];
             $cmsCategoryModel = new CmsCategorysModel();
             if ($category_id) {
-                $category_result = $cmsCategoryModel->getRecordById($category_id);
+                $category_result = $cmsCategoryModel->getRecordInfoById($category_id);
             }
 
             if (!$post_result && !$category_result) {
@@ -168,7 +168,7 @@ class CmsController extends UserBaseController
                 die('请选择内容模型');
             }
             $cmsModelModel = new CmsModelModel();
-            $model_result = $cmsModelModel->getRecordById($model_id);
+            $model_result = $cmsModelModel->getRecordInfoById($model_id);
             if (!$model_result) {
                 die('内容模型不存在');
             }

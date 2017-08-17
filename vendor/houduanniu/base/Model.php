@@ -234,5 +234,10 @@ class Model
         Application::getInstance()->setInfo($key, $value);
     }
 
+    public function getTableName()
+    {
+        return $this->tableName;
+    }
+
 
 }

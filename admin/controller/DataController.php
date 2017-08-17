@@ -53,7 +53,7 @@ class DataController extends UserBaseController
         $dictionaryModel = new DictionaryModel();
         #查询字典信息
         {
-            $dictionary_info = $dictionaryModel->getRecordById($pid);
+            $dictionary_info = $dictionaryModel->getRecordInfoById($pid);
         }
         #查询列表
         {
@@ -94,9 +94,9 @@ class DataController extends UserBaseController
         #查询字典信息
         {
             #查询字段信息
-            $field_info = $dictionaryModel->getRecordById($pid);
+            $field_info = $dictionaryModel->getRecordInfoById($pid);
             #查询字典信息
-            $dictionary_info = $dictionaryModel->getRecordById($field_info['pid']);
+            $dictionary_info = $dictionaryModel->getRecordInfoById($field_info['pid']);
         }
 
         #查询列表
@@ -152,7 +152,7 @@ class DataController extends UserBaseController
             $model = new DictionaryModel();
             $result = [];
             if ($id) {
-                $result = $model->getRecordById($id);
+                $result = $model->getRecordInfoById($id);
             }
             if (!$result && $pid) {
                 $result['pid'] = $pid;

@@ -32,11 +32,6 @@ class BaseModel extends Model
         return $orm;
     }
 
-    public function getTableName()
-    {
-        return $this->tableName;
-    }
-
     /**
      * 删除记录
      * @access public
@@ -83,14 +78,11 @@ class BaseModel extends Model
      * @since 2017年7月28日 09:40:34
      * @abstract
      */
-    public function getRecordById($id, $filed = '*')
+    public function getRecordInfoById($id, $filed = '*')
     {
-        $result = $this->orm()->where($this->pk, $id)->select($filed)->find_one();
-        if (!empty($result)) {
-            return $result->as_array();
-        } else {
-            return false;
-        }
+        $orm = $this->orm()->where($this->pk, $id);
+        $result = $this->getRecordInfo($orm, $filed);
+        return $result;
     }
 
     /**
@@ -152,6 +144,26 @@ class BaseModel extends Model
                 $model = $model->order_by_asc($this->pk);
             }
             $result = $model->find_array();
+        }
+        return $result;
+    }
+
+    /**
+     * 获取单条记录
+     * @access public
+     * @author furong
+     * @param string $orm
+     * @param string $field
+     * @return array|false
+     * @since 2017年8月17日 16:40:20
+     * @abstract
+     */
+    public function getRecordInfo($orm = '', $field = '*')
+    {
+        $orm = $this->getOrm($orm);
+        $result = $orm->select_expr($field)->find_one();
+        if (!empty($result)) {
+            $result = $result->as_array();
         }
         return $result;
     }

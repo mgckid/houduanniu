@@ -37,7 +37,7 @@ class SystemController extends UserBaseController
             $siteConfigModel = new SiteConfigModel();
             $result = [];
             if ($id) {
-                $result = $siteConfigModel->getRecordById($id);
+                $result = $siteConfigModel->getRecordInfoById($id);
             }
             $dictionaryLogic = new DictionarryLogic();
             $form_init = $dictionaryLogic->getFormInit('site_config','table');

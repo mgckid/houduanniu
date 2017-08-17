@@ -32,7 +32,7 @@ class AdvertisementController extends UserBaseController
             $request_data = $logic->getRequestData('advertisement_position', 'table');
 
             $advertisementPositionModel = new AdvertisementPositioModel();
-            $result = $advertisementPositionModel->addAdvertisementPositio($request_data);
+            $result = $advertisementPositionModel->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail('广告位添加失败');
             } else {
@@ -46,7 +46,7 @@ class AdvertisementController extends UserBaseController
             $form_init = $logic->getFormInit('advertisement_position', 'table');
 
             $advertisementPositionModel = new AdvertisementPositioModel();
-            $positionInfo = $advertisementPositionModel->getPostionInfoByID($id);
+            $positionInfo = $advertisementPositionModel->getRecordInfoById($id);
 
             Form::getInstance()->form_schema($form_init)->form_data($positionInfo);
             #面包屑导航
@@ -67,16 +67,16 @@ class AdvertisementController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 20;
 
-        $dictionaryLogic= new DictionarryLogic();
+        $dictionaryLogic = new DictionarryLogic();
         $list_init = $dictionaryLogic->getListInit('advertisement_position');
 
         $advertisementPositionModel = new AdvertisementPositioModel();
-        $count = $advertisementPositionModel->getPostionList('', '', true);
+        $count = $advertisementPositionModel->getRecordList('', '', '', true);
         $page = new Page($count, $p, $pageSize);
-        $result = $advertisementPositionModel->getPostionList($page->getOffset(), $pageSize, false);
+        $result = $advertisementPositionModel->getRecordList('', $page->getOffset(), $pageSize, false);
 
         $data['list_data'] = $result;
-        $data['list_init']=$list_init;
+        $data['list_init'] = $list_init;
         $data['pages'] = $page->getPageStruct();
 
         #面包屑导航
@@ -101,9 +101,9 @@ class AdvertisementController extends UserBaseController
     {
         if (IS_POST) {
             $dictionaryLogic = new DictionarryLogic();
-            $request_data = $dictionaryLogic->getRequestData('advertisement_list','table');
+            $request_data = $dictionaryLogic->getRequestData('advertisement_list', 'table');
             $advertisementListModel = new AdvertisementListModel();
-            $result = $advertisementListModel->addAdvertisement($request_data);
+            $result = $advertisementListModel->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail('添加广告失败' . $this->getMessage());
             } else {
@@ -113,13 +113,13 @@ class AdvertisementController extends UserBaseController
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             #获取表单初始数据
             $dictionaryLogic = new DictionarryLogic();
-            $form_init = $dictionaryLogic->getFormInit('advertisement_list','table');
+            $form_init = $dictionaryLogic->getFormInit('advertisement_list', 'table');
 
             #自定义枚举值
             {
                 #获取广告位下拉
                 $AdvertisementPositionModel = new AdvertisementPositioModel();
-                $positionList = $AdvertisementPositionModel->getPostionList(0, 999, false, 'id,position_name');
+                $positionList = $AdvertisementPositionModel->getRecordList('',0, 999, false, 'id,position_name');
                 $enum = [];
                 foreach ($positionList as $key => $value) {
                     $enum[] = [
@@ -131,9 +131,9 @@ class AdvertisementController extends UserBaseController
             }
 
             $advertisementListModel = new AdvertisementListModel();
-            $adInfo=[];
-            if($id){
-                $adInfo = $advertisementListModel->getAdvertisementInfoByID($id);
+            $adInfo = [];
+            if ($id) {
+                $adInfo = $advertisementListModel->getRecordInfoById($id);
             }
 
             Form::getInstance()->form_schema($form_init)->form_data($adInfo);
@@ -161,17 +161,17 @@ class AdvertisementController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 20;
 
-        $dictionaryLogic= new DictionarryLogic();
+        $dictionaryLogic = new DictionarryLogic();
         $list_init = $dictionaryLogic->getListInit('advertisement_list');
         #完善列表枚举值
         {
             $advertisementPositionModel = new AdvertisementPositioModel();
             $position_result = $advertisementPositionModel->getAllRecord();
             $enum = [];
-            foreach($position_result as $value){
-                $enum[$value['id']]=$value['position_name'];
+            foreach ($position_result as $value) {
+                $enum[$value['id']] = $value['position_name'];
             }
-            $list_init['position_id']['enum']=$enum;
+            $list_init['position_id']['enum'] = $enum;
         }
 
         $advertisementListModel = new AdvertisementListModel();
@@ -182,7 +182,7 @@ class AdvertisementController extends UserBaseController
 
         $data['adList'] = $result;
         $data['pages'] = $page->getPageStruct();
-        $data['list_init']=$list_init;
+        $data['list_init'] = $list_init;
         #面包屑导航
         $this->crumb([
             '广告管理' => U('Advertisement/index'),

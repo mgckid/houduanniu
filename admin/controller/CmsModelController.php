@@ -210,7 +210,7 @@ class CmsModelController extends UserBaseController
             $field_id = isset($_GET['field_id']) ? intval($_GET['field_id']) : 0;
             $result = [];
             if ($id) {
-                $result = $cmsAttributeModel->getRecordById($id);
+                $result = $cmsAttributeModel->getRecordInfoById($id);
             }
             if (!$result && $field_id) {
                 $result['field_id'] = $field_id;
