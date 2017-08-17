@@ -696,6 +696,7 @@ class RbacController extends UserBaseController
         $arr = glob(__DIR__ . DIRECTORY_SEPARATOR . '*.php');
 
         $accessModel = new AdminAccessModel();
+        $accessModel->orm()->delete_many();
         foreach ($arr as $path) {
             $basename = basename($path, '.php');
             $className = __NAMESPACE__ . '\\' . ucfirst($basename);

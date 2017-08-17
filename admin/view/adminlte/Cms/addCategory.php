@@ -7,7 +7,7 @@
                     <label class="col-sm-2 control-label">操作</label>
 
                     <div class="col-sm-10">
-                        <button data-power="Cms/addColumn" class="btn btn-success" type="submit">提交</button>
+                        <button data-power="Cms/addCategory" class="btn btn-success" type="submit">提交</button>
                         <button type="reset" class="btn btn-danger ml10">重置</button>
                     </div>
                 </div>

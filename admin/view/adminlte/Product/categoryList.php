@@ -38,7 +38,7 @@
         layer.confirm('您确定要删除选中的栏目么？', {
             btn: ['确定', '取消'] //按钮
         }, function () {
-            $.post('<?= U('Product/delColumn') ?>', {id: id}, function (data) {
+            $.post('<?= U('Product/delCategory') ?>', {id: id}, function (data) {
                 layer.msg(data.msg);
                 if (data.status == 1) {
                     $("#row" + id).remove();

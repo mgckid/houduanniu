@@ -28,9 +28,9 @@ class CmsController extends UserBaseController
 
     /**
      * 添加栏目
-     * @privilege 添加栏目|Admin/Cms/addColumn|e90e8dd1-2006-11e7-8ad5-9cb3ab404081|2
+     * @privilege 添加栏目|Admin/Cms/addCategory|e90e8dd1-2006-11e7-8ad5-9cb3ab404081|2
      */
-    public function addColumn()
+    public function addCategory()
     {
         if (IS_POST) {
             $logic = new DictionarryLogic();
@@ -90,7 +90,7 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '添加栏目' => ''
             ));
-            $this->display('Cms/addColumn');
+            $this->display('Cms/addCategory');
         }
     }
 
@@ -255,9 +255,9 @@ class CmsController extends UserBaseController
 
     /**
      * 删除目录
-     * @privilege 删除目录|Admin/Cms/delColumn|e92a1a4e-2006-11e7-8ad5-9cb3ab404081|3
+     * @privilege 删除目录|Admin/Cms/delCategory|e92a1a4e-2006-11e7-8ad5-9cb3ab404081|3
      */
-    public function delColumn()
+    public function delCategory()
     {
         $model = new CmsCategoryModel();
         #验证

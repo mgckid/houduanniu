@@ -28,7 +28,7 @@ class CmsCategoryModel extends BaseModel
      * @since ${DATE}
      * @abstract
      */
-    public function addColumn($data)
+    public function addCategory($data)
     {
         $data['modified'] = getDateTime();
         $model = $this->orm();

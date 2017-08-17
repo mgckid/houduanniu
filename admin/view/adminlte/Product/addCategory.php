@@ -2,7 +2,7 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="col-md-8">
-            <form name="addColumn" action="<?= U('Product/addCategory') ?>" method="post"
+            <form name="addCategory" action="<?= U('Product/addCategory') ?>" method="post"
                   class="form form-horizontal">
                 <input type="hidden" name="category_id" value="<?= $info['category_id'] ?>" />
                 <div class="form-group">
@@ -28,7 +28,7 @@
                     <label class="col-sm-2 control-label">操作</label>
 
                     <div class="col-sm-10">
-                        <button data-power="Cms/addColumn" class="btn btn-success" type="submit">提交</button>
+                        <button data-power="Cms/addCategory" class="btn btn-success" type="submit">提交</button>
                         <button type="reset" class="btn btn-danger ml10">重置</button>
 
                     </div>
@@ -42,7 +42,7 @@
 
 
     $(function () {
-        $('form[name=addColumn]').ajaxForm({
+        $('form[name=addCategory]').ajaxForm({
             dataType: 'json',
             success: function (data) {
                 layer.alert(data.msg)

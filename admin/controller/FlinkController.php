@@ -3,7 +3,7 @@
 
 namespace app\controller;
 
-use app\model\FlinkModel;
+use app\model\SiteFlinkModel;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
 use app\logic\DictionarryLogic;
@@ -29,8 +29,8 @@ class FlinkController extends UserBaseController
             $logic = new DictionarryLogic();
             $request_data = $logic->getRequestData('site_link', 'table');
 
-            $FlinkModel = new FlinkModel();
-            $result = $FlinkModel->addRecord($request_data);
+            $SiteFlinkModel = new SiteFlinkModel();
+            $result = $SiteFlinkModel->addRecord($request_data);
             if ($result) {
                 $this->ajaxSuccess('友情链接添加成功');
             } else {
@@ -44,8 +44,8 @@ class FlinkController extends UserBaseController
 
             $result = [];
             if ($id) {
-                $FlinkModel = new FlinkModel();
-                $result = $FlinkModel->getRecordInfoById($id);
+                $SiteFlinkModel = new SiteFlinkModel();
+                $result = $SiteFlinkModel->getRecordInfoById($id);
             }
             Form::getInstance()->form_schema($form_init)->form_data($result);
             #面包屑导航
@@ -69,7 +69,7 @@ class FlinkController extends UserBaseController
         #获取列表字段
         $dictionarylogic = new DictionarryLogic();
         $list_init = $dictionarylogic->getListInit('site_link');
-        $flinkModel = new FlinkModel();
+        $flinkModel = new SiteFlinkModel();
         $count = $flinkModel->getRecordList('', '', '', true);
         $page = new Page($count, $p, $pageSize, false);
         $result = $flinkModel->getRecordList('', $page->getOffset(), $pageSize, false);
@@ -95,7 +95,7 @@ class FlinkController extends UserBaseController
         if (!IS_POST) {
             $this->ajaxFail('非法访问');
         }
-        $model = new FlinkModel();
+        $model = new SiteFlinkModel();
         #验证
         $rule = array(
             'id' => 'required',
