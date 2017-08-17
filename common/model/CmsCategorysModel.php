@@ -9,7 +9,7 @@
 namespace app\model;
 
 
-class CmsCategorysModel extends BaseModel
+class CmsCategoryModel extends BaseModel
 {
     protected $tableName = 'cms_category';
     protected $pk = 'id';

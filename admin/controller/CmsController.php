@@ -15,7 +15,6 @@ use houduanniu\base\BosonNLP;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
 use Overtrue\Pinyin\Pinyin;
-use app\model\CmsCategorysModel;
 
 /**
  * 内容管理控制器
@@ -35,7 +34,7 @@ class CmsController extends UserBaseController
         if (IS_POST) {
             $logic = new DictionarryLogic();
             $request_data = $logic->getRequestData('cms_category', 'table');
-            $model = new CmsCategorysModel();
+            $model = new CmsCategoryModel();
             $result = $model->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail();
@@ -52,7 +51,7 @@ class CmsController extends UserBaseController
             #自定义枚举值
             {
                 #栏目分类
-                $cmsCategoryModel = new CmsCategorysModel();
+                $cmsCategoryModel = new CmsCategoryModel();
                 $category_result = $cmsCategoryModel->orm()->select_expr('id,pid,category_name')->find_array();
                 $category_list = treeStructForLevel($category_result);
                 $enum = [];
@@ -120,7 +119,10 @@ class CmsController extends UserBaseController
         }
     }
 
-
+    /**
+     * 添加文档
+     * @privilege 添加文档|Admin/Cms/addPost|f7effdf6-776f-11e7-ba80-5996e3b2d0fb|3
+     */
     public function addPost()
     {
         if (IS_POST) {
@@ -153,7 +155,7 @@ class CmsController extends UserBaseController
             }
             #获取栏目信息
             $category_result = [];
-            $cmsCategoryModel = new CmsCategorysModel();
+            $cmsCategoryModel = new CmsCategoryModel();
             if ($category_id) {
                 $category_result = $cmsCategoryModel->getRecordInfoById($category_id);
             }
@@ -217,7 +219,7 @@ class CmsController extends UserBaseController
     public function index()
     {
         #获取栏目列表数据
-        $cmsCategoryModel = new CmsCategorysModel();
+        $cmsCategoryModel = new CmsCategoryModel();
         $all_category_result = $cmsCategoryModel->getAllRecord();
         $list = treeStructForLevel($all_category_result);
         #获取列表字段
@@ -280,37 +282,6 @@ class CmsController extends UserBaseController
         }
     }
 
-    /**
-     * 文章列表
-     * @privilege 文章列表|Admin/Cms/articleList|c68ffb0f-2008-11e7-8ad5-9cb3ab404081|2
-     */
-    public function articleList()
-    {
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0; #栏目id
-        $p = isset($_GET['p']) ? intval($_GET['p']) : 1; #当前页
-        $fetch_row = 20; #每页条数
-        #获取列表字段
-        $dictionaryLogic = new DictionarryLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_post');
-        #获取列表数据
-        $model = new CmsPostModel();
-        #统计记录数
-        $count = $model->getRecordList('', '', '', TRUE);
-        #分页
-        $page = new Page($count, $p, $fetch_row);
-        $list = $model->getRecordList('', $page->getOffset(), $fetch_row, FALSE);
-        $data = array(
-            'list' => $list,
-            'list_init' => $list_init,
-            'page' => $page->getPageStruct(),
-        );
-        #面包屑导航
-        $this->crumb(array(
-            '内容管理' => U('Cms/index'),
-            '文章管理' => ''
-        ));
-        $this->display('Cms/articleList', $data);
-    }
 
     /**
      * 文档列表
@@ -340,7 +311,7 @@ class CmsController extends UserBaseController
         #完善列表字段枚举值
         {
             #父级栏目
-            $cmsCategoryModel = new CmsCategorysModel();
+            $cmsCategoryModel = new CmsCategoryModel();
             $all_category_result = $cmsCategoryModel->getAllRecord();
             $enum = [];
             foreach ($all_category_result as $value) {
