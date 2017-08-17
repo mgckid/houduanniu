@@ -8,7 +8,7 @@
 
 namespace app\model;
 
-class UserRoleModel extends BaseModel
+class AdminUserRoleModel extends BaseModel
 {
 
     protected $tableName = 'admin_user_role';

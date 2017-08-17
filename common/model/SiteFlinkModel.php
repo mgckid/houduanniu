@@ -9,7 +9,7 @@
 namespace app\model;
 
 
-class FlinkModel extends BaseModel
+class SiteFlinkModel extends BaseModel
 {
     protected $tableName = 'site_flink';
     protected $pk = 'id';

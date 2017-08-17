@@ -5,11 +5,11 @@ namespace app\controller;
 
 use app\controller\BaseController;
 use app\logic\DictionarryLogic;
-use app\model\RoleModel;
-use app\model\UserModel;
-use app\model\UserRoleModel;
-use app\model\AccessModel;
-use app\model\RoleAccessModel;
+use app\model\AdminRoleModel;
+use app\model\AdminUserModel;
+use app\model\AdminUserRoleModel;
+use app\model\AdminAccessModel;
+use app\model\AdminRoleAccessModel;
 use DocBlockReader\Reader;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
@@ -33,7 +33,7 @@ class RbacController extends UserBaseController
             $logic = new DictionarryLogic();
             $request_data = $logic->getRequestData('admin_role', 'table');
 
-            $model = new RoleModel();
+            $model = new AdminRoleModel();
             $result = $model->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail($this->getMessage());
@@ -70,19 +70,19 @@ class RbacController extends UserBaseController
             if (!$role) {
                 $this->ajaxFail('请选择角色');
             }
-            $userRoleModel = new UserRoleModel();
-            $userModel = new UserModel();
+            $userAdminRoleModel = new AdminUserRoleModel();
+            $userModel = new AdminUserModel();
             $userInfo = $userModel->getUserInfo($userName);
             if (empty($userInfo)) {
                 $this->ajaxFail('用户不存在');
             }
             #获取用户角色；
-            $roleList = $userRoleModel->getRoleByUserId($userInfo['user_id']);
+            $roleList = $userAdminRoleModel->getRoleByUserId($userInfo['user_id']);
             #添加的角色
             $addRole = array_diff($role, $roleList);
             #删除的角色
             $delRole = array_diff($roleList, $role);
-            $userRoleModel->beginTransaction();
+            $userAdminRoleModel->beginTransaction();
             try {
                 $count = 0;
                 #添加角色
@@ -94,7 +94,7 @@ class RbacController extends UserBaseController
                             'created' => date('Y-m-d H:i:s', time()),
                             'modified' => date('Y-m-d H:i:s', time()),
                         );
-                        $obj = $userRoleModel->orm()->create($data);
+                        $obj = $userAdminRoleModel->orm()->create($data);
                         if ($obj->save()) {
                             $count++;
                         }
@@ -105,7 +105,7 @@ class RbacController extends UserBaseController
                 }
                 #删除角色
                 if ($delRole) {
-                    $result = $userRoleModel->orm()
+                    $result = $userAdminRoleModel->orm()
                         ->where(array('user_id' => $userInfo['user_id']))
                         ->where_in('role_id', $delRole)
                         ->delete_many();
@@ -113,15 +113,15 @@ class RbacController extends UserBaseController
                         throw new \Exception('删除角色权限失败');
                     }
                 }
-                $userRoleModel->commit();
+                $userAdminRoleModel->commit();
             } catch (\Exception $ex) {
-                $userRoleModel->rollBack();
+                $userAdminRoleModel->rollBack();
                 $this->ajaxFail($ex->getMessage());
             }
             $this->ajaxSuccess('添加用户角色关联记录成功');
         } else {
-            $roleModel = new RoleModel();
-            $userModel = new UserModel();
+            $roleModel = new AdminRoleModel();
+            $userModel = new AdminUserModel();
             #获取用户列表
             $field = array('username', 'true_name');
             $userList = $userModel->orm()
@@ -155,10 +155,10 @@ class RbacController extends UserBaseController
             $dictionaryLogic = new DictionarryLogic();
             $request_data = $dictionaryLogic->getRequestData('admin_user', 'table');
 
-            $adminUserModel = new UserModel();
-            $request_data['user_id'] = $adminUserModel->getUserId();
+            $adminAdminUserModel = new AdminUserModel();
+            $request_data['user_id'] = $adminAdminUserModel->getUserId();
 
-            $result = $adminUserModel->addRecord($request_data);
+            $result = $adminAdminUserModel->addRecord($request_data);
             if ($result) {
                 $this->ajaxSuccess('用户添加成功');
             } else {
@@ -185,7 +185,7 @@ class RbacController extends UserBaseController
     public function addAccess()
     {
         if (IS_POST) {
-            $model = new AccessModel();
+            $model = new AdminAccessModel();
             #验证
             $rule = array(
                 'access_name' => 'required',
@@ -251,7 +251,7 @@ class RbacController extends UserBaseController
                 'path' => ''
             );
             if ($accessId) {
-                $model = new AccessModel();
+                $model = new AdminAccessModel();
                 $result = $model->orm()->find_one($accessId)->as_array();
                 $accessInfo['id'] = $accessId;
                 $accessInfo['access_name'] = $result['access_name'];
@@ -277,7 +277,7 @@ class RbacController extends UserBaseController
 
     protected function handleAccess()
     {
-        $model = new AccessModel();
+        $model = new AdminAccessModel();
         $list = $model->orm()
             ->find_array();
         return treeStructForLevel($list);
@@ -295,7 +295,7 @@ class RbacController extends UserBaseController
             if (!$roleId) {
                 $this->ajaxFail('请选择角色');
             }
-            $roleAccessModel = new RoleAccessModel();
+            $roleAccessModel = new AdminRoleAccessModel();
             #获取角色权限
             $result = $roleAccessModel->getAccessByRoleId(array($roleId));
             $userAccess = array_column($result, 'access_sn');
@@ -346,8 +346,8 @@ class RbacController extends UserBaseController
             $this->ajaxSuccess('添加角色权限关联记录成功');
         } else {
             $roleId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $accessModel = new AccessModel();
-            $roleModel = new RoleModel();
+            $accessModel = new AdminAccessModel();
+            $roleModel = new AdminRoleModel();
             #权限记录
             $accessInfo = $accessModel->getAccessList(0, 999, '');
             $accessList = treeStructForLayer($accessInfo);
@@ -382,7 +382,7 @@ class RbacController extends UserBaseController
         $dictionaryLogic = new DictionarryLogic();
         $list_init = $dictionaryLogic->getListInit('admin_role');
 
-        $roleModel = new RoleModel();
+        $roleModel = new AdminRoleModel();
         $count = $roleModel->getRoleList('', '', true);
         $page = new Page($count, $p, $pageSize, false);
         $roleList = $roleModel->getRoleList($page->getOffset(), $pageSize, false);
@@ -405,7 +405,7 @@ class RbacController extends UserBaseController
      */
     public function delRole()
     {
-        $roleModel = new RoleModel();
+        $roleModel = new AdminRoleModel();
         #验证
         $rule = array(
             'role_id' => 'required|integer',
@@ -437,7 +437,7 @@ class RbacController extends UserBaseController
     {
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 10;
-        $userModel = new UserModel();
+        $userModel = new AdminUserModel();
         $count = $userModel->getUserList('', '', true);
         $page = new Page($count, $p, $pageSize);
         $list = $userModel->getUserList($page->getOffset(), $pageSize, FALSE, array('id', 'username', 'created', 'modified', 'true_name', 'email'));
@@ -462,7 +462,7 @@ class RbacController extends UserBaseController
         if (!IS_POST) {
             $this->ajaxFail('非法请求');
         }
-        $RoleAccessModel = new RoleAccessModel();
+        $RoleAccessModel = new AdminRoleAccessModel();
         #验证
         $rule = array(
             'role_id' => 'required',
@@ -495,7 +495,7 @@ class RbacController extends UserBaseController
     {
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 20;
-        $accessModel = new AccessModel();
+        $accessModel = new AdminAccessModel();
         $count = $accessModel->getAccessList('', '', TRUE);
         $page = new Page($count, $p, $pageSize);
         $list = $accessModel->getAccessList($page->getOffset(), $pageSize);
@@ -534,7 +534,7 @@ class RbacController extends UserBaseController
         if (!IS_POST) {
             $this->ajaxFail('非法访问');
         }
-        $accessModel = new AccessModel();
+        $accessModel = new AdminAccessModel();
         #验证
         $rule = array(
             'access_id' => 'required|integer',
@@ -549,7 +549,7 @@ class RbacController extends UserBaseController
         #获取参数
         $accessId = isset($_POST['access_id']) ? intval($_POST['access_id']) : 0;
 
-        $roleAccessModel = new RoleAccessModel();
+        $roleAccessModel = new AdminRoleAccessModel();
         $count = $roleAccessModel->orm()
             ->where(array('access_id' => $accessId))
             ->count();
@@ -590,7 +590,7 @@ class RbacController extends UserBaseController
     public function resetPassword()
     {
         if (IS_POST) {
-            $userModel = new UserModel();
+            $userModel = new AdminUserModel();
             #验证
             $rule = array(
                 'id' => 'required|integer',
@@ -629,7 +629,7 @@ class RbacController extends UserBaseController
             if (!$id) {
                 die('用户id不能为空');
             }
-            $userModel = new UserModel();
+            $userModel = new AdminUserModel();
             $userInfo = $userModel->orm()
                 ->find_one($id)
                 ->as_array();
@@ -657,7 +657,7 @@ class RbacController extends UserBaseController
         if (!IS_AJAX) {
             $this->ajaxFail('非法请求');
         }
-        $userModel = new UserModel();
+        $userModel = new AdminUserModel();
         #验证
         $rule = array(
             'username' => 'required|alpha',
@@ -672,12 +672,12 @@ class RbacController extends UserBaseController
         #获取参数
         $username = isset($_POST['username']) ? trim($_POST['username']) : '';
 
-        $userRoleModel = new UserRoleModel();
+        $userAdminRoleModel = new AdminUserRoleModel();
         $userInfo = $userModel->getUserInfo($username);
         if (empty($userInfo)) {
             $this->ajaxFail('用户不存在');
         }
-        $roleList = $userRoleModel->getRoleByUserId($userInfo['user_id']);
+        $roleList = $userAdminRoleModel->getRoleByUserId($userInfo['user_id']);
         if (empty($roleList)) {
             $this->ajaxFail('该用户没有分配角色');
         } else {
@@ -695,7 +695,7 @@ class RbacController extends UserBaseController
     {
         $arr = glob(__DIR__ . DIRECTORY_SEPARATOR . '*.php');
 
-        $accessModel = new AccessModel();
+        $accessModel = new AdminAccessModel();
         foreach ($arr as $path) {
             $basename = basename($path, '.php');
             $className = __NAMESPACE__ . '\\' . ucfirst($basename);

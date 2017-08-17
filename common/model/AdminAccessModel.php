@@ -9,7 +9,7 @@
 namespace app\model;
 
 
-class AccessModel extends BaseModel
+class AdminAccessModel extends BaseModel
 {
 
     protected $tableName = 'admin_access';

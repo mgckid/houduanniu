@@ -10,7 +10,7 @@ namespace app\model;
 
 
 
-class UserModel extends BaseModel {
+class AdminUserModel extends BaseModel {
 
     public $tableName = 'admin_user';
 

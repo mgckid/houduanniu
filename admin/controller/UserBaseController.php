@@ -9,7 +9,6 @@
 namespace app\controller;
 
 
-use app\model\SiteConfigModel;
 use houduanniu\base\Application;
 use app\model\SiteSetModel;
 use houduanniu\web\View;
@@ -64,7 +63,7 @@ class UserBaseController extends BaseController
                 return true;
             }
         }
-        $userModel = new \app\model\UserModel();
+        $userModel = new \app\model\AdminUserModel();
         $accessList = $userModel->orm()
             ->table_alias('u')
             ->select(array('a.module', 'a.controller', 'a.action'))
@@ -121,7 +120,7 @@ class UserBaseController extends BaseController
         #站点信息
         $shareData['siteInfo'] = $this->siteInfo;
         #左侧菜单
-        $model = new \app\model\UserModel();
+        $model = new \app\model\AdminUserModel();
         $roleInfo = $this->getInfo('loginInfo')['roleInfo'];
         $list = $model->for_table('admin_access')
             ->select_expr('ac.*')
