@@ -8,8 +8,8 @@
 
 namespace app\controller;
 
-use app\model\UserRoleModel;
-use app\model\UserModel;
+use app\model\AdminUserRoleModel;
+use app\model\AdminUserModel;
 use houduanniu\base\Application;
 
 class LoginController extends BaseController
@@ -23,7 +23,7 @@ class LoginController extends BaseController
     public function index()
     {
         if (IS_POST) {
-            $userModel = new UserModel();
+            $userModel = new AdminUserModel();
             #验证
             $rules = array(
                 'username' => 'required|alpha',
@@ -42,12 +42,12 @@ class LoginController extends BaseController
             $userName = isset($_POST['username']) ? trim($_POST['username']) : '';
             $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 
-            $userRoleModel = new UserRoleModel();
+            $AdminUserRoleModel = new AdminUserRoleModel();
             if (!$userModel->validatePassword($userName, $password)) {
                 $this->ajaxFail($this->getMessage());
             }
             $userinfo = $userModel->getUserInfo($userName);
-            $userinfo['roleInfo']= $userRoleModel->getRoleByUserId($userinfo['user_id']);
+            $userinfo['roleInfo']= $AdminUserRoleModel->getRoleByUserId($userinfo['user_id']);
             Application::segment()->set('loginInfo',$userinfo);
             Application::session()->commit();
             $this->ajaxSuccess('登陆成功');
