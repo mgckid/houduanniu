@@ -63,16 +63,15 @@ class BaseController extends Controller
      */
     public function getSiteInfo()
     {
-        $siteConfigModel = new SiteConfigModel();
-        $result = $siteConfigModel->getConfigList([], 'name,value');
+        $result = $this->apiRequest('Site/siteConfig', [], 'Api');
         $siteInfo = [];
-        foreach ($result as $value) {
+        foreach ($result['data'] as $value) {
             $siteInfo[$value['name']] = $value['value'];
         }
         return $siteInfo;
     }
 
-    public function apiRequest($url, $data, $mode = 'Api', $method = 'get')
+    public function apiRequest($url, $data = [], $mode = 'Api', $method = 'get')
     {
         if ($mode == 'Api') {
             $host = C('API_URL');
@@ -101,16 +100,16 @@ class BaseController extends Controller
      */
     public function display($view, $data = array(), $seoInfo = array())
     {
-//        #站点信息
-//        {
-//            $siteInfo = $this->siteInfo;
-//            $siteInfo['title'] = !empty($seoInfo['title']) ? $seoInfo['title'] . '_' . $siteInfo['site_name'] : $siteInfo['site_name'];
-//            $siteInfo['keyword'] = !empty($seoInfo['keyword']) ? $seoInfo['keyword'] : $siteInfo['site_keywords'];
-//            $siteInfo['description'] = !empty($seoInfo['description']) ? $seoInfo['description'] : $siteInfo['site_description'];
-//
-//            $reg['siteInfo'] = $siteInfo;
-//            $reg['crumbs'] = $this->crumbHtml;
-//        }
+        #站点信息
+        {
+            $siteInfo = $this->siteInfo;
+            $siteInfo['title'] = !empty($seoInfo['title']) ? $seoInfo['title'] . '_' . $siteInfo['site_name'] : $siteInfo['site_name'];
+            $siteInfo['keyword'] = !empty($seoInfo['keyword']) ? $seoInfo['keyword'] : $siteInfo['site_keywords'];
+            $siteInfo['description'] = !empty($seoInfo['description']) ? $seoInfo['description'] : $siteInfo['site_description'];
+
+            $reg['siteInfo'] = $siteInfo;
+            $reg['crumbs'] = $this->crumbHtml;
+        }
 //        #获取头部导航
 //        {
 //            $cateModel = new CmsCategoryModel();
@@ -122,13 +121,13 @@ class BaseController extends Controller
 //            $navList = treeStructForLayer($result);
 //            $reg['navList'] = $navList;
 //        }
-//        #友情链接
-//        {
-//            $flinkModel = new FlinkModel();
-//            $result = $flinkModel->getFlinkList(0, 10);
-//            $reg['flink'] = $result;
-//        }
-//        View::addData($reg);
+        #友情链接
+        {
+
+            $result =   $this->apiRequest('Site/flink', [], 'Api');
+            $reg['flink'] = $result['data'];
+        }
+        View::addData($reg);
         View::setDirectory(__PROJECT__ . '/' . strtolower(Application::getModule()) . '/' . C('DIR_VIEW'));
         View::display($view, $data);
     }

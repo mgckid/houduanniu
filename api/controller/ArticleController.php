@@ -47,7 +47,7 @@ class ArticleController extends Controller
             'count'=>$count,
             'list'=>$result,
         ];
-        $this->response($return, self::S200_OK, null, false);
+        $this->response($return, self::S200_OK, null, true);
     }
 
     public function article()

@@ -28,7 +28,7 @@ class IndexController extends BaseController
                 'p' => $p,
                 'page_size' => $page_size
             ];
-            $result = $this->apiRequest('Article/articleList', $param);
+            $result = $this->apiRequest('Article/articleList', $param, 'Api');
 
             if ($result['code'] == 200) {
                 $count = $result['data']['count'];
@@ -38,7 +38,16 @@ class IndexController extends BaseController
                 $reg['list_data'] = $list_data;
             }
         }
-        $this->display('Index/index',$reg);
+        #seo标题
+        {
+            $seoInfo = [
+                'title' => $this->siteInfo['site_short_name'] . '首页',
+                'keyword' => $this->siteInfo['site_keywords'],
+                'description' => $this->siteInfo['site_description'],
+            ];
+
+        }
+        $this->display('Index/index', $reg, $seoInfo);
 
     }
 
