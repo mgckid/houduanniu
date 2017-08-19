@@ -37,6 +37,9 @@ return array(
 
     #图片处理类(PHP Image Manipulation )
     'Intervention\Image' => __VENDOR__ . '/image/src/Intervention/Image',
+
+    #Guzzle，可扩展的PHP HTTP客户端 http://guzzlephp.org/
+    'GuzzleHttp' => __VENDOR__ . '/guzzle-master/src',
     /****************************核心库文件 结束***************************/
 
     #基于词库的中文转拼音优质解决方案 http://overtrue.me/pinyin
