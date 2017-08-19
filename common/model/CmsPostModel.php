@@ -73,7 +73,6 @@ class CmsPostModel extends BaseModel
     }
 
 
-
     /**
      * 获取推荐文章列表
      * @param array $condition
@@ -347,7 +346,8 @@ class CmsPostModel extends BaseModel
                 ->find_array();
             if ($result && $inclue_extend) {
                 foreach ($result as $key => $value) {
-                    $value['extend_attrbute'] = $this->getPostExtendAttrbute($value['post_id']);
+                    $extend_data = $this->getPostExtendAttrbute($value['post_id']);
+                    $value = !empty($extend_data) ? array_merge($value, $extend_data) : $value;
                     $result[$key] = $value;
                 }
             }
@@ -375,10 +375,11 @@ class CmsPostModel extends BaseModel
         return $result;
     }
 
-    public function getPostsInfo($post_id){
-        $post_info=[];
-        $result = $this->orm()->where('post_id',$post_id)->find_one();
-        if($result){
+    public function getPostsInfo($post_id)
+    {
+        $post_info = [];
+        $result = $this->orm()->where('post_id', $post_id)->find_one();
+        if ($result) {
             $post_info = $this->getRecordInfoById($result['id']);
         }
         return $post_info;

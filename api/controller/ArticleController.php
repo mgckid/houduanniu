@@ -43,7 +43,11 @@ class ArticleController extends Controller
         $count = $cmsPostModel->getPostList('', '', '', true);
         $page = new Page($count, $p, $page_size);
         $result = $cmsPostModel->getPostList('', $page->getOffset(), $page->getPageSize(), false, true);
-        $this->response($result, self::S200_OK, null, true);
+        $return =[
+            'count'=>$count,
+            'list'=>$result,
+        ];
+        $this->response($return, self::S200_OK, null, false);
     }
 
     public function article()
@@ -62,7 +66,7 @@ class ArticleController extends Controller
         $post_id = $_REQUEST['post_id'];
         $result = $cmsPostModel->getPostsInfo($post_id);
         if ($result) {
-            $this->response($result, self::S200_OK, null, true);
+            $this->response($result, self::S200_OK, null, false);
         } else {
             $this->response(null, self::S404_NOT_FOUND);
         }

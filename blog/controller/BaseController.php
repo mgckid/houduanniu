@@ -13,6 +13,7 @@ use app\model\SiteConfigModel;
 use app\model\SiteSetModel;
 use app\model\CmsCategoryModel;
 use app\model\FlinkModel;
+use GuzzleHttp\Client;
 use houduanniu\web\Controller;
 use houduanniu\web\View;
 use houduanniu\base\Application;
@@ -71,6 +72,28 @@ class BaseController extends Controller
         return $siteInfo;
     }
 
+    public function apiRequest($url, $data, $mode = 'Api', $method = 'get')
+    {
+        if ($mode == 'Api') {
+            $host = C('API_URL');
+        }
+        if (empty($host)) {
+            die('主机地址不存在');
+        }
+        if (!class_exists('\Requests')) {
+            require_once(__VENDOR__ . '/Requests-master/library/Requests.php');
+            \Requests::register_autoloader();
+        }
+        if ($method == 'get') {
+            $response = \Requests::get($host . U($url, $data));
+        }
+        if (!$response->success) {
+            die('接口请求错误');
+        }
+        $result = is_array(json_decode($response->body, true)) ? json_decode($response->body, true) : $response->body;
+        return $result;
+    }
+
     /**
      * 输出模版方法
      * @param type $view
@@ -78,34 +101,34 @@ class BaseController extends Controller
      */
     public function display($view, $data = array(), $seoInfo = array())
     {
-        #站点信息
-        {
-            $siteInfo = $this->siteInfo;
-            $siteInfo['title'] = !empty($seoInfo['title']) ? $seoInfo['title'] . '_' . $siteInfo['site_name'] : $siteInfo['site_name'];
-            $siteInfo['keyword'] = !empty($seoInfo['keyword']) ? $seoInfo['keyword'] : $siteInfo['site_keywords'];
-            $siteInfo['description'] = !empty($seoInfo['description']) ? $seoInfo['description'] : $siteInfo['site_description'];
-
-            $reg['siteInfo'] = $siteInfo;
-            $reg['crumbs'] = $this->crumbHtml;
-        }
-        #获取头部导航
-        {
-            $cateModel = new CmsCategoryModel();
-            $condition = [
-                'where' => array('nav_display', $cateModel::NAV_DISPLAY),
-            ];
-            $filed = 'id,pid,name,alias,jump_url,cate_type';
-            $result = $cateModel->getColumnList($condition, $filed);
-            $navList = treeStructForLayer($result);
-            $reg['navList'] = $navList;
-        }
-        #友情链接
-        {
-            $flinkModel = new FlinkModel();
-            $result = $flinkModel->getFlinkList(0, 10);
-            $reg['flink'] = $result;
-        }
-        View::addData($reg);
+//        #站点信息
+//        {
+//            $siteInfo = $this->siteInfo;
+//            $siteInfo['title'] = !empty($seoInfo['title']) ? $seoInfo['title'] . '_' . $siteInfo['site_name'] : $siteInfo['site_name'];
+//            $siteInfo['keyword'] = !empty($seoInfo['keyword']) ? $seoInfo['keyword'] : $siteInfo['site_keywords'];
+//            $siteInfo['description'] = !empty($seoInfo['description']) ? $seoInfo['description'] : $siteInfo['site_description'];
+//
+//            $reg['siteInfo'] = $siteInfo;
+//            $reg['crumbs'] = $this->crumbHtml;
+//        }
+//        #获取头部导航
+//        {
+//            $cateModel = new CmsCategoryModel();
+//            $condition = [
+//                'where' => array('nav_display', $cateModel::NAV_DISPLAY),
+//            ];
+//            $filed = 'id,pid,name,alias,jump_url,cate_type';
+//            $result = $cateModel->getColumnList($condition, $filed);
+//            $navList = treeStructForLayer($result);
+//            $reg['navList'] = $navList;
+//        }
+//        #友情链接
+//        {
+//            $flinkModel = new FlinkModel();
+//            $result = $flinkModel->getFlinkList(0, 10);
+//            $reg['flink'] = $result;
+//        }
+//        View::addData($reg);
         View::setDirectory(__PROJECT__ . '/' . strtolower(Application::getModule()) . '/' . C('DIR_VIEW'));
         View::display($view, $data);
     }
