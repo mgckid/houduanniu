@@ -1,0 +1,99 @@
+.widget-search {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget {
+  padding: 1.25rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid $card-border-color;
+  border-radius: 0.25rem;
+  margin-bottom: 10px;
+  ul {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+    li {
+      line-height: 2;
+      a {
+        color: #333;
+      }
+    }
+  }
+}
+
+.widget-header {
+  padding: 0.75rem 1.25rem;
+  margin: -1.25rem -1.25rem 1.25rem -1.25rem;
+  background-color: $card-cap-bg;
+  border-bottom: $card-border-width solid $card-border-color;
+  &:first-child {
+    @include border-radius($card-inner-border-radius $card-inner-border-radius 0 0);
+  }
+}
+
+@media (max-width: 767px) {
+  .widget {
+      margin: 40px 0;
+  }
+}
+
+/*****************************
+ ~~ widgets (calendar)
+*****************************/
+
+table#wp-calendar {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+td#next {
+  text-align: right;
+}
+
+table#wp-calendar caption {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*****************************
+ ~~ widgets (tag cloud)
+*****************************/
+.tagcloud {
+  margin-bottom: -10px; //修正标签的marging-botttom 10px
+  a {
+    padding: 5px 15px;
+    border: 1px solid #68727d;
+    border-radius: 4px;
+    color: #68727d;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  a:hover {
+    opacity: 0.8;
+    text-decoration: none;
+  }
+}
+
+/* Make sure select elements fit in widgets. */
+.widget select,
+.card select,
+.widget_categories select,
+.widget_archive select {
+	max-width: 100%;
+}
+
+.widget_recent_entries {
+  span {
+    font-size: 85%;
+    color: #666;
+  }
+}
+
+.comment-author-link {
+  margin-right: .25rem;
+}
