@@ -324,7 +324,7 @@ class CmsPostModel extends BaseModel
      * @param type $field 字段
      * @return type
      */
-    public function getPostList($orm = '', $offset, $limit, $forCount = false, $inclue_extend = false, $order_by = 'a.id', $sort = 'desc', $field = 'a.*')
+    public function getPostList($orm = '', $offset, $limit, $forCount = false, $order_by = 'a.id', $sort = 'desc', $field = 'a.*,c.category_name')
     {
         $orm = $this->getOrm($orm)->where('a.deleted', 0)
             ->table_alias('a')
@@ -344,13 +344,6 @@ class CmsPostModel extends BaseModel
                 ->offset($offset)
                 ->order_by_desc('id')
                 ->find_array();
-            if ($result && $inclue_extend) {
-                foreach ($result as $key => $value) {
-                    $extend_data = $this->getPostExtendAttrbute($value['post_id']);
-                    $value = !empty($extend_data) ? array_merge($value, $extend_data) : $value;
-                    $result[$key] = $value;
-                }
-            }
         }
         return $result;
     }

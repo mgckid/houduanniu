@@ -93,10 +93,15 @@ class Controller
     public function __construct()
     {
         header("Content-type: application/json;charset=utf-8");
-        if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
-            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
-            exit();
-        }
+//        if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
+//            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
+//            exit();
+//        }
+    }
+
+
+    function __destruct() {
+       Application::cache($this->getCacheName())->eraseExpired();
     }
 
     public function response($data = null, $http_code = null, $messaage = null, $cached = false)

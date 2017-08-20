@@ -1,7 +1,7 @@
 <header class="header">
     <nav class="navbar navbar-expand-lg navbar-shadow navbar-dark bg-primary fixed-top" id="primary-navbar" role="navigation">
         <div class="container">
-            <a class="navbar-brand" href="http://blog.houduanniu.com/" title="<?=$siteInfo['site_short_name']?>" rel="home"><?=$siteInfo['site_short_name']?></a>
+            <a class="navbar-brand" href="/" title="<?=$siteInfo['site_short_name']?>" rel="home"><?=$siteInfo['site_short_name']?></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -9,7 +9,7 @@
             <div id="navbarNavDropdown" class="collapse navbar-collapse">
                 <div class="mr-auto">
                     <ul id="main-nav" class="navbar-nav mr-auto">
-                        <li class="nav-item active"><a title="首页" href="http://blog.houduanniu.com/" class="nav-link">首页</a></li>
+                        <li class="nav-item active"><a title="首页" href="/" class="nav-link">首页</a></li>
                         <li class="nav-item"><a title="WordPress" href="##wordpress" class="nav-link">WordPress</a></li>
                         <li class="nav-item"><a title="运营" href="##growth" class="nav-link">运营</a></li>
                         <li class="nav-item"><a title="状态" href="http://blog.houduanniu.com/type/status" class="nav-link">状态</a></li>
