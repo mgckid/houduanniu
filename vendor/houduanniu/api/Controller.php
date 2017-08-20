@@ -93,10 +93,10 @@ class Controller
     public function __construct()
     {
         header("Content-type: application/json;charset=utf-8");
-//        if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
-//            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
-//            exit();
-//        }
+        if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
+            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
+            exit();
+        }
     }
 
 
