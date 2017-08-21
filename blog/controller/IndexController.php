@@ -38,12 +38,6 @@ class IndexController extends BaseController
                 $reg['list_data'] = $list_data;
             }
         }
-        #获取热门标签
-        {
-            $result = $this->apiRequest('Post/tagList', [], 'Api');
-            $tag_list = $result['data'];
-            $reg['tag_list'] = $tag_list;
-        }
         #seo标题
         {
             $seoInfo = [

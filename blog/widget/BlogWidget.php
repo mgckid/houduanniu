@@ -26,16 +26,11 @@ class BlogWidget extends BaseController
      * @since 2017年4月24日 16:55:34
      * @abstract
      */
-    public function hotPost($limit, $cateId = '')
+    public function hotArticle($limit, $cateId = '')
     {
-        $postModel = new CmsPostModel();
-        $result = $postModel->getHotPost($limit, 'a.id,a.title,a.title_alias,a.public_time,a.image_name', $cateId);
-        foreach ($result as $key => $value) {
-            $value['image_url'] = $value['image_name'] ? getImage($value['image_name'], $this->imageSize[1]) : '';
-            $result[$key] = $value;
-        }
-        $reg['hotPost'] = $result;
-        return View::render('Common/hotPost', $reg);
+
+        $reg['hotPost'] = '';
+        return View::render('Common/hotArticle', $reg);
     }
 
     /**
@@ -47,12 +42,24 @@ class BlogWidget extends BaseController
      * @since 2017年4月24日 17:22:24
      * @abstract
      */
-    public function hotTag($limit)
+    public function hotTag()
     {
         #获取热门标签
-        $tagModel = new CmsTagModel();
-        $result = $tagModel->getHotTagList($limit);
-        $reg['hotTag'] = $result;
+        {
+            $result = $this->apiRequest('Post/tagList', [], 'Api');
+            $tag_list = $result['data'];
+            $reg['tag_list'] = $tag_list;
+        }
         return View::render('Common/hotTag', $reg);
+    }
+
+    public function flink(){
+        #获取热门标签
+        {
+            $result = $this->apiRequest('Site/flink', [], 'Api');
+            $tag_list = $result['data'];
+            $reg['list'] = $tag_list;
+        }
+        return View::render('Common/flink', $reg);
     }
 }

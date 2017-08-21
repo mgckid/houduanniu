@@ -132,68 +132,9 @@
                     </main>
                 </div>
 
-                <div class="col-lg-4 hidden-md-down">
-                    <div class="sidebar">
-                        <aside class="widget card-shadow widget_text">
-                            <h4 class="widget-header h6">WordPress主题：Writing</h4>
-
-                            <div class="textwidget"><p>特色：<span class="badge badge-primary mr-2">自适应</span><span
-                                        class="badge badge-warning mr-2">博客</span><span class="badge badge-info">主题选项</span></p>
-
-                                <p>本博客主题免费下载：</p>
-
-                                <p><a class="btn btn-warning btn-sm"
-                                      href="http://blog.houduanniu.com/theme/writing?utm_source=site&amp;utm_medium=siebar">去下载</a>
-                                    v0.8.0</p>
-
-                                <p>QQ群：189678769</p>
-                            </div>
-                        </aside>
-                        <aside class="widget card-shadow d_tag"><h4 class="widget-header h6">热门标签</h4>
-
-                            <div class="hot-tags">
-                                <a href="###" class="btn btn-light btn-sm">如何写博客</a>
-                            </div>
-                        </aside>
-                        <aside class="widget card-shadow widget_lean_posts">
-                            <h4 class="widget-header h6">最近文章</h4>
-
-                            <ul class="list-unstyled">
-                                <li>
-                                    <a href="##" rel="bookmark" title="Writing-v0.8更新日志">Writing-v0.8更新日志</a>
-                                </li>
-                                <!--./li-->
-                                <li>
-                                    <a href="##" rel="bookmark" title="Writing-v0.8更新日志">Writing-v0.8更新日志</a>
-                                </li>
-                                <!--./li-->
-                                <li>
-                                    <a href="##" rel="bookmark" title="Writing-v0.8更新日志">Writing-v0.8更新日志</a>
-                                </li>
-                                <!--./li-->
-                                <li>
-                                    <a href="##" rel="bookmark" title="Writing-v0.8更新日志">Writing-v0.8更新日志</a>
-                                </li>
-                                <!--./li-->
-                                <li>
-                                    <a href="##" rel="bookmark" title="Writing-v0.8更新日志">Writing-v0.8更新日志</a>
-                                </li>
-                                <!--./li-->
-
-                            </ul>
-                            <!--./ul-->
-
-                        </aside>
-                        <aside class="widget card-shadow widget_nav_menu"><h4 class="widget-header h6">友情链接</h4>
-
-                            <div>
-                                <ul class="menu">
-                                    <li><a href="###">一个女产品经理的博客</a></li>
-                                </ul>
-                            </div>
-                        </aside>
-                    </div>
-                </div>
+                <!--侧边栏 开始-->
+                <?=$this->insert('Common/sidebar')?>
+                <!--侧边栏 结束-->
             </div>
         </div><!-- /.row -->
     </div><!-- /.container -->
