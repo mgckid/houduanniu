@@ -26,10 +26,14 @@ class BlogWidget extends BaseController
      * @since 2017年4月24日 16:55:34
      * @abstract
      */
-    public function hotArticle($limit, $cateId = '')
+    public function hotArticle($page_size, $cateId = '')
     {
-
-        $reg['hotPost'] = '';
+        #获取热门标签
+        {
+            $result = $this->apiRequest('Post/hotPost', ['page_size'=>$page_size], 'Api');
+            $posts = $result['data'];
+            $reg['posts'] = $posts;
+        }
         return View::render('Common/hotArticle', $reg);
     }
 

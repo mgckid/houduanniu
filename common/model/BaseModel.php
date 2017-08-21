@@ -131,7 +131,7 @@ class BaseModel extends Model
      */
     public function getRecordList($orm = '', $offset = '', $limit = '', $for_count = false, $order_by_id_desc = true, $field = '*')
     {
-        $orm = $this->getOrm($orm)->where_equal('deleted', 0);
+        //$orm = $this->getOrm($orm)->where_equal('deleted', 0);
         if ($for_count) {
             $result = $orm->count();
         } else {

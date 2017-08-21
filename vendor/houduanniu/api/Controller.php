@@ -92,8 +92,8 @@ class Controller
 
     public function __construct()
     {
-        header("Content-type: application/json;charset=utf-8");
         if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
+            header("Content-type: application/json;charset=utf-8");
             echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
             exit();
         }
@@ -106,6 +106,7 @@ class Controller
 
     public function response($data = null, $http_code = null, $messaage = null, $cached = false)
     {
+        header("Content-type: application/json;charset=utf-8");
         ob_start();
         // If the HTTP status is not null, then cast as an integer
         if (!empty($http_code)) {

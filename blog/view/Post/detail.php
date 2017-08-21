@@ -24,7 +24,11 @@
 
                                     <?=htmlspecialchars_decode($info['content'])?>
 
-                                    <div class="post-tags mt-4 mb-3"><a href="http://qingzhuti.com/tag/wordpress%e4%b8%bb%e9%a2%98%e5%bc%80%e5%8f%91%e6%95%99%e7%a8%8b" class="btn btn-light btn-sm mr-2 mb-2">WordPress主题开发教程</a></div>
+                                    <div class="post-tags mt-4 mb-3">
+                                        <?php foreach($info['post_tag'] as $value):?>
+                                        <a  href="<?=U('Post/tags',['tag_name'=>$value])?>" class="btn btn-light btn-sm mr-2 mb-2"><?=$value?></a>
+                                        <?php endforeach?>
+                                    </div>
                                 </div>
 
                             </div>
