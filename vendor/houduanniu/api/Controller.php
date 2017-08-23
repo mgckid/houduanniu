@@ -92,19 +92,20 @@ class Controller
 
     public function __construct()
     {
-        if(Application::cache($this->getCacheName())->isCached($this->getCacheKey())){
-            header("Content-type: application/json;charset=utf-8");
-            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
-            exit();
-        }
+//        if (Application::cache($this->getCacheName())->isCached($this->getCacheKey())) {
+//            header("Content-type: application/json;charset=utf-8");
+//            echo Application::cache($this->getCacheName())->retrieve($this->getCacheKey());
+//            exit();
+//        }
     }
 
 
-    function __destruct() {
-       Application::cache($this->getCacheName())->eraseExpired();
+    function __destruct()
+    {
+        Application::cache($this->getCacheName())->eraseExpired();
     }
 
-    public function response($data = null, $http_code = null, $messaage = null, $cached = false)
+    public function response($data = null, $http_code = null, $messaage = null, $cached = false, $cache_life_time = 300)
     {
         header("Content-type: application/json;charset=utf-8");
         ob_start();
@@ -126,6 +127,8 @@ class Controller
             'code' => $http_code,
             'message' => $messaage,
             'data' => $data,
+            'cacheed'=>$cached?1:0,
+            'cache_life_time'=>$cache_life_time,
         ];
         $return = json_encode($output, JSON_UNESCAPED_UNICODE);
         if ($cached) {
@@ -150,7 +153,8 @@ class Controller
         return $cache_key;
     }
 
-    public function getCacheName(){
+    public function getCacheName()
+    {
         return json_encode(Application::getRouter());
     }
 

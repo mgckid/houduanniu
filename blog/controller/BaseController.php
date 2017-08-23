@@ -90,6 +90,9 @@ class BaseController extends Controller
             die('接口请求错误');
         }
         $result = is_array(json_decode($response->body, true)) ? json_decode($response->body, true) : $response->body;
+        if ($result['cached']) {
+            Application::cache($this->getCacheName())->store($this->getCacheKey(), $return, 300);
+        }
         return $result;
     }
 
