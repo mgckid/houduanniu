@@ -79,6 +79,14 @@ class BaseController extends Controller
         if (empty($host)) {
             die('主机地址不存在');
         }
+        #返回缓存内容
+        $cache_key = md5(json_encode($data));
+        if ($method == 'get') {
+            if (Application::cache($url)->isCached($cache_key)) {
+                return Application::cache($url)->retrieve($cache_key);
+            }
+        }
+
         if (!class_exists('\Requests')) {
             require_once(__VENDOR__ . '/Requests-master/library/Requests.php');
             \Requests::register_autoloader();
@@ -86,12 +94,17 @@ class BaseController extends Controller
         if ($method == 'get') {
             $response = \Requests::get($host . U($url, $data));
         }
+
         if (!$response->success) {
             die('接口请求错误');
         }
         $result = is_array(json_decode($response->body, true)) ? json_decode($response->body, true) : $response->body;
-        if ($result['cached']) {
-            Application::cache($this->getCacheName())->store($this->getCacheKey(), $return, 300);
+        #缓存数据
+        if ($method == 'get') {
+            if(isset($result['cached'])&&$result['cached']){
+                Application::cache($url)->store($cache_key, $result, 300);
+                Application::cache($url)->eraseExpired();
+            }
         }
         return $result;
     }
@@ -127,13 +140,16 @@ class BaseController extends Controller
         #友情链接
         {
 
-            $result =   $this->apiRequest('Site/flink', [], 'Api');
+            $result = $this->apiRequest('Site/flink', [], 'Api');
             $reg['flink'] = $result['data'];
         }
         View::addData($reg);
         View::setDirectory(__PROJECT__ . '/' . strtolower(Application::getModule()) . '/' . C('DIR_VIEW'));
         View::display($view, $data);
     }
+
+    
+
 
 
 } 
