@@ -27,15 +27,15 @@ class PostController extends BaseController
             if ($result['code'] != 200) {
                 die('页面不存在');
             }
-            $result['data']['post_tag']=explode(',',$result['data']['post_tag']);
+            $result['data']['article']['post_tag']=explode(',',$result['data']['article']['post_tag']);
             $reg['info'] = $result['data'];
         }
         #seo标题
         {
             $seoInfo = [
-                'title' => $reg['info']['title'],
-                'keyword' => $reg['info']['keyword'],
-                'description' => $reg['info']['description']
+                'title' => $reg['info']['article']['title'],
+                'keyword' => $reg['info']['article']['keyword'],
+                'description' => $reg['info']['article']['description']
             ];
 
         }

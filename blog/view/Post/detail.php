@@ -12,20 +12,20 @@
                             <div class="card-body">
 
 
-                                <h1 class="card-title mb-4"><?=$info['title']?></h1>
+                                <h1 class="card-title mb-4"><?=$info['article']['title']?></h1>
                                 <p class="card-text text-link-color-muted">
                                     <small>
-                                        <span class="post-time"><?=date('Y年m月d日',strtotime($info['created']))?></span>
-                                        <span class="post-category"> &nbsp;&bull;&nbsp;<a href="http://qingzhuti.com/category/wordpress" rel="category tag"><?=$info['category_name']?></a></span>
+                                        <span class="post-time"><?=date('Y年m月d日',strtotime($info['article']['created']))?></span>
+                                        <span class="post-category"> &nbsp;&bull;&nbsp;<a href="http://qingzhuti.com/category/wordpress" rel="category tag"><?=$info['article']['category_name']?></a></span>
                                     </small>
                                 </p>
 
                                 <div class="entry-content pt-3">
 
-                                    <?=htmlspecialchars_decode($info['content'])?>
+                                    <?=htmlspecialchars_decode($info['article']['content'])?>
 
                                     <div class="post-tags mt-4 mb-3">
-                                        <?php foreach($info['post_tag'] as $value):?>
+                                        <?php foreach($info['article']['post_tag'] as $value):?>
                                         <a  href="<?=U('Post/tags',['tag_name'=>$value])?>" class="btn btn-light btn-sm mr-2 mb-2"><?=$value?></a>
                                         <?php endforeach?>
                                     </div>
@@ -38,8 +38,16 @@
                             <div class="card-body">
                                 <h4 class="sr-only sr-only-focusable">Post navigation</h4>
                                 <div class="nav-links clearfix">
-                                    <div class="nav-previous float-left">&larr; <a href="http://qingzhuti.com/523" rel="prev">上一篇文章</a></div>
-                                    <div class="nav-next float-right"><a href="http://qingzhuti.com/378" rel="next">开始创建主题：主样式表（style.css）</a> &rarr;</div>
+                                    <div class="nav-previous float-left">&larr;
+                                        <a href="<?=!empty($info['pre'])?U('Post/detail',['id'=>$info['pre']['title_alias']]):'javascript:void(0)'?>" rel="prev">
+                                            <?=!empty($info['pre'])?$info['pre']['title']:'无'?>
+                                        </a>
+                                    </div>
+                                    <div class="nav-next float-right">
+                                        <a href="<?=!empty($info['next'])?U('Post/detail',['id'=>$info['next']['title_alias']]):'javascript:void(0)'?>" rel="prev">
+                                            <?=!empty($info['next'])?$info['next']['title']:'无'?>
+                                        </a>
+                                    </div>
                                 </div><!-- .nav-links -->
 
                             </div>

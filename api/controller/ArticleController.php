@@ -86,11 +86,31 @@ class ArticleController extends Controller
         } elseif ($field_name = 'post_id') {
             $post_id = $field_value;
         }
-        $result = $cmsPostModel->getPostsInfo($post_id);
-        $cmsCategoryModel = new CmsCategoryModel();
-        $category_result = $cmsCategoryModel->getRecordInfoById($result['category_id']);
-        $result['category_name']=$category_result['category_name'];
-        if ($result) {
+        $article = $cmsPostModel->getPostsInfo($post_id);
+        if ($article) {
+            $cmsCategoryModel = new CmsCategoryModel();
+            $category_result = $cmsCategoryModel->getRecordInfoById($article['category_id']);
+            $article['category_name'] = $category_result['category_name'];
+            $pre_result = $cmsPostModel->getPre($post_id, $article['category_id']);
+            $next_result = $cmsPostModel->getNext($post_id, $article['category_id']);
+            $pre = [];
+            if ($pre_result) {
+                $pre = [
+                    'title_alias' => $pre_result['title_alias'],
+                    'title' => $pre_result['title'],
+                ];
+            }
+            $next = [];
+            if ($next_result) {
+                $next = [
+                    'title_alias' => $next_result['title_alias'],
+                    'title' => $next_result['title'],
+                ];
+            }
+            unset($result);
+            $result['article'] = $article;
+            $result['pre'] = $pre;
+            $result['next'] = $next;
             $this->response($result, self::S200_OK, null, true);
         } else {
             $this->response(null, self::S404_NOT_FOUND);

@@ -92,16 +92,19 @@ class CmsPostModel extends BaseModel
      * @param string $filed
      * @return mixed
      */
-    public function getNext($id, $cateid, $filed = 'id,title,title_alias')
+    public function getNext($post_id, $category_id)
     {
-        $result = $this->orm()
-            ->select_expr($filed)
-            ->where('column_id', $cateid)
-            ->where_gt('id', $id)
+        $orm = $this->orm()->where('post_id',$post_id);
+        $post_result = parent::getRecordInfo($orm,'id');
+        $next_id = $this->orm()
+            ->where('category_id', $category_id)
+            ->where_gt('id', $post_result['id'])
             ->order_by_asc('id')
             ->find_one();
-        if ($result) {
-            $result = $result->as_array();
+        $result=[];
+        if ($next_id) {
+            $next_id = $next_id->as_array();
+            $result=$this->getRecordInfoById($next_id['id']);
         }
         return $result;
     }
@@ -113,16 +116,19 @@ class CmsPostModel extends BaseModel
      * @param string $filed
      * @return mixed
      */
-    public function getPre($id, $cateid, $filed = 'id,title,title_alias')
+    public function getPre($post_id, $category_id)
     {
-        $result = $this->orm()
-            ->select_expr($filed)
-            ->where('column_id', $cateid)
-            ->where_lt('id', $id)
-            ->order_by_desc('id')
+        $orm = $this->orm()->where('post_id',$post_id);
+        $post_result = parent::getRecordInfo($orm,'id');
+        $pre_id = $this->orm()
+            ->where('category_id', $category_id)
+            ->where_lt('id', $post_result['id'])
+            ->order_by_asc('id')
             ->find_one();
-        if ($result) {
-            $result = $result->as_array();
+        $result=[];
+        if ($pre_id) {
+            $pre_id = $pre_id->as_array();
+            $result=$this->getRecordInfoById($pre_id['id']);
         }
         return $result;
     }
