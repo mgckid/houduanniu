@@ -43,6 +43,7 @@ class Model
     public static function selectDb($dbName = 'default')
     {
         $config = Application::config()->get('DB');
+        print_g($config);
         if (!array_key_exists($dbName, $config)) {
             throw new InternalServerErrorException($dbName . '数据库配置不存在');
         }

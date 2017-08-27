@@ -43,7 +43,7 @@ class testController extends BaseController
             if($cmsPostModel->orm()->where('title',$result['title'])->find_one()){
                 continue;
             }
-            $cmsPostModel->addRecord($post_data);
+           // $cmsPostModel->addRecord($post_data);
             sleep(5);
         }
 
