@@ -17,42 +17,33 @@ class testController extends BaseController
     public function index()
     {
         $cmsPostModel = new CmsPostModel();
-        $pro = $cmsPostModel->for_table('cms_post', 'pro');
-        $result = $pro->table_alias('a')
-            ->left_outer_join('cms_post_tag', ['a.id', '=', 'pt.post_id'], 'pt')
-            ->left_outer_join('cms_tag', ['pt.tag_id', '=', 't.tag_id'], 't')
-            ->select_expr("a.*,group_concat(t.tag_name,',') as tag_names" )
-            ->group_by('pt.post_id')
+        $m= $cmsPostModel->for_table('cms_post_tag', 'pro');
+        $result = $m->table_alias('pt')
+            ->select_expr('a.*,GROUP_CONCAT(t.tag_name) AS tags')
+            ->left_join('cms_tag', ['pt.tag_id', '=', 't.tag_id'], 't')
+            ->left_join('cms_post', ['pt.post_id', '=', 'a.id'], 'a')
+            ->group_by_expr('pt.post_id')
             ->find_array();
-        print_g($pro->get_last_query());
-        $postModel = $cmsPostModel->for_table('cms_post')->use_id_column('id');
-        $ids = $postModel->select_expr('id')->find_array();
-        $ids = array_column($ids, 'id');
-        foreach ($ids as $value) {
-            $result = $cmsPostModel->for_table('cms_post')->use_id_column('id')->find_one($value);
-            if (!$result) {
-                continue;
-            }
-            $result = $result->as_array();
-//            var_dump($result,$ids);
+
+        foreach ($result as $value) {
             $post_data = [
                 'category_id' => 1,
                 'model_id' => 1,
-                'title' => $result['title'],
-                'title_alias' => $result['title_alias'],
-                'keywords' => $result['keyword'],
-                'description' => $result['description'],
+                'title' => $value['title'],
+                'title_alias' => $value['title_alias'],
+                'keywords' => $value['keyword'],
+                'description' => $value['description'],
                 'post_id' => getItemId(),
-                'content' => $result['content'],
-                'author' => $result['editor'],
-                'click' => $result['click'],
-                'main_image' => $result['image_name'],
+                'content' => $value['content'],
+                'author' => $value['editor'],
+                'click' => $value['click'],
+                'main_image' => $value['image_name'],
+                'post_tag'=>$value['tags']
             ];
             if ($cmsPostModel->orm()->where('title', $result['title'])->find_one()) {
                 continue;
             }
-            // $cmsPostModel->addRecord($post_data);
-            sleep(5);
+             $cmsPostModel->addRecord($post_data);
         }
 
 
