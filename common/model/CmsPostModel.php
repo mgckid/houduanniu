@@ -320,6 +320,8 @@ class CmsPostModel extends BaseModel
         return $cms_post_result;
     }
 
+
+
     /**改版后****/
     /**
      * 获取文章列表

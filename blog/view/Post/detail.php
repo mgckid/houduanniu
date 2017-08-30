@@ -57,85 +57,20 @@
                             <div class="card-body"><h3 class="card-title h6 mb-3">你可能喜欢：</h3>
 
                                 <div class="row">
-
+                                <?php foreach($related_article as $value):?>
                                     <div class="col-md-4 col-6">
                                         <div class="card border-0">
-                                            <a class="entry-img" href="http://qingzhuti.com/554">
-                                                <img src="http://assets.qingzhuti.com/wp-content/themes/writing/assets/img/placeholder.png" alt="图片占位符" class="card-img rounded-0">
+                                            <a class="entry-img" href="<?=U('Post/detail',['id'=>$value['title_alias']])?>">
+                                                <img src="<?=$value['main_image']?>" alt="<?=$value['title']?>" class="card-img rounded-0">
                                             </a>
                                             <div class="card-body px-0 py-3">
                                                 <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="http://qingzhuti.com/554" rel="bookmark">内容类型（Post  Type）与文章形式（Post Format）</a>
+                                                    <a href="<?=U('Post/detail',['id'=>$value['title_alias']])?>" rel="bookmark"><?=$value['title']?></a>
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-4 col-6">
-                                        <div class="card border-0">
-                                            <a class="entry-img" href="http://qingzhuti.com/554">
-                                                <img src="http://assets.qingzhuti.com/wp-content/themes/writing/assets/img/placeholder.png" alt="图片占位符" class="card-img rounded-0">
-                                            </a>
-                                            <div class="card-body px-0 py-3">
-                                                <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="http://qingzhuti.com/554" rel="bookmark">内容类型（Post  Type）与文章形式（Post Format）</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-6">
-                                        <div class="card border-0">
-                                            <a class="entry-img" href="http://qingzhuti.com/554">
-                                                <img src="http://assets.qingzhuti.com/wp-content/themes/writing/assets/img/placeholder.png" alt="图片占位符" class="card-img rounded-0">
-                                            </a>
-                                            <div class="card-body px-0 py-3">
-                                                <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="http://qingzhuti.com/554" rel="bookmark">内容类型（Post  Type）与文章形式（Post Format）</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-6">
-                                        <div class="card border-0">
-                                            <a class="entry-img" href="http://qingzhuti.com/554">
-                                                <img src="http://assets.qingzhuti.com/wp-content/themes/writing/assets/img/placeholder.png" alt="图片占位符" class="card-img rounded-0">
-                                            </a>
-                                            <div class="card-body px-0 py-3">
-                                                <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="http://qingzhuti.com/554" rel="bookmark">内容类型（Post  Type）与文章形式（Post Format）</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-6">
-                                        <div class="card border-0">
-                                            <a class="entry-img" href="http://qingzhuti.com/554">
-                                                <img src="http://assets.qingzhuti.com/wp-content/themes/writing/assets/img/placeholder.png" alt="图片占位符" class="card-img rounded-0">
-                                            </a>
-                                            <div class="card-body px-0 py-3">
-                                                <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="http://qingzhuti.com/554" rel="bookmark">内容类型（Post  Type）与文章形式（Post Format）</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-6">
-                                        <div class="card border-0">
-                                            <a class="entry-img" href="http://qingzhuti.com/554">
-                                                <img src="http://assets.qingzhuti.com/wp-content/themes/writing/assets/img/placeholder.png" alt="图片占位符" class="card-img rounded-0">
-                                            </a>
-                                            <div class="card-body px-0 py-3">
-                                                <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="http://qingzhuti.com/554" rel="bookmark">内容类型（Post  Type）与文章形式（Post Format）</a>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    <?php endforeach;?>
                                 </div>
                             </div>
                         </div>

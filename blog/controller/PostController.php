@@ -9,6 +9,7 @@
 namespace app\controller;
 
 use houduanniu\base\Page;
+
 class PostController extends BaseController
 {
     public function detail()
@@ -27,8 +28,27 @@ class PostController extends BaseController
             if ($result['code'] != 200) {
                 die('页面不存在');
             }
-            $result['data']['article']['post_tag']=explode(',',$result['data']['article']['post_tag']);
+            $result['data']['article']['post_tag'] = explode(',', $result['data']['article']['post_tag']);
             $reg['info'] = $result['data'];
+        }
+        #获取相关文章
+        {
+            $param = [
+                'post_id' => $result['data']['article']['post_id'],
+                'page_size' => 6,
+            ];
+            $result = $this->apiRequest('post/relatedArticles', $param, 'Api');
+            $related_article = [];
+            if (isset($result['code']) && $result['code'] == 200) {
+                foreach ($result['data'] as $value) {
+                    $related_article[] = [
+                        'title' => $value['title'],
+                        'title_alias' => $value['title_alias'],
+                        'main_image' => getImage($value['main_image']),
+                    ];
+                }
+            }
+            $reg['related_article'] = $related_article;
         }
         #seo标题
         {
@@ -42,8 +62,9 @@ class PostController extends BaseController
         $this->display('Post/detail', $reg, $seoInfo);
     }
 
-    public function tags(){
-        $tag_name = isset($_GET)?trim($_GET['tag_name']):'';
+    public function tags()
+    {
+        $tag_name = isset($_GET) ? trim($_GET['tag_name']) : '';
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $page_size = 10;
         #获取最近更新文章
@@ -51,7 +72,7 @@ class PostController extends BaseController
             $param = [
                 'p' => $p,
                 'page_size' => $page_size,
-                'tag_name'=>$tag_name
+                'tag_name' => $tag_name
             ];
             $result = $this->apiRequest('Post/tags', $param, 'Api');
 
