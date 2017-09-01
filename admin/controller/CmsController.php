@@ -210,7 +210,7 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '添加文档' => ''
             ));
-            print_g(Application::config()->all());
+            print_g(Hook::getInstance());
             $this->display($model_result['post_add_template']);
         }
     }
