@@ -11,6 +11,7 @@ namespace app\logic;
 use app\model\CmsFieldModel;
 use app\model\CmsModelModel;
 use app\model\DictionaryModel;
+use houduanniu\base\Hook;
 use houduanniu\web\Controller;
 use houduanniu\base\Model;
 
@@ -131,6 +132,12 @@ class DictionarryLogic extends Controller
                 'enum' => $value['enum'],
                 'description' => '这是描述',
             ];
+        }
+        #注册钩子方法
+        foreach($field_definded as $value){
+            $hook = $value['belong_to_table'];
+            $function =$hook.'::'. $value['value'];
+            Hook::getInstance()->add_action($hook,$function);
         }
         return $form_init;
     }

@@ -11,7 +11,9 @@ use app\model\CmsPostModel;
 use app\model\CmsPageModel;
 use app\model\CmsTagModel;
 use app\model\CoreTextModel;
+use houduanniu\base\Application;
 use houduanniu\base\BosonNLP;
+use houduanniu\base\Hook;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
 use Overtrue\Pinyin\Pinyin;
@@ -208,6 +210,7 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '添加文档' => ''
             ));
+            print_g(Application::config()->all());
             $this->display($model_result['post_add_template']);
         }
     }
