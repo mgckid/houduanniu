@@ -45,9 +45,9 @@ class Hook
         }
         // append the current function to the list of function handlers
         if (is_callable($function)) {
+            $this->actions[$hook][] = $function;
+            return TRUE;
         }
-        $this->actions[$hook][] = $function;
-        return TRUE;
         return FALSE;
     }
 
@@ -63,6 +63,8 @@ class Hook
         if (isset($this->actions[$hook])) {
             // call each function handler associated with this hook
             foreach ($this->actions[$hook] as $function) {
+                $function = explode('::',$function);
+                $function[0] = new $function[0];
                 if (is_array($params)) {
                     call_user_func_array($function, $params);
                 } else {

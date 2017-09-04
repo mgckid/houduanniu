@@ -73,26 +73,32 @@ class BaseController extends Controller
 
     public function apiRequest($url, $data = [], $mode = 'Api', $method = 'get')
     {
+
         if ($mode == 'Api') {
             $host = C('API_URL');
         }
         if (empty($host)) {
-            die('主机地址不存在');
+            die('接口地址不存在');
         }
         #返回缓存内容
         $cache_key = md5(json_encode($data));
+        $cache_name = $url;
         if ($method == 'get') {
-            if (Application::cache($url)->isCached($cache_key)) {
-                return Application::cache($url)->retrieve($cache_key);
+            if (Application::cache($cache_name)->isCached($cache_key)) {
+               return Application::cache($cache_name)->retrieve($cache_key);
             }
         }
-
+        $header = [];
+        $options = [
+            'proxy' => '127.0.0.1:7777',
+        ];
         if (!class_exists('\Requests')) {
             require_once(__VENDOR__ . '/Requests-master/library/Requests.php');
             \Requests::register_autoloader();
         }
         if ($method == 'get') {
-            $response = \Requests::get($host . U($url, $data));
+            $url = $host . U($url, $data);
+            $response = \Requests::get($url, $header, $options);
         }
 
         if (!$response->success) {
@@ -101,9 +107,9 @@ class BaseController extends Controller
         $result = is_array(json_decode($response->body, true)) ? json_decode($response->body, true) : $response->body;
         #缓存数据
         if ($method == 'get') {
-            if(isset($result['cached'])&&$result['cached']){
-                Application::cache($url)->store($cache_key, $result, 300);
-                Application::cache($url)->eraseExpired();
+            if (isset($result['cached']) && $result['cached']) {
+                Application::cache($cache_name)->store($cache_key, $result, 300);
+                Application::cache($cache_name)->eraseExpired();
             }
         }
         return $result;
@@ -147,9 +153,6 @@ class BaseController extends Controller
         View::setDirectory(__PROJECT__ . '/' . strtolower(Application::getModule()) . '/' . C('DIR_VIEW'));
         View::display($view, $data);
     }
-
-    
-
 
 
 } 

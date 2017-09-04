@@ -133,30 +133,28 @@ class DictionarryLogic extends Controller
                 'description' => '这是描述',
             ];
         }
+
         #注册钩子方法
-        foreach($field_definded as $value){
+        foreach ($field_definded as $value) {
             $hook = $value['belong_to_table'];
-            $function =$hook.'::'. $value['value'];
-            Hook::getInstance()->add_action($hook,$function);
+            $function = 'app\\logic\\' . ucfirst($hook) . '::' . $value['value'];
+            Hook::getInstance()->add_action($hook, $function);
         }
         return $form_init;
     }
 
     public function getRequestData($name, $mode = 'table')
     {
-
         if ($mode == 'table') {
             $field_definded = $this->getTableDefinded($name);
         } elseif ($mode = 'model') {
             $field_definded = $this->getModelDefined($name);
         }
-        #获取提交表单数据
-        $request_data = [];
-        $input_fields = array_column($field_definded, 'value');
-        foreach ($_REQUEST as $key => $value) {
-            if (in_array($key, $input_fields)) {
-                $request_data[$key] = $value;
-            }
+        #注册钩子方法
+        $hook = $name;
+        foreach ($field_definded as $value) {
+            $function = 'app\\logic\\' . ucfirst($hook) . '::' . $value['value'];
+            Hook::getInstance()->add_action($hook, $function);
         }
         #获取验证规则
         $validate_rule = [];
@@ -166,6 +164,32 @@ class DictionarryLogic extends Controller
                 $validate_rule[$value['value']] = $value['validate_rule'];
                 $name_map[$value['value']] = $value['name'];
             }
+        }
+        #验证输入数据
+        if (!empty($validate_rule)) {
+            $model = new Model();
+            $validate = $model->validate()->make($_REQUEST, $validate_rule, [], $name_map);
+            if (false === $validate->passes()) {
+                if (IS_POST || IS_AJAX) {
+                    $this->ajaxFail($validate->messages()->first());
+                } else {
+                    die($validate->messages()->first());
+                }
+            }
+        }
+        #执行钩子方法
+        Hook::getInstance()->do_action($hook);
+        #获取提交表单数据
+        $request_data = [];
+        $input_fields = array_column($field_definded, 'value');
+        foreach ($_REQUEST as $key => $value) {
+            if (in_array($key, $input_fields)) {
+                $request_data[$key] = $value;
+            }
+        }
+
+        #格式化数据
+        foreach ($field_definded as $value) {
             if (isset($request_data[$value['value']])) {
                 switch ($value['data_type']) {
                     case 'int':
@@ -180,18 +204,6 @@ class DictionarryLogic extends Controller
                     case 'password':
                         $request_data[$value['value']] = sha1(trim($request_data[$value['value']]));
                         break;
-                }
-            }
-        }
-        #验证输入数据
-        if (!empty($validate_rule)) {
-            $model = new Model();
-            $validate = $model->validate()->make($_REQUEST, $validate_rule, [], $name_map);
-            if (false === $validate->passes()) {
-                if (IS_POST || IS_AJAX) {
-                    $this->ajaxFail($validate->messages()->first());
-                } else {
-                    die($validate->messages()->first());
                 }
             }
         }

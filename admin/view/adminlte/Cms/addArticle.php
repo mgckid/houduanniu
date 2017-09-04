@@ -67,7 +67,7 @@
 <script>
     $(function(){
         getAuthor();
-        getTitleAlias();
+       // getTitleAlias();
     })
     function getAuthor() {
         var author = $('#author').val();
@@ -83,23 +83,7 @@
             $('#author').val(data.data)
         }, 'json');
     }
-    function getTitleAlias() {
-        var title_alias = $('#title_alias').val();
-        if (title_alias.length != 0) {
-            return true;
-        }
-        //获取作者
-        var json = {
-            class: 'app\\logic\\ArticleLogic',
-            method: 'getTitleAlias',
-            param:{
-                title:$('#title').val()
-            }
-        };
-        $.post('<?=U('Cms/ajaxPlug')?>', json, function (data) {
-            $('#title_alias').val(data.data)
-        }, 'json');
-    }
+
     //分词操作
     $('#fenci').on('click', function () {
         var content = $('[name=content]').val();
