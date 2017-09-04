@@ -15,19 +15,6 @@ use app\library\BosonNLP;
 
 class ArticleLogic extends UserBaseController
 {
-    public function getAuthor()
-    {
-        $login_info = $this->getInfo('loginInfo');
-        return $login_info['true_name'];
-    }
-
-    public function getTitleAlias($title)
-    {
-        $pinyin = new Pinyin();
-        $titleAlias = htmlspecialchars(join('-', $pinyin->convert($title)));
-        return $titleAlias;
-    }
-
     public function getFenci($text)
     {
         $text =strip_tags( htmlspecialchars_decode($text));

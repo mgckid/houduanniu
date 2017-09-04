@@ -510,51 +510,5 @@ class CmsController extends UserBaseController
         }
     }
 
-    /**
-     * 文章分词
-     * @privilege 文章分词|Admin/Cms/ajaxFenci|c6ce19bb-2008-11e7-8ad5-9cb3ab404081|3
-     */
-    public function ajaxFenci()
-    {
-        if (!IS_POST) {
-            $this->ajaxFail('非法请求');
-        }
-        $text = isset($_POST['content']) ? trim(strip_tags($_POST['content'])) : '';
-        if (empty($text)) {
-            $this->ajaxFail('源数据不能为空');
-        }
-        $token = $this->siteInfo['cfg_BosonNLP_TOKEN'];
-        if (empty($token)) {
-            $this->ajaxFail('请先设置玻森分词api Token');
-        }
-        $fenci = new BosonNLP($token);
-        $tagModel = new CmsTagModel();
-        //提取关键字
-        $pram = [
-            'top_k' => 10,
-        ];
-        $result = $fenci->analysis($fenci::ACTION_KEYWORDS, $text, $pram);
-        if (!$result) {
-            $this->ajaxFail('分词失败');
-        }
-        $keyword = [];
-        foreach ($result[0] as $key => $val) {
-            $keyword[] = $val[1];
-        }
-        //提取描述
-        $data = [
-            'content' => $text,
-            'not_exceed' => 0,
-            'percentage' => 0.1,
-        ];
-        $result = $fenci->analysis($fenci::ACTION_SUMMARY, $data);
-        $summary = !empty($result) ? str_replace(PHP_EOL, "", $result) : '';
-        $return = [
-            'keyword' => join(',', $keyword),
-            'tag' => join(',', array_slice($keyword, 0, 5)),
-            'description' => $summary,
-        ];
-        $this->ajaxSuccess('获取成功', $return);
-    }
 
 }

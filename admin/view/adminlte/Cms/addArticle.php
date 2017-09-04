@@ -56,7 +56,7 @@
                 if (data.status == 1) {
                     $('form[name=autoform]').find('input:reset').click();
                     setTimeout(function () {
-                      //  window.history.go(-1)
+                        //  window.history.go(-1)
                     }, 2000);
                 }
             }
@@ -65,36 +65,17 @@
 </script>
 <!--表单提交 结束-->
 <script>
-    $(function(){
-        getAuthor();
-       // getTitleAlias();
-    })
-    function getAuthor() {
-        var author = $('#author').val();
-        if (author.length != 0) {
-            return true;
-        }
-        //获取作者
-        var json = {
-            class: 'app\\logic\\ArticleLogic',
-            method: 'getAuthor'
-        };
-        $.post('<?=U('Cms/ajaxPlug')?>', json, function (data) {
-            $('#author').val(data.data)
-        }, 'json');
-    }
-
     //分词操作
     $('#fenci').on('click', function () {
         var content = $('[name=content]').val();
         var json = {
-            class: 'app\\logic\\ArticleLogic',
-            method: 'getFenci',
+            model_name: 'Article',
+            method_name: 'getFenci',
             param: {
                 content: content
             }
         };
-        $.post('<?=U('cms/ajaxPlug')?>', json, function (data) {
+        $.post('<?=U('pop/index')?>', json, function (data) {
             if (data.status != 1) {
                 layer.alert(data.msg);
             }
