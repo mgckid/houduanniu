@@ -25,7 +25,7 @@ class PopController extends UserBaseController
      */
     public function index()
     {
-        if (IS_POST) {
+        if (!IS_POST) {
             $this->ajaxFail('非法访问');
         }
         #验证
@@ -45,10 +45,9 @@ class PopController extends UserBaseController
         if (false === $validate->passes()) {
             $this->ajaxFail($validate->messages()->first());
         }
-        $model_name = 'app\\logic\\' . ucfirst($_REQUEST['method_name']);
+        $model_name = 'app\\logic\\' . ucfirst($_REQUEST['model_name']);
         $methid_name = $_REQUEST['method_name'];
         $param = $_REQUEST['param'];
-
         if (!class_exists($model_name)) {
             $this->ajaxFail('模块不存在');
         }

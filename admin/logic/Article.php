@@ -9,11 +9,11 @@
 namespace app\logic;
 
 
-use houduanniu\web\Controller;
+use app\controller\UserBaseController;
 use Overtrue\Pinyin\Pinyin;
 use app\library\BosonNLP;
 
-class Article extends Controller
+class Article extends UserBaseController
 {
 
     public function main_image()
