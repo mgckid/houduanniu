@@ -10,7 +10,7 @@
 
 namespace app\model;
 
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 use app\model\BaseModel;
 use Core\DB;
 
@@ -250,7 +250,7 @@ class CmsPostModel extends BaseModel
         $cmsModelModel = new CmsModelModel();
         $model_result = $cmsModelModel->getRecordInfoById($model_id);
         #获取模型定义
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $model_defined = $dictionaryLogic->getModelDefined($model_result['value']);
         $cms_post_data = [];
         $extend_data = [];
@@ -305,7 +305,7 @@ class CmsPostModel extends BaseModel
         $cmsModelModel = new CmsModelModel();
         $model_result = $cmsModelModel->getRecordInfoById($model_id);
         #获取模型定义
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $model_defined = $dictionaryLogic->getModelDefined($model_result['value']);
         #获取扩展数据
         foreach ($model_defined as $value) {

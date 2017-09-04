@@ -4,7 +4,7 @@
 namespace app\controller;
 
 use app\controller\BaseController;
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 use app\model\AdminRoleModel;
 use app\model\AdminUserModel;
 use app\model\AdminUserRoleModel;
@@ -30,7 +30,7 @@ class RbacController extends UserBaseController
     public function addRole()
     {
         if (IS_POST) {
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $request_data = $logic->getRequestData('admin_role', 'table');
 
             $model = new AdminRoleModel();
@@ -42,7 +42,7 @@ class RbacController extends UserBaseController
             }
         } else {
             #获取表单数据
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('admin_role', 'table');
 
             Form::getInstance()->form_schema($form_init);
@@ -152,7 +152,7 @@ class RbacController extends UserBaseController
     public function addUser()
     {
         if (IS_POST) {
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('admin_user', 'table');
 
             $adminAdminUserModel = new AdminUserModel();
@@ -166,7 +166,7 @@ class RbacController extends UserBaseController
             }
         } else {
             #表单初始化数据
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('admin_user', 'table');
             Form::getInstance()->form_schema($form_init);
             #面包屑导航
@@ -379,7 +379,7 @@ class RbacController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 10;
 
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('admin_role');
 
         $roleModel = new AdminRoleModel();

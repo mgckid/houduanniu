@@ -2,7 +2,7 @@
 
 namespace app\controller;
 
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 use app\model\SiteConfigModel;
 use houduanniu\web\Form;
 
@@ -23,7 +23,7 @@ class SystemController extends UserBaseController
     public function addConfig()
     {
         if (IS_POST) {
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('site_config','table');
             $model = new SiteConfigModel();
             $result = $model->addRecord($request_data);
@@ -39,7 +39,7 @@ class SystemController extends UserBaseController
             if ($id) {
                 $result = $siteConfigModel->getRecordInfoById($id);
             }
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('site_config','table');
             Form::getInstance()->form_schema($form_init)->form_data($result);
             #面包屑导航

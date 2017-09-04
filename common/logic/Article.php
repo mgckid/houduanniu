@@ -9,11 +9,10 @@
 namespace app\logic;
 
 
-use app\controller\UserBaseController;
 use Overtrue\Pinyin\Pinyin;
 use app\library\BosonNLP;
 
-class Article extends UserBaseController
+class Article extends BaseLogic
 {
 
     public function main_image()

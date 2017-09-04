@@ -8,7 +8,7 @@ use app\model\CmsAttributeModel;
 use app\model\CmsFieldModel;
 use app\model\CmsModelModel;
 use app\model\DictionaryModel;
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
 
@@ -29,7 +29,7 @@ class CmsModelController extends UserBaseController
      */
     public function modelManage()
     {
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('cms_model');
         #查询列表
         {
@@ -56,7 +56,7 @@ class CmsModelController extends UserBaseController
     public function fieldManage()
     {
         $model_id = isset($_GET['model_id']) ? intval($_GET['model_id']) : 0;
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('cms_field');
         #查询列表
         {
@@ -89,7 +89,7 @@ class CmsModelController extends UserBaseController
     public function attributeManage()
     {
         $field_id = isset($_GET['field_id']) ? intval($_GET['field_id']) : 0;
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('cms_attribute');
         #查询列表
         {
@@ -115,7 +115,7 @@ class CmsModelController extends UserBaseController
     public function addModel()
     {
         if (IS_POST) {
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('cms_model', 'table');
 
             $cmsModelModel = new CmsModelModel();
@@ -130,7 +130,7 @@ class CmsModelController extends UserBaseController
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             $result = $cmsModelModel->getCmsModelInfo($cmsModelModel->orm()->where('id', $id));
 
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('cms_model', 'table');
 
             Form::getInstance()->form_schema($form_init)->form_data($result);
@@ -146,7 +146,7 @@ class CmsModelController extends UserBaseController
     public function addField()
     {
         if (IS_POST) {
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('cms_field', 'table');
 
             $cmsFieldModel = new CmsFieldModel();
@@ -168,7 +168,7 @@ class CmsModelController extends UserBaseController
                 $result['model_id'] = $model_id;
             }
 
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('cms_field', 'table');
             #补充枚举数据
             {
@@ -194,7 +194,7 @@ class CmsModelController extends UserBaseController
     public function addAttribute()
     {
         if (IS_POST) {
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('cms_attribute', 'table');
 
             $cmsAttributeModel = new CmsAttributeModel();
@@ -215,7 +215,7 @@ class CmsModelController extends UserBaseController
             if (!$result && $field_id) {
                 $result['field_id'] = $field_id;
             }
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('cms_attribute', 'table');
 
             Form::getInstance()->form_schema($form_init)->form_data($result);

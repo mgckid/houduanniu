@@ -8,14 +8,13 @@
  */
 namespace app\logic;
 
+use app\controller\UserBaseController;
 use app\model\CmsFieldModel;
-use app\model\CmsModelModel;
 use app\model\DictionaryModel;
 use houduanniu\base\Hook;
-use houduanniu\web\Controller;
 use houduanniu\base\Model;
 
-class DictionarryLogic extends Controller
+class BaseLogic extends UserBaseController
 {
     /**
      * 获取字典名称

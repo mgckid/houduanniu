@@ -3,7 +3,7 @@
 
 namespace app\controller;
 
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 use app\model\BaseModel;
 use app\model\CmsCategoryModel;
 use app\model\CmsModelModel;
@@ -34,7 +34,7 @@ class CmsController extends UserBaseController
     public function addCategory()
     {
         if (IS_POST) {
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $request_data = $logic->getRequestData('cms_category', 'table');
             $model = new CmsCategoryModel();
             $result = $model->addRecord($request_data);
@@ -47,7 +47,7 @@ class CmsController extends UserBaseController
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             #表单数据
             {
-                $dictionaryLogic = new DictionarryLogic();
+                $dictionaryLogic = new BaseLogic();
                 $form_init = $dictionaryLogic->getFormInit('cms_category', 'table');
             }
             #自定义枚举值
@@ -136,7 +136,7 @@ class CmsController extends UserBaseController
                 $this->ajaxSuccess('内容模型不存在');
             }
             $model_name = $model_result['value'];
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $request_data = $logic->getRequestData($model_name, 'model');
             $model = new CmsPostModel();
             $result = $model->addRecord($request_data);
@@ -179,7 +179,7 @@ class CmsController extends UserBaseController
 
             #获取表单初始化数据
             $model_name = $model_result['value'];
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit($model_name, 'model');
             #完善表单枚举数据
             {
@@ -225,7 +225,7 @@ class CmsController extends UserBaseController
         $all_category_result = $cmsCategoryModel->getAllRecord();
         $list = treeStructForLevel($all_category_result);
         #获取列表字段
-        $dictionarylogic = new DictionarryLogic();
+        $dictionarylogic = new BaseLogic();
         $list_init = $dictionarylogic->getListInit('cms_category');
         #完善列表字段枚举值
         {
@@ -308,7 +308,7 @@ class CmsController extends UserBaseController
         $page = new Page($count, $p, $fetch_row);
         $list = $model->getRecordList($orm, $page->getOffset(), $fetch_row, FALSE);
         #获取列表字段
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('cms_post');
         #完善列表字段枚举值
         {

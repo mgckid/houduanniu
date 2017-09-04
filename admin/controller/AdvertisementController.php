@@ -7,7 +7,7 @@ use app\model\AdvertisementListModel;
 use app\model\AdvertisementPositioModel;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 
 /**
  * 广告管理
@@ -28,7 +28,7 @@ class AdvertisementController extends UserBaseController
     public function addPosition()
     {
         if (IS_POST) {
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $request_data = $logic->getRequestData('advertisement_position', 'table');
 
             $advertisementPositionModel = new AdvertisementPositioModel();
@@ -42,7 +42,7 @@ class AdvertisementController extends UserBaseController
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $form_init = $logic->getFormInit('advertisement_position', 'table');
 
             $advertisementPositionModel = new AdvertisementPositioModel();
@@ -67,7 +67,7 @@ class AdvertisementController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 20;
 
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('advertisement_position');
 
         $advertisementPositionModel = new AdvertisementPositioModel();
@@ -100,7 +100,7 @@ class AdvertisementController extends UserBaseController
     public function addAd()
     {
         if (IS_POST) {
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('advertisement_list', 'table');
             $advertisementListModel = new AdvertisementListModel();
             $result = $advertisementListModel->addRecord($request_data);
@@ -112,7 +112,7 @@ class AdvertisementController extends UserBaseController
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             #获取表单初始数据
-            $dictionaryLogic = new DictionarryLogic();
+            $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('advertisement_list', 'table');
 
             #自定义枚举值
@@ -161,7 +161,7 @@ class AdvertisementController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 20;
 
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('advertisement_list');
         #完善列表枚举值
         {

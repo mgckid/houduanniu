@@ -2,7 +2,7 @@
 
 namespace app\controller;
 
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 use app\model\DictionaryModel;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
@@ -29,7 +29,7 @@ class DataController extends UserBaseController
             $result = $dictionaryModel->getRecordList($dictionaryModel->orm()->where($condition), 0, 999, false, false);
         }
         #获取列表字段
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('dictionarys');
         $data = array(
             'list' => $result,
@@ -67,7 +67,7 @@ class DataController extends UserBaseController
             }
         }
         #获取列表字段
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('dictionarys');
 
         $data = array(
@@ -111,7 +111,7 @@ class DataController extends UserBaseController
             }
         }
         #获取列表字段
-        $dictionaryLogic = new DictionarryLogic();
+        $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('dictionarys');
 
         $data = array(
@@ -136,7 +136,7 @@ class DataController extends UserBaseController
     public function addDictionary()
     {
         if (IS_POST) {
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $request_data = $logic->getRequestData('dictionarys', 'table');
             $model = new DictionaryModel();
             $result = $model->addDictionary($request_data);
@@ -157,7 +157,7 @@ class DataController extends UserBaseController
             if (!$result && $pid) {
                 $result['pid'] = $pid;
             }
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $form_init = $logic->getFormInit('dictionarys', 'table');
             if(in_array($result['data_type'],['table','attribute'])){
                 foreach($form_init as $key=> $value){

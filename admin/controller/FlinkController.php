@@ -6,7 +6,7 @@ namespace app\controller;
 use app\model\SiteFlinkModel;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
-use app\logic\DictionarryLogic;
+use app\logic\BaseLogic;
 
 /**
  * 友情链接管理控制器
@@ -26,7 +26,7 @@ class FlinkController extends UserBaseController
     public function addFlink()
     {
         if (IS_POST) {
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $request_data = $logic->getRequestData('site_link', 'table');
 
             $SiteFlinkModel = new SiteFlinkModel();
@@ -39,7 +39,7 @@ class FlinkController extends UserBaseController
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-            $logic = new DictionarryLogic();
+            $logic = new BaseLogic();
             $form_init = $logic->getFormInit('site_link', 'table');
 
             $result = [];
@@ -67,7 +67,7 @@ class FlinkController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 20;
         #获取列表字段
-        $dictionarylogic = new DictionarryLogic();
+        $dictionarylogic = new BaseLogic();
         $list_init = $dictionarylogic->getListInit('site_link');
         $flinkModel = new SiteFlinkModel();
         $count = $flinkModel->getRecordList('', '', '', true);
