@@ -8,13 +8,13 @@
  */
 namespace app\logic;
 
-use app\controller\UserBaseController;
 use app\model\CmsFieldModel;
 use app\model\DictionaryModel;
 use houduanniu\base\Hook;
 use houduanniu\base\Model;
+use houduanniu\web\Controller;
 
-class BaseLogic extends UserBaseController
+class BaseLogic extends Controller
 {
     /**
      * 获取字典名称
@@ -232,4 +232,5 @@ class BaseLogic extends UserBaseController
         }
         return $list_init;
     }
+
 }

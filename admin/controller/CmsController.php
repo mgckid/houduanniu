@@ -136,10 +136,9 @@ class CmsController extends UserBaseController
                 $this->ajaxSuccess('内容模型不存在');
             }
             $model_name = $model_result['value'];
-            $logic = new BaseLogic();
+            $logic = getLogic($model_name);
             $request_data = $logic->getRequestData($model_name, 'model');
-            $model = new CmsPostModel();
-            $result = $model->addRecord($request_data);
+            $result = $logic->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail('文档添加失败,' . $this->getMessage());
             } else {

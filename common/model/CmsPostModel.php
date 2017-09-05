@@ -212,7 +212,7 @@ class CmsPostModel extends BaseModel
         return $result;
     }
 
-    protected function addCmsPostExtendData($table_name, $post_id, $field, $value)
+    public  function addCmsPostExtendData($table_name, $post_id, $field, $value)
     {
         $orm = $this->orm()->for_table($table_name)->use_id_column('id');
         $data = [
@@ -234,91 +234,9 @@ class CmsPostModel extends BaseModel
         return $return;
     }
 
-    /**
-     * 添加文档
-     * @access public
-     * @author furong
-     * @param $request_data
-     * @return bool
-     * @since 2017年8月2日 15:48:44
-     * @abstract
-     */
-    public function addRecord($request_data)
-    {
-        #获取模型信息
-        $model_id = $request_data['model_id'];
-        $cmsModelModel = new CmsModelModel();
-        $model_result = $cmsModelModel->getRecordInfoById($model_id);
-        #获取模型定义
-        $dictionaryLogic = new BaseLogic();
-        $model_defined = $dictionaryLogic->getModelDefined($model_result['value']);
-        $cms_post_data = [];
-        $extend_data = [];
-        foreach ($model_defined as $value) {
-            switch ($value['belong_to_table']) {
-                case 'cms_post':
-                    if (isset($request_data[$value['value']])) {
-                        $cms_post_data[$value['value']] = $request_data[$value['value']];
-                    }
-                    break;
-                default:
-                    if (isset($request_data[$value['value']])) {
-                        $extend_data[] = [
-                            'table_name' => $value['belong_to_table'],
-                            'post_id' => $request_data['post_id'],
-                            'field' => $value['value'],
-                            'value' => $request_data[$value['value']],
-                        ];
-                    }
-            }
-        }
-        try {
-            $this->beginTransaction();
-            $cms_post_result = parent::addRecord($cms_post_data);
-            if (!$cms_post_result) {
-                throw new \Exception('文档主记录添加失败');
-            }
-            if ($extend_data) {
-                foreach ($extend_data as $value) {
-                    $result = $this->addCmsPostExtendData($value['table_name'], $value['post_id'], $value['field'], $value['value']);
-                    if (!$result) {
-                        throw new \Exception('文档扩展记录添加失败');
-                    }
-                }
-            }
-            $this->commit();
-            $return = true;
-        } catch (\Exception $ex) {
-            $this->rollBack();
-            $this->setMessage($ex->getMessage());
-            $return = false;
-        }
-        return $return;
-    }
 
 
-    public function getRecordInfoById($id, $filed = '*')
-    {
-        $cms_post_result = parent::getRecordInfoById($id);
-        #获取模型信息
-        $model_id = $cms_post_result['model_id'];
-        $cmsModelModel = new CmsModelModel();
-        $model_result = $cmsModelModel->getRecordInfoById($model_id);
-        #获取模型定义
-        $dictionaryLogic = new BaseLogic();
-        $model_defined = $dictionaryLogic->getModelDefined($model_result['value']);
-        #获取扩展数据
-        foreach ($model_defined as $value) {
-            if ($value['belong_to_table'] != $this->tableName) {
-                $result = $this->orm()->for_table($value['belong_to_table'])->where('post_id', $cms_post_result['post_id'])->where('field', $value['value'])->find_one();
-                if ($result) {
-                    $result = $result->as_array();
-                    $cms_post_result[$result['field']] = $result['value'];
-                }
-            }
-        }
-        return $cms_post_result;
-    }
+
 
 
 

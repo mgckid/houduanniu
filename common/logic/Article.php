@@ -9,11 +9,14 @@
 namespace app\logic;
 
 
+use app\model\CmsPostModel;
 use Overtrue\Pinyin\Pinyin;
 use app\library\BosonNLP;
+use app\model\CmsModelModel;
 
 class Article extends BaseLogic
 {
+    protected $model_name = 'article';
 
     public function main_image()
     {
@@ -97,4 +100,82 @@ class Article extends BaseLogic
         ];
         return $return;
     }
+
+    /**
+     * 添加文档
+     * @access public
+     * @author furong
+     * @param $request_data
+     * @return bool
+     * @since 2017年8月2日 15:48:44
+     * @abstract
+     */
+    public function addRecord($request_data)
+    {
+        #获取模型定义
+        $model_defined = $this->getModelDefined($this->model_name);
+        $cms_post_data = [];
+        $extend_data = [];
+        foreach ($model_defined as $value) {
+            switch ($value['belong_to_table']) {
+                case 'cms_post':
+                    if (isset($request_data[$value['value']])) {
+                        $cms_post_data[$value['value']] = $request_data[$value['value']];
+                    }
+                    break;
+                default:
+                    if (isset($request_data[$value['value']])) {
+                        $extend_data[] = [
+                            'table_name' => $value['belong_to_table'],
+                            'post_id' => $request_data['post_id'],
+                            'field' => $value['value'],
+                            'value' => $request_data[$value['value']],
+                        ];
+                    }
+            }
+        }
+        $cmsPostModel = new CmsPostModel();
+        try {
+            $cmsPostModel->beginTransaction();
+            $cms_post_result = $cmsPostModel->addRecord($cms_post_data);
+            if (!$cms_post_result) {
+                throw new \Exception('文档主记录添加失败');
+            }
+            if ($extend_data) {
+                foreach ($extend_data as $value) {
+                    $result = $cmsPostModel->addCmsPostExtendData($value['table_name'], $value['post_id'], $value['field'], $value['value']);
+                    if (!$result) {
+                        throw new \Exception('文档扩展记录添加失败');
+                    }
+                }
+            }
+            $cmsPostModel->commit();
+            $return = true;
+        } catch (\Exception $ex) {
+            $cmsPostModel->rollBack();
+            $this->setMessage($ex->getMessage());
+            $return = false;
+        }
+        return $return;
+    }
+
+    public function getRecordInfoById($id)
+    {
+        $cmsPostModel = new CmsPostModel();
+        $cms_post_result = $cmsPostModel->getRecordInfoById($id);
+        #获取模型定义
+        $model_defined = $this->getModelDefined($this->model_name);
+        #获取扩展数据
+        foreach ($model_defined as $value) {
+            if ($value['belong_to_table'] != $this->tableName) {
+                $result = $this->orm()->for_table($value['belong_to_table'])->where('post_id', $cms_post_result['post_id'])->where('field', $value['value'])->find_one();
+                if ($result) {
+                    $result = $result->as_array();
+                    $cms_post_result[$result['field']] = $result['value'];
+                }
+            }
+        }
+        return $cms_post_result;
+    }
+
 } 

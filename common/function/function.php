@@ -201,14 +201,29 @@ function getRandNumber($length = 6)
     if ($length >= 10) {
         $t = intval($length / 9);
         $tail = $length % 9;
-        for ($i = 1; $i <= $t; $i ++ ) {
-            $num .=  substr(mt_rand('1' . str_repeat('0', 9), str_repeat('9', 10)), 1);
+        for ($i = 1; $i <= $t; $i++) {
+            $num .= substr(mt_rand('1' . str_repeat('0', 9), str_repeat('9', 10)), 1);
         }
-        $num .=  substr(mt_rand('1' . str_repeat('0', $tail), str_repeat('9', $tail + 1)), 1);
+        $num .= substr(mt_rand('1' . str_repeat('0', $tail), str_repeat('9', $tail + 1)), 1);
         return $num;
     } else {
         return substr(mt_rand('1' . str_repeat('0', $length), str_repeat('9', $length + 1)), 1);
     }
+}
+
+/**
+ * @access public
+ * @author furong
+ * @param $model_name
+ * @return app\logic
+ * @since 2017年9月5日 13:18:56
+ * @abstract
+ */
+function getLogic($model_name)
+{
+    $logic_class = 'app\\logic\\' . ucfirst($model_name);
+    $logic = new $logic_class;
+    return $logic;
 }
 
 
