@@ -214,6 +214,24 @@ class CmsController extends UserBaseController
     }
 
     /**
+     * 编辑文档
+     * @privilege 编辑文档|Admin/Cms/editPost|e91d2442-2006-11e7-8ad5-9kjhkjhkjhgjhg|3
+     */
+    public function editPost()
+    {
+        if (IS_POST) {
+
+        } else {
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+            $cmsPostModel = new CmsPostModel();
+            $post_result = $cmsPostModel->getRecordInfoById($id);
+            if (empty($post_result)) {
+                die('文章不存在');
+            }
+        }
+    }
+
+    /**
      * 栏目列表
      * @privilege 栏目列表|Admin/Cms/index|e91d2442-2006-11e7-8ad5-9cb3ab404081|2
      */
@@ -342,7 +360,6 @@ class CmsController extends UserBaseController
 
         $this->display('Cms/postList', $data);
     }
-
 
 
     /**
