@@ -68,7 +68,7 @@
     $(function () {
         //栏目分类
         var param = {
-            model_name: 'Article',
+            model_name: 'BaseLogic',
             method_name: 'getCategoryData'
         };
         $.post('<?=U('pop/index')?>', param, function (data) {

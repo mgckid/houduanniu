@@ -79,7 +79,7 @@ class CmsCategoryModel extends BaseModel
      */
     public function deleteColumn($id)
     {
-        $cateList = $this->getAllRecord('', 'id,name,pid');
+        $cateList = $this->getAllRecord('');
         $record = $this->getRecordInfoById($id);
         if (!$record) {
             $this->setMessage('栏目不存在');

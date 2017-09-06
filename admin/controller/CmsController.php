@@ -36,8 +36,8 @@ class CmsController extends UserBaseController
     {
         if (IS_POST) {
             $logic = new BaseLogic();
-            $request_data = $logic->getRequestData('cms_category', 'table');
             $model = new CmsCategoryModel();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
             $result = $model->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail();
@@ -45,48 +45,11 @@ class CmsController extends UserBaseController
                 $this->ajaxSuccess();
             }
         } else {
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            #表单数据
-            {
-                $dictionaryLogic = new BaseLogic();
-                $form_init = $dictionaryLogic->getFormInit('cms_category', 'table');
-            }
-            #自定义枚举值
-            {
-                #栏目分类
-                $cmsCategoryModel = new CmsCategoryModel();
-                $category_result = $cmsCategoryModel->orm()->select_expr('id,pid,category_name')->find_array();
-                $category_list = treeStructForLevel($category_result);
-                $enum = [];
-                foreach ($category_list as $key => $value) {
-                    $enum[] = [
-                        'value' => $value['id'],
-                        'option' => $value['placeHolder'] . $value['category_name'],
-                    ];
-                }
-                $form_init['pid']['enum'] = $enum;
-
-                #模型分类
-                $cmsModelModel = new CmsModelModel();
-                $model_result = $cmsModelModel->getAllCmsModel('id,name');
-                $enum = [];
-                foreach ($model_result as $key => $value) {
-                    $enum[] = [
-                        'value' => $value['id'],
-                        'option' => $value['name'],
-                    ];
-                }
-                $form_init['model_id']['enum'] = $enum;
-            }
-            #获取数据(编辑使用)
-            {
-                $result = [];
-                if ($id) {
-                    $result = $cmsCategoryModel->getRecordInfoById($id);
-                }
-            }
-
-            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #获取表单初始化数据
+            $logic = new BaseLogic();
+            $model = new CmsCategoryModel();
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init);
             #面包屑导航
             $this->crumb(array(
                 '内容管理' => U('Cms/index'),
@@ -97,30 +60,30 @@ class CmsController extends UserBaseController
     }
 
     /**
-     * 异步处理插件
-     * @privilege 异步处理插件|Admin/Cms/ajaxPlug|f7effdf6-775f-11e7-ba80-5996e3b2d0fb|3
+     * 修改栏目
+     * @privilege 修改栏目|Admin/Cms/editCategory|f7effdf6-776f-11e7-ba80-dsjhgds566|3
      */
-    public function ajaxPlug()
+    public function editCategory()
     {
-        if (!IS_POST) {
-            $this->ajaxFail('非法请求');
-        }
-        $class_name = $_POST['class'];
-        $method_name = $_POST['method'];
-        if (!class_exists($class_name)) {
-            $this->ajaxFail('处理对象不存在');
-        }
-        if (!method_exists($class_name, $method_name)) {
-            $this->ajaxFail('方法不存在');
-        }
-        $param = isset($_POST['param']) ? $_POST['param'] : [];
-        $result = call_user_func_array([new $class_name, $method_name], $param);
-        if (!$result) {
-            $this->ajaxFail($this->getMessage());
+        if (IS_POST) {
+            $this->addCategory();
         } else {
-            $this->ajaxSuccess('执行成功', $result);
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+            $baseLogic = new BaseLogic();
+            $cmsCategoryModel = new CmsCategoryModel();
+            $result = $cmsCategoryModel->getRecordInfoById($id);
+            #获取表单初始化数据
+            $form_init = $baseLogic->getFormInit($cmsCategoryModel->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '内容管理' => U('Cms/index'),
+                '修改栏目' => ''
+            ));
+            $this->display('Cms/addCategory');
         }
     }
+
 
     /**
      * 添加文档
@@ -131,30 +94,27 @@ class CmsController extends UserBaseController
         if (IS_POST) {
             #获取模型信息
             $model_id = isset($_POST['model_id']) ? intval($_POST['model_id']) : 0;
-            $cmsModelModel = new CmsModelModel();
-            $model_result = $cmsModelModel->getRecordInfoById($model_id);
+            $baseLogic = new BaseLogic();
+            $model_result = $baseLogic->getModelInfo($model_id);
             if (!$model_result) {
                 $this->ajaxSuccess('内容模型不存在');
             }
             $model_name = $model_result['value'];
-            $logic = getLogic($model_name);
-            $request_data = $logic->getRequestData($model_name, 'model');
-            $result = $logic->addRecord($request_data);
+            $request_data = $baseLogic->getRequestData($model_name, 'model');
+            $result = $baseLogic->addPost($request_data);
             if (!$result) {
                 $this->ajaxFail('文档添加失败,' . $this->getMessage());
             } else {
                 $this->ajaxSuccess('文档添加成功');
             }
         } else {
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             $category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : 0;
+            $model_name = isset($_GET['model_name']) ? trim($_GET['model_name']) : '';
 
-            #获取文档信息
-            $post_result = [];
-            $cmsPostModel = new CmsPostModel();
-            if ($id) {
-                $post_result = $cmsPostModel->getRecordInfoById($id);
+            if (!$category_id && !$model_name) {
+                die('请选择栏目或者模型');
             }
+
             #获取栏目信息
             $category_result = [];
             $cmsCategoryModel = new CmsCategoryModel();
@@ -162,47 +122,21 @@ class CmsController extends UserBaseController
                 $category_result = $cmsCategoryModel->getRecordInfoById($category_id);
             }
 
-            if (!$post_result && !$category_result) {
-                die('请选择栏目');
-            }
-
             #获取模型信息
-            $model_id = $post_result ? $post_result['model_id'] : $category_result['model_id'];
-            if (!$model_id) {
-                die('请选择内容模型');
-            }
-            $cmsModelModel = new CmsModelModel();
-            $model_result = $cmsModelModel->getRecordInfoById($model_id);
+            $baseLogic = new BaseLogic();
+            $model_name = !empty($model_name) ? $model_name : $category_result['model_id'];
+            $model_result = $baseLogic->getModelInfo($model_name);
             if (!$model_result) {
                 die('内容模型不存在');
             }
 
             #获取表单初始化数据
-            $model_name = $model_result['value'];
-            $dictionaryLogic = new BaseLogic();
-            $form_init = $dictionaryLogic->getFormInit($model_name, 'model');
-            #完善表单枚举数据
-            {
-                $all_category_result = $cmsCategoryModel->getAllRecord();
-                $list = treeStructForLevel($all_category_result);
-                $enum = [];
-                foreach ($list as $key => $value) {
-                    $enum[] = [
-                        'value' => $value['id'],
-                        'option' => $value['placeHolder'] . $value['category_name'],
-                    ];
-                }
-                $form_init['category_id']['enum'] = $enum;
-            }
-
+            $form_init = $baseLogic->getFormInit($model_result['value'], 'model');
             #添加文档是默认数据
-            if (empty($post_result)) {
-                $post_result['category_id'] = $category_id;
-                $post_result['model_id'] = $model_result['id'];
-                $post_result['post_id'] = getItemId();
-            }
-
-            Form::getInstance()->form_data($post_result)
+            $form_data['category_id'] = $category_id;
+            $form_data['model_id'] = $model_result['id'];
+            $form_data['post_id'] = getItemId();
+            Form::getInstance()->form_data($form_data)
                 ->form_schema($form_init);
 
             #面包屑导航
@@ -223,14 +157,14 @@ class CmsController extends UserBaseController
         if (IS_POST) {
             #获取模型信息
             $model_id = isset($_POST['model_id']) ? intval($_POST['model_id']) : 0;
-            $postLogic = new Post();
-            $model_result = $postLogic->getModelInfo($model_id);
+            $baseLogic = new BaseLogic();
+            $model_result = $baseLogic->getModelInfo($model_id);
             if (!$model_result) {
                 $this->ajaxSuccess('内容模型不存在');
             }
             $model_name = $model_result['value'];
-            $request_data = $postLogic->getRequestData($model_name, 'model');
-            $result = $postLogic->addPost($request_data);
+            $request_data = $baseLogic->getRequestData($model_name, 'model');
+            $result = $baseLogic->addPost($request_data);
             if (!$result) {
                 $this->ajaxFail('文档添加失败,' . $this->getMessage());
             } else {
@@ -238,47 +172,24 @@ class CmsController extends UserBaseController
             }
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $postLogic = new Post();
+            $baseLogic = new BaseLogic();
             #获取文档信息
-            $post_result = $postLogic->getPostInfoById($id);
+            $post_result = $baseLogic->getPostInfoById($id);
             #获取表单初始化数据
-            $form_init = $postLogic->getFormInit($post_result['model'], 'model');
+            $form_init = $baseLogic->getFormInit($post_result['model'], 'model');
             Form::getInstance()->form_data($post_result)
                 ->form_schema($form_init);
             #获取模型信息
-            $model_result = $postLogic->getModelInfo($post_result['model']);
+            $model_result = $baseLogic->getModelInfo($post_result['model']);
             #面包屑导航
             $this->crumb(array(
                 '内容管理' => U('Cms/index'),
-                '添加文档' => ''
+                '编辑文档' => ''
             ));
             $this->display($model_result['post_add_template']);
         }
     }
 
-    /**
-     * 添加
-     * @privilege 添加|Admin/Cms/add|e91d2442-2006-11e7-8ad5-9cb3ab654656|3
-     */
-    public function add()
-    {
-
-    }
-
-    /**
-     * 编辑
-     * @privilege 编辑|Admin/Cms/edit|e91d2442-2006-11e7-8ad5-9fdskfd998|3
-     */
-    public function edit()
-    {
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-        $cmsPostModel = new CmsPostModel();
-        $result = $cmsPostModel->getRecordInfoById($id);
-        if (empty($result)) {
-            die('文章不存在');
-        }
-        $this->redirect(U('Cms/editPost', ['id' => $id, 'model' => $result['model']]));
-    }
 
     /**
      * 栏目列表
@@ -288,7 +199,7 @@ class CmsController extends UserBaseController
     {
         #获取栏目列表数据
         $cmsCategoryModel = new CmsCategoryModel();
-        $all_category_result = $cmsCategoryModel->getAllRecord();
+        $all_category_result = $cmsCategoryModel->getAllRecord($cmsCategoryModel->orm()->where('deleted',0));
         $list = treeStructForLevel($all_category_result);
         #获取列表字段
         $dictionarylogic = new BaseLogic();
@@ -450,129 +361,6 @@ class CmsController extends UserBaseController
     {
         $model = new CmsPostModel();
         return $model->deleteRecordById($id);
-    }
-
-
-    /**
-     * 添加标签
-     * @privilege 添加标签|Admin/Cms/addTag|c6b424e9-2008-11e7-8ad5-9cb3ab404081|3
-     */
-    public function addTag()
-    {
-        if (IS_POST) {
-            $rules = array(
-                'tag_name' => 'required',
-                'tag_description' => 'required',
-            );
-            $attr = array(
-                'tag_name' => '标签名称',
-                'tag_description' => '标签描述'
-            );
-            $model = new CmsTagModel();
-            $validator = $model->validate()->make($_POST, $rules, $attr);
-            if (!$validator->passes()) {
-                $this->ajaxFail($validator->messages()->first());
-            }
-            $tagId = isset($_POST['tag_id']) ? intval($_POST['tag_id']) : 0;
-            $tagName = isset($_POST['tag_name']) ? trim($_POST['tag_name']) : '';
-            $tagDescription = isset($_POST['tag_description']) ? trim($_POST['tag_description']) : '';
-            $tagSort = isset($_POST['tag_sort']) ? intval($_POST['tag_sort']) : 100;
-            $data = array(
-                'tag_id' => $tagId,
-                'tag_name' => $tagName,
-                'tag_description' => $tagDescription,
-                'tag_sort' => $tagSort,
-            );
-            $result = $model->addTag($data);
-            if (!$result) {
-                $this->ajaxFail('标签添加失败,' . $this->getMessage());
-            } else {
-                $this->ajaxSuccess('标签添加成功');
-            }
-        } else {
-            $tagId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $model = new CmsTagModel();
-            $data = array(
-                'tag_id' => $tagId,
-                'tag_name' => '',
-                'tag_description' => '',
-                'tag_sort' => 100
-            );
-            if (!empty($tagId)) {
-                $result = $model->orm()
-                    ->find_one($tagId);
-                if ($result) {
-                    $data = $result->as_array();
-                }
-            }
-            #面包屑导航
-            $this->crumb(array(
-                '内容管理' => U('Cms/index'),
-                '添加标签' => ''
-            ));
-            $info = array(
-                'data' => $data
-            );
-            $this->display('Cms/addTag', $info);
-        }
-    }
-
-    /**
-     * 标签管理
-     * @privilege 标签管理|Admin/Cms/tag|c6c0d2cc-2008-11e7-8ad5-9cb3ab404081|2
-     */
-    public function tag()
-    {
-        #面包屑导航
-        $this->crumb(array(
-            '内容管理' => U('Cms/index'),
-            '标签管理' => ''
-        ));
-        $this->display('Cms/tag');
-    }
-
-    /**
-     * 生成标签
-     * @privilege 生成标签|Admin/Cms/generateTag|01df5951-7816-11e7-ba80-5996e3b2d0fb|3
-     */
-    public function generateTag()
-    {
-        $cmsTagModel = new CmsTagModel();
-        $cmsAttributeModel = $cmsTagModel->orm()->for_table('cms_post_extend_attribute')->use_id_column('id');
-        $cmsPostTagModel = $cmsTagModel->orm()->for_table('cms_post_tag')->use_id_column('id');
-        $cmsTagModel->orm()->delete_many();
-        $cmsPostTagModel->delete_many();
-        $post_tag_result = $cmsAttributeModel->table_alias('a')
-            ->select_expr('a.*')
-            ->left_join('cms_post', ['a.post_id', '=', 'p.post_id'], 'p')
-            ->where('p.deleted', 0)
-            ->where('a.field', 'post_tag')
-            ->find_array();
-
-        foreach ($post_tag_result as $value) {
-            $tag_list = explode(',', $value['value']);
-            $post_id = $value['post_id'];
-            foreach ($tag_list as $val) {
-                $tag_info = $cmsTagModel->orm()->where('tag_name', $val)->find_one();
-                if (empty($tag_info)) {
-                    $data = [
-                        'tag_name' => $val,
-                    ];
-                    $tag_id = $cmsTagModel->addRecord($data);
-                } else {
-                    $tag_id = $tag_info->id();
-                }
-                $cmsPostTagModel = $cmsTagModel->orm()->for_table('cms_post_tag')->use_id_column('id');
-                $post_tag_info = $cmsPostTagModel->where('tag_id', $tag_id)->where('post_id', $post_id)->find_one();
-                if (empty($post_tag_info)) {
-                    $data = [
-                        'tag_id' => $tag_id,
-                        'post_id' => $post_id,
-                    ];
-                    $tag_id = $cmsPostTagModel->create($data)->save();
-                }
-            }
-        }
     }
 
 

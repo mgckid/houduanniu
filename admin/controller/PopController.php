@@ -13,7 +13,7 @@ use app\model\BaseModel;
 
 /**
  * 弹出层控制器
- * @privilege 内容管理|Admin/Pop|e902296d-2006-11e7-8ad5-9cb3ab404099|1
+ * @privilege 弹出层管理|Admin/Pop|e902296d-2006-11e7-8ad5-9cb3ab404099|1
  * @date 2016年5月4日 21:17:23
  * @author Administrator
  */
