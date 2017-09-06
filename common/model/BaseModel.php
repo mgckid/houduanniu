@@ -73,15 +73,15 @@ class BaseModel extends Model
      * @access public
      * @author furong
      * @param $id
-     * @param string $filed
+     * @param string $field
      * @return array|bool
      * @since 2017年7月28日 09:40:34
      * @abstract
      */
-    public function getRecordInfoById($id, $filed = '*')
+    public function getRecordInfoById($id, $field = '*')
     {
         $orm = $this->orm()->where($this->pk, $id);
-        $result = $this->getRecordInfo($orm, $filed);
+        $result = $this->getRecordInfo($orm, $field);
         return $result;
     }
 

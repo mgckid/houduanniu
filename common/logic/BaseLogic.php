@@ -9,6 +9,7 @@
 namespace app\logic;
 
 use app\model\CmsFieldModel;
+use app\model\CmsModelModel;
 use app\model\DictionaryModel;
 use houduanniu\base\Hook;
 use houduanniu\base\Model;
@@ -22,12 +23,12 @@ class BaseLogic extends Controller
      * @author furong
      * @param $field
      * @param $dictionary_name
-     * @param string $filed_name
+     * @param string $field_name
      * @return array
      * @since 2017年7月17日 14:10:59
      * @abstract
      */
-    public function getDictionaryName($field, $dictionary_name, $filed_name = '')
+    public function getDictionaryName($field, $dictionary_name, $field_name = '')
     {
         $dictionaryModel = new DictionaryModel();
         $all_dictionary = treeStructForLayer($dictionaryModel->getAllDictionary());
@@ -35,7 +36,7 @@ class BaseLogic extends Controller
         foreach ($all_dictionary as $value) {
             if ($value['value'] == $dictionary_name) {
                 foreach ($value['sub'] as $val) {
-                    if (empty($filed_name)) {
+                    if (empty($field_name)) {
                         if (in_array($val['value'], $field)) {
                             $name[$val['value']] = $val['name'];
                         }
@@ -84,6 +85,8 @@ class BaseLogic extends Controller
 
     public function getModelDefined($model_name)
     {
+        $model_result = $this->getModelInfo($model_name);
+        $model_name= $model_result['value'];
         $model = new CmsFieldModel();
         $field_result = $model->orm()->table_alias('f')
             ->left_join('cms_model', ['f.model_id', '=', 'm.id'], 'm')
@@ -231,6 +234,18 @@ class BaseLogic extends Controller
             ];
         }
         return $list_init;
+    }
+
+    public function getModelInfo($model_name)
+    {
+        if (is_numeric($model_name)) {
+            $where = ['id' => $model_name];
+        } else {
+            $where = ['value' => $model_name];
+        }
+        $cmsModel = new CmsModelModel();
+        $result = $cmsModel->getRecordInfo($cmsModel->orm()->where($where));
+        return $result;
     }
 
 }

@@ -406,17 +406,19 @@ EOT;
         $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
         $class_str = !empty($fieldHtmlClass) ? 'class="' . $fieldHtmlClass . '"' : '';
+        $selected_data_str = !empty($select_value) ? 'data-selected="' . $select_value . '"' : '';
         $options_str = '<option value="">请选择</option>';
         foreach ($option_data as $key => $value) {
             $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
-            $selected_str = $select_value == $value['value'] ? 'selected="true"' : '';
+            $selected_str = ($select_value == $value['value']) ? 'selected="true"' : '';
+
             $option = !empty($value['option']) ? $value['option'] : '';
 
             $option_template = '<option %s %s >%s</option>';
             $options_str .= sprintf($option_template, $value_str, $selected_str, $option);
         }
-        $select_template = '<select %s %s %s >%s</select>';
-        return sprintf($select_template, $name_str, $id_str, $class_str, $options_str);
+        $select_template = '<select %s %s %s %s>%s</select>';
+        return sprintf($select_template, $name_str, $id_str, $class_str, $selected_data_str, $options_str);
     }
 
     /**

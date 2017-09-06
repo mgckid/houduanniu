@@ -16,7 +16,7 @@
                                 <td><?= isset($val['enum'][$value[$key]]) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                             <?php endforeach;?>
                             <td>
-                                <a class="btn btn-success btn-xs"  href="<?= U('Cms/editPost', array('id' => $value['id'])) ?>" data-power="Cms/editPost">编辑</a>
+                                <a class="btn btn-success btn-xs"  href="<?= U('Cms/edit', array('id' => $value['id'])) ?>" data-power="Cms/edit">编辑</a>
                                 <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delArticle(<?= $value['id'] ?>)" data-power="Cms/delArticle">删除</a>
                             </td>
                         </tr>

@@ -40,9 +40,9 @@ class DictionaryModel extends BaseModel
         return $result;
     }
 
-    public function getDictionaryInfo($orm,$filed='*')
+    public function getDictionaryInfo($orm,$field='*')
     {
-        $result = $this->getOrm($orm)->where('deleted',0)->select($filed)->find_one();
+        $result = $this->getOrm($orm)->where('deleted',0)->select($field)->find_one();
         if (!empty($result)) {
             return $result->as_array();
         } else {

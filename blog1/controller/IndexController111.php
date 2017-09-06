@@ -29,11 +29,11 @@ class IndexController extends BaseController
         #获取新闻
         {
             $newsModel = new CmsPostModel();
-            $filed = 'a.id,a.title,a.public_time,a.description,a.image_name';
+            $field = 'a.id,a.title,a.public_time,a.description,a.image_name';
             $condition=[
                 'where'=>['is_image',10]
             ];
-            $result = $newsModel->getArticleList($condition, 0, 6, false, $filed);
+            $result = $newsModel->getArticleList($condition, 0, 6, false, $field);
             $data['newsList'] = $result;
         }
         $this->display('Index/index', $data, array('title' => '首页'));

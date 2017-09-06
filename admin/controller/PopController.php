@@ -32,7 +32,7 @@ class PopController extends UserBaseController
         $rule = array(
             'model_name' => 'required',
             'method_name' => 'required',
-            'param' => 'required',
+            'param' => 'array',
 
         );
         $attr = array(
@@ -47,7 +47,7 @@ class PopController extends UserBaseController
         }
         $model_name = 'app\\logic\\' . ucfirst($_REQUEST['model_name']);
         $methid_name = $_REQUEST['method_name'];
-        $param = $_REQUEST['param'];
+        $param = isset($_REQUEST['param'])?$_REQUEST['param']:[];
         if (!class_exists($model_name)) {
             $this->ajaxFail('模块不存在');
         }

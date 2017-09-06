@@ -138,8 +138,8 @@ class BaseController extends Controller
 //            $condition = [
 //                'where' => array('nav_display', $cateModel::NAV_DISPLAY),
 //            ];
-//            $filed = 'id,pid,name,alias,jump_url,cate_type';
-//            $result = $cateModel->getColumnList($condition, $filed);
+//            $field = 'id,pid,name,alias,jump_url,cate_type';
+//            $result = $cateModel->getColumnList($condition, $field);
 //            $navList = treeStructForLayer($result);
 //            $reg['navList'] = $navList;
 //        }

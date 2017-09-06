@@ -89,22 +89,22 @@ class CmsPostModel extends BaseModel
      * 获取下一篇文章
      * @param $id
      * @param $cateid
-     * @param string $filed
+     * @param string $field
      * @return mixed
      */
     public function getNext($post_id, $category_id)
     {
-        $orm = $this->orm()->where('post_id',$post_id);
-        $post_result = parent::getRecordInfo($orm,'id');
+        $orm = $this->orm()->where('post_id', $post_id);
+        $post_result = parent::getRecordInfo($orm, 'id');
         $next_id = $this->orm()
             ->where('category_id', $category_id)
             ->where_gt('id', $post_result['id'])
             ->order_by_asc('id')
             ->find_one();
-        $result=[];
+        $result = [];
         if ($next_id) {
             $next_id = $next_id->as_array();
-            $result=$this->getRecordInfoById($next_id['id']);
+            $result = $this->getRecordInfoById($next_id['id']);
         }
         return $result;
     }
@@ -113,22 +113,22 @@ class CmsPostModel extends BaseModel
      * 获取上一篇文章
      * @param $id
      * @param $cateid
-     * @param string $filed
+     * @param string $field
      * @return mixed
      */
     public function getPre($post_id, $category_id)
     {
-        $orm = $this->orm()->where('post_id',$post_id);
-        $post_result = parent::getRecordInfo($orm,'id');
+        $orm = $this->orm()->where('post_id', $post_id);
+        $post_result = parent::getRecordInfo($orm, 'id');
         $pre_id = $this->orm()
             ->where('category_id', $category_id)
             ->where_lt('id', $post_result['id'])
             ->order_by_asc('id')
             ->find_one();
-        $result=[];
+        $result = [];
         if ($pre_id) {
             $pre_id = $pre_id->as_array();
-            $result=$this->getRecordInfoById($pre_id['id']);
+            $result = $this->getRecordInfoById($pre_id['id']);
         }
         return $result;
     }
@@ -212,7 +212,7 @@ class CmsPostModel extends BaseModel
         return $result;
     }
 
-    public  function addCmsPostExtendData($table_name, $post_id, $field, $value)
+    public function addCmsPostExtendData($table_name, $post_id, $field, $value)
     {
         $orm = $this->orm()->for_table($table_name)->use_id_column('id');
         $data = [
@@ -302,6 +302,28 @@ class CmsPostModel extends BaseModel
             $post_info = $this->getRecordInfoById($result['id']);
         }
         return $post_info;
+    }
+
+    /**
+     * 获取单条记录
+     * @access public
+     * @author furong
+     * @param $id
+     * @param string $field
+     * @return array|bool
+     * @since 2017年7月28日 09:40:34
+     * @abstract
+     */
+    public function getRecordInfoById($id, $field = 'p.*,m.value as model')
+    {
+        $result = $this->orm()->select_expr($field)->table_alias('p')
+            ->left_join('cms_model', ['p.model_id', '=', 'm.id'], 'm')
+            ->where('p.id', $id)
+            ->find_one();
+        if (!empty($result)) {
+            $result = $result->as_array();
+        }
+        return $result;
     }
 
 }

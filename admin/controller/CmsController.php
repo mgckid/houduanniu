@@ -4,6 +4,7 @@
 namespace app\controller;
 
 use app\logic\BaseLogic;
+use app\logic\Post;
 use app\model\BaseModel;
 use app\model\CmsCategoryModel;
 use app\model\CmsModelModel;
@@ -220,15 +221,63 @@ class CmsController extends UserBaseController
     public function editPost()
     {
         if (IS_POST) {
-
+            #获取模型信息
+            $model_id = isset($_POST['model_id']) ? intval($_POST['model_id']) : 0;
+            $postLogic = new Post();
+            $model_result = $postLogic->getModelInfo($model_id);
+            if (!$model_result) {
+                $this->ajaxSuccess('内容模型不存在');
+            }
+            $model_name = $model_result['value'];
+            $request_data = $postLogic->getRequestData($model_name, 'model');
+            $result = $postLogic->addPost($request_data);
+            if (!$result) {
+                $this->ajaxFail('文档添加失败,' . $this->getMessage());
+            } else {
+                $this->ajaxSuccess('文档添加成功');
+            }
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $cmsPostModel = new CmsPostModel();
-            $post_result = $cmsPostModel->getRecordInfoById($id);
-            if (empty($post_result)) {
-                die('文章不存在');
-            }
+            $postLogic = new Post();
+            #获取文档信息
+            $post_result = $postLogic->getPostInfoById($id);
+            #获取表单初始化数据
+            $form_init = $postLogic->getFormInit($post_result['model'], 'model');
+            Form::getInstance()->form_data($post_result)
+                ->form_schema($form_init);
+            #获取模型信息
+            $model_result = $postLogic->getModelInfo($post_result['model']);
+            #面包屑导航
+            $this->crumb(array(
+                '内容管理' => U('Cms/index'),
+                '添加文档' => ''
+            ));
+            $this->display($model_result['post_add_template']);
         }
+    }
+
+    /**
+     * 添加
+     * @privilege 添加|Admin/Cms/add|e91d2442-2006-11e7-8ad5-9cb3ab654656|3
+     */
+    public function add()
+    {
+
+    }
+
+    /**
+     * 编辑
+     * @privilege 编辑|Admin/Cms/edit|e91d2442-2006-11e7-8ad5-9fdskfd998|3
+     */
+    public function edit()
+    {
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        $cmsPostModel = new CmsPostModel();
+        $result = $cmsPostModel->getRecordInfoById($id);
+        if (empty($result)) {
+            die('文章不存在');
+        }
+        $this->redirect(U('Cms/editPost', ['id' => $id, 'model' => $result['model']]));
     }
 
     /**
