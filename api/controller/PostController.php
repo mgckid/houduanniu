@@ -111,7 +111,8 @@ class PostController extends Controller
         }
         $post_id = $_REQUEST['post_id'];
         $page_size = $_REQUEST['page_size'];
-        $post_result = $cmsPostModel->getPostsInfo($post_id);
+        $result = $cmsPostModel->getRecordInfoByPostid($post_id);
+        $post_result = $cmsPostModel->getPostInfoById($result['id']);
         if (!$post_result) {
             $this->response(null, self::S400_BAD_REQUEST, '文档不存在');
         }
@@ -138,8 +139,13 @@ class PostController extends Controller
             $post_ids = array_slice($post_ids, 0, 6);
         }
         $result = [];
-        foreach ($post_ids as $value) {
-            $result[] = $cmsPostModel->getPostsInfo($value);
+        $orm = $cmsPostModel->orm()->where_in('post_id',$post_ids);
+        $result = $cmsPostModel->getAllRecord($orm);
+        foreach($result as $key => $value){
+            $extend_data = $cmsPostModel->getPostExtendAttrbute($value['post_id']);
+            if(!empty($extend_data)){
+                $result[$key]=array_merge($value,$extend_data);
+            }
         }
         $this->response($result, self::S200_OK, '', true);
     }

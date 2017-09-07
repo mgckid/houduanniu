@@ -239,59 +239,6 @@ class CmsPostModel extends BaseModel
 
 
     /**改版后****/
-    /**
-     * 获取文章列表
-     * @param type $condition 条件
-     * @param type $offset 偏移量
-     * @param type $limit 获取条数
-     * @param type $forCount 统计
-     * @param type $field 字段
-     * @return type
-     */
-    public function getPostList($orm = '', $offset, $limit, $forCount = false, $order_by = 'a.id', $sort = 'desc', $field = 'a.*,c.category_name')
-    {
-        $orm = $this->getOrm($orm)->where('a.deleted', 0)
-            ->table_alias('a')
-            ->select_expr($field)
-            ->left_outer_join('cms_category', array('a.category_id', '=', 'c.id'), 'c');
-        #排序
-        if ($sort == 'desc') {
-            $orm = $orm->order_by_desc($order_by);
-        } elseif ($sort == 'asc') {
-            $orm = $orm->order_by_asc($order_by);
-        }
-        if ($forCount) {
-            $result = $orm->count();
-        } else {
-            $result = $orm
-                ->limit($limit)
-                ->offset($offset)
-                ->order_by_desc('id')
-                ->find_array();
-        }
-        return $result;
-    }
-
-    /**
-     * 获取文档扩展属性
-     * @param $post_id
-     * @return array
-     */
-    public function getPostExtendAttrbute($post_id)
-    {
-        $result = $this->for_table('cms_post_extend_attribute')
-            ->use_id_column('id')
-            ->select_expr('field,value')
-            ->where('post_id', $post_id)
-            ->find_array();
-        if ($result) {
-            $field = array_column($result, 'field');
-            $value = array_column($result, 'value');
-            $result = array_combine($field, $value);
-        }
-        return $result;
-    }
-
     public function getRecordInfoByPostid($post_id, $field = 'p.*,m.value as model,c.category_name')
     {
         $orm = $this->orm()->select_expr($field)->table_alias('p')
@@ -310,7 +257,7 @@ class CmsPostModel extends BaseModel
         $orm = $cmsPostExtendAttributeModel->orm()->where(['field' => 'title_alias', 'value' => $title_alias]);
         $result = $cmsPostExtendAttributeModel->getRecordInfo($orm);
         if ($result) {
-            $post_info = $this->getRecordInfoById($result['id']);
+            $post_info = $this->getRecordInfoByPostid($result['post_id']);
         }
         return $post_info;
     }
@@ -426,6 +373,59 @@ class CmsPostModel extends BaseModel
             }
         }
         return $cms_post_result;
+    }
+
+    /**
+     * 获取文章列表
+     * @param type $condition 条件
+     * @param type $offset 偏移量
+     * @param type $limit 获取条数
+     * @param type $forCount 统计
+     * @param type $field 字段
+     * @return type
+     */
+    public function getPostList($orm = '', $offset, $limit, $forCount = false, $order_by = 'a.id', $sort = 'desc', $field = 'a.*,c.category_name')
+    {
+        $orm = $this->getOrm($orm)->where('a.deleted', 0)
+            ->table_alias('a')
+            ->select_expr($field)
+            ->left_outer_join('cms_category', array('a.category_id', '=', 'c.id'), 'c');
+        #排序
+        if ($sort == 'desc') {
+            $orm = $orm->order_by_desc($order_by);
+        } elseif ($sort == 'asc') {
+            $orm = $orm->order_by_asc($order_by);
+        }
+        if ($forCount) {
+            $result = $orm->count();
+        } else {
+            $result = $orm
+                ->limit($limit)
+                ->offset($offset)
+                ->order_by_desc('id')
+                ->find_array();
+        }
+        return $result;
+    }
+
+    /**
+     * 获取文档扩展属性
+     * @param $post_id
+     * @return array
+     */
+    public function getPostExtendAttrbute($post_id)
+    {
+        $result = $this->for_table('cms_post_extend_attribute')
+            ->use_id_column('id')
+            ->select_expr('field,value')
+            ->where('post_id', $post_id)
+            ->find_array();
+        if ($result) {
+            $field = array_column($result, 'field');
+            $value = array_column($result, 'value');
+            $result = array_combine($field, $value);
+        }
+        return $result;
     }
 
 
