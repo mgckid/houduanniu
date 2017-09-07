@@ -10,7 +10,6 @@ namespace app\controller;
 
 
 use app\model\CmsCategoryModel;
-use app\model\CmsPostExtendAttributeModel;
 use app\model\CmsPostModel;
 use houduanniu\api\Controller;
 use houduanniu\base\Page;
@@ -74,23 +73,16 @@ class ArticleController extends Controller
         }
         $field_name = $_REQUEST['field_name'];
         $field_value = $_REQUEST['field_value'];
-        $post_id = '';
         if ($field_name == 'title_alias') {
-            $cmsPostExtendAttributeModel = new CmsPostExtendAttributeModel();
-            $orm = $cmsPostExtendAttributeModel->orm()->where(['field' => $field_name, 'value' => $field_value]);
-            $result = $cmsPostExtendAttributeModel->getRecordInfo($orm);
-            if (!$result) {
-                $this->response(null, self::S400_BAD_REQUEST);
-            }
-            $post_id = $result['post_id'];
+            $post_result = $cmsPostModel->getRecordInfoByTitleAlias($field_value);
         } elseif ($field_name = 'post_id') {
-            $post_id = $field_value;
+            $post_result = $cmsPostModel->getRecordInfoByPostid($field_value);
         }
-        $article = $cmsPostModel->getPostsInfo($post_id);
-        if ($article) {
-            $cmsCategoryModel = new CmsCategoryModel();
-            $category_result = $cmsCategoryModel->getRecordInfoById($article['category_id']);
-            $article['category_name'] = $category_result['category_name'];
+        $article = $cmsPostModel->getPostInfoById($post_result['id']);
+        if (!$article) {
+            $this->response(null, self::S404_NOT_FOUND);
+        }else{
+            $post_id = $article['post_id'];
             $pre_result = $cmsPostModel->getPre($post_id, $article['category_id']);
             $next_result = $cmsPostModel->getNext($post_id, $article['category_id']);
             $pre = [];
@@ -98,6 +90,9 @@ class ArticleController extends Controller
                 $pre = [
                     'title_alias' => $pre_result['title_alias'],
                     'title' => $pre_result['title'],
+                    'id'=>$pre_result['id'],
+                    'post_id'=>$pre_result['post_id'],
+                    'main_image'=>$pre_result['main_image'],
                 ];
             }
             $next = [];
@@ -105,15 +100,15 @@ class ArticleController extends Controller
                 $next = [
                     'title_alias' => $next_result['title_alias'],
                     'title' => $next_result['title'],
+                    'id'=>$next_result['id'],
+                    'post_id'=>$next_result['post_id'],
+                    'main_image'=>$next_result['main_image'],
                 ];
             }
-            unset($result);
             $result['article'] = $article;
             $result['pre'] = $pre;
             $result['next'] = $next;
             $this->response($result, self::S200_OK, null, true);
-        } else {
-            $this->response(null, self::S404_NOT_FOUND);
         }
     }
 }

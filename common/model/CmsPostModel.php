@@ -94,17 +94,16 @@ class CmsPostModel extends BaseModel
      */
     public function getNext($post_id, $category_id)
     {
-        $orm = $this->orm()->where('post_id', $post_id);
-        $post_result = parent::getRecordInfo($orm, 'id');
-        $next_id = $this->orm()
+        $post_result = $this->getRecordInfoByPostid($post_id);
+        $next_result = $this->orm()
             ->where('category_id', $category_id)
             ->where_gt('id', $post_result['id'])
             ->order_by_asc('id')
             ->find_one();
         $result = [];
-        if ($next_id) {
-            $next_id = $next_id->as_array();
-            $result = $this->getRecordInfoById($next_id['id']);
+        if ($next_result) {
+            $next_result = $next_result->as_array();
+            $result = $this->getPostInfoById($next_result['id']);
         }
         return $result;
     }
@@ -118,17 +117,16 @@ class CmsPostModel extends BaseModel
      */
     public function getPre($post_id, $category_id)
     {
-        $orm = $this->orm()->where('post_id', $post_id);
-        $post_result = parent::getRecordInfo($orm, 'id');
-        $pre_id = $this->orm()
+        $post_result = $this->getRecordInfoByPostid($post_id);
+        $pre_result = $this->orm()
             ->where('category_id', $category_id)
             ->where_lt('id', $post_result['id'])
             ->order_by_asc('id')
             ->find_one();
         $result = [];
-        if ($pre_id) {
-            $pre_id = $pre_id->as_array();
-            $result = $this->getRecordInfoById($pre_id['id']);
+        if ($pre_result) {
+            $pre_result = $pre_result->as_array();
+            $result = $this->getPostInfoById($pre_result['id']);
         }
         return $result;
     }
@@ -294,10 +292,23 @@ class CmsPostModel extends BaseModel
         return $result;
     }
 
-    public function getPostsInfo($post_id)
+    public function getRecordInfoByPostid($post_id, $field = 'p.*,m.value as model,c.category_name')
+    {
+        $orm = $this->orm()->select_expr($field)->table_alias('p')
+            ->table_alias('p')
+            ->left_join('cms_model', ['p.model_id', '=', 'm.id'], 'm')
+            ->left_join('cms_category', ['p.category_id', '=', 'c.id'], 'c')
+            ->where('p.post_id', $post_id);
+        $result = $this->getRecordInfo($orm, $field);
+        return $result;
+    }
+
+    public function getRecordInfoByTitleAlias($title_alias)
     {
         $post_info = [];
-        $result = $this->orm()->where('post_id', $post_id)->find_one();
+        $cmsPostExtendAttributeModel = new CmsPostExtendAttributeModel();
+        $orm = $cmsPostExtendAttributeModel->orm()->where(['field' => 'title_alias', 'value' => $title_alias]);
+        $result = $cmsPostExtendAttributeModel->getRecordInfo($orm);
         if ($result) {
             $post_info = $this->getRecordInfoById($result['id']);
         }
@@ -314,16 +325,108 @@ class CmsPostModel extends BaseModel
      * @since 2017年7月28日 09:40:34
      * @abstract
      */
-    public function getRecordInfoById($id, $field = 'p.*,m.value as model')
+    public function getRecordInfoById($id, $field = 'p.*,m.value as model,c.category_name')
     {
-        $result = $this->orm()->select_expr($field)->table_alias('p')
+        $orm = $this->orm()->select_expr($field)->table_alias('p')
+            ->table_alias('p')
             ->left_join('cms_model', ['p.model_id', '=', 'm.id'], 'm')
-            ->where('p.id', $id)
-            ->find_one();
-        if (!empty($result)) {
-            $result = $result->as_array();
-        }
+            ->left_join('cms_category', ['p.category_id', '=', 'c.id'], 'c')
+            ->where('p.id', $id);
+        $result = $this->getRecordInfo($orm, $field);
         return $result;
     }
+
+    /**
+     * 添加文档
+     * @access public
+     * @author furong
+     * @param $request_data
+     * @return bool
+     * @since 2017年8月2日 15:48:44
+     * @abstract
+     */
+    public function addRecord($request_data)
+    {
+        #获取模型定义
+        $baseLogic = new BaseLogic();
+        $model_defined = $baseLogic->getModelDefined($request_data['model_id']);
+        $cms_post_data = [];
+        $extend_data = [];
+        foreach ($model_defined as $value) {
+            switch ($value['belong_to_table']) {
+                case 'cms_post':
+                    if (isset($request_data[$value['value']])) {
+                        $cms_post_data[$value['value']] = $request_data[$value['value']];
+                    }
+                    break;
+                default:
+                    if (isset($request_data[$value['value']])) {
+                        $extend_data[] = [
+                            'table_name' => $value['belong_to_table'],
+                            'post_id' => $request_data['post_id'],
+                            'field' => $value['value'],
+                            'value' => $request_data[$value['value']],
+                        ];
+                    }
+            }
+        }
+        try {
+            $this->beginTransaction();
+            $cms_post_result = parent::addRecord($cms_post_data);
+            if (!$cms_post_result) {
+                throw new \Exception('文档主记录添加失败');
+            }
+            if ($extend_data) {
+                foreach ($extend_data as $value) {
+                    $result = $this->addCmsPostExtendData($value['table_name'], $value['post_id'], $value['field'], $value['value']);
+                    if (!$result) {
+                        throw new \Exception('文档扩展记录添加失败');
+                    }
+                }
+            }
+            $this->commit();
+            $return = true;
+        } catch (\Exception $ex) {
+            $this->rollBack();
+            $this->setMessage($ex->getMessage());
+            $return = false;
+        }
+        return $return;
+    }
+
+    public function getPostInfoById($id)
+    {
+        $baseLogic = new BaseLogic();
+        $cms_post_result = $this->getRecordInfoById($id);
+        if (empty($cms_post_result)) {
+            die('文章不存在');
+        }
+        #获取模型定义
+        $model_defined = $baseLogic->getModelDefined($cms_post_result['model']);
+        #获取扩展数据
+        $fields = array_unique(array_column($model_defined, 'value'));
+        $tables = array_unique(array_column($model_defined, 'belong_to_table'));
+        $tables = array_flip($tables);
+        if (isset($tables['cms_post'])) {
+            unset ($tables['cms_post']);
+        }
+        $tables = array_keys($tables);
+        $extend_data = [];
+        foreach ($tables as $value) {
+            $result = $this->orm()->for_table($value)->select_expr('field,value')->where(['post_id' => $cms_post_result['post_id']])->find_array();
+            if ($result) {
+                $extend_data = array_merge($extend_data, $result);
+            }
+        }
+        if (!empty($extend_data)) {
+            foreach ($extend_data as $value) {
+                if (in_array($value['field'], $fields)) {
+                    $cms_post_result[$value['field']] = $value['value'];
+                }
+            }
+        }
+        return $cms_post_result;
+    }
+
 
 }

@@ -101,7 +101,8 @@ class CmsController extends UserBaseController
             }
             $model_name = $model_result['value'];
             $request_data = $baseLogic->getRequestData($model_name, 'model');
-            $result = $baseLogic->addPost($request_data);
+            $cmsPostModel = new CmsPostModel();
+            $result = $cmsPostModel->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail('文档添加失败,' . $this->getMessage());
             } else {
@@ -164,7 +165,8 @@ class CmsController extends UserBaseController
             }
             $model_name = $model_result['value'];
             $request_data = $baseLogic->getRequestData($model_name, 'model');
-            $result = $baseLogic->addPost($request_data);
+            $cmsPostModel = new CmsPostModel();
+            $result = $cmsPostModel->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail('文档添加失败,' . $this->getMessage());
             } else {
@@ -173,8 +175,9 @@ class CmsController extends UserBaseController
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             $baseLogic = new BaseLogic();
+            $cmsPostModel = new CmsPostModel();
             #获取文档信息
-            $post_result = $baseLogic->getPostInfoById($id);
+            $post_result = $cmsPostModel->getPostInfoById($id);
             #获取表单初始化数据
             $form_init = $baseLogic->getFormInit($post_result['model'], 'model');
             Form::getInstance()->form_data($post_result)
