@@ -10,14 +10,10 @@ use app\model\CmsCategoryModel;
 use app\model\CmsModelModel;
 use app\model\CmsPostModel;
 use app\model\CmsPageModel;
-use app\model\CmsTagModel;
 use app\model\CoreTextModel;
-use houduanniu\base\Application;
 use houduanniu\base\BosonNLP;
-use houduanniu\base\Hook;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
-use Overtrue\Pinyin\Pinyin;
 
 /**
  * 内容管理控制器
@@ -35,10 +31,18 @@ class CmsController extends UserBaseController
     public function addCategory()
     {
         if (IS_POST) {
+            #获取模型信息
+            $model_id = isset($_POST['model_id']) ? intval($_POST['model_id']) : 0;
+            $baseLogic = new BaseLogic();
+            $model_result = $baseLogic->getModelInfo($model_id);
+            if (!$model_result) {
+                $this->ajaxSuccess('内容模型不存在');
+            }
+            $model_name = $model_result['value'];
             $logic = new BaseLogic();
-            $model = new CmsCategoryModel();
-            $request_data = $logic->getRequestData($model->getTableName(), 'table');
-            $result = $model->addRecord($request_data);
+            $cmsPostModel = new CmsPostModel();
+            $request_data = $logic->getRequestData($model_name, 'model');
+            $result = $cmsPostModel->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail();
             } else {
@@ -48,8 +52,12 @@ class CmsController extends UserBaseController
             #获取表单初始化数据
             $logic = new BaseLogic();
             $model = new CmsCategoryModel();
-            $form_init = $logic->getFormInit($model->getTableName(), 'table');
-            Form::getInstance()->form_schema($form_init);
+            $model_result = $logic->getModelInfo('category');
+            $form_init = $logic->getFormInit($model_result['value'], 'model');
+            #添加文档是默认数据
+            $form_data['model_id'] = $model_result['id'];
+            $form_data['post_id'] = getItemId();
+            Form::getInstance()->form_schema($form_init)->form_data($form_data);
             #面包屑导航
             $this->crumb(array(
                 '内容管理' => U('Cms/index'),
