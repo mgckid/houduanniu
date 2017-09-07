@@ -139,12 +139,12 @@ class PostController extends Controller
             $post_ids = array_slice($post_ids, 0, 6);
         }
         $result = [];
-        $orm = $cmsPostModel->orm()->where_in('post_id',$post_ids);
+        $orm = $cmsPostModel->orm()->where_in('post_id', $post_ids);
         $result = $cmsPostModel->getAllRecord($orm);
-        foreach($result as $key => $value){
+        foreach ($result as $key => $value) {
             $extend_data = $cmsPostModel->getPostExtendAttrbute($value['post_id']);
-            if(!empty($extend_data)){
-                $result[$key]=array_merge($value,$extend_data);
+            if (!empty($extend_data)) {
+                $result[$key] = array_merge($value, $extend_data);
             }
         }
         $this->response($result, self::S200_OK, '', true);

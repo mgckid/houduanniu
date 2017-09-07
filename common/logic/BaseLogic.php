@@ -164,7 +164,7 @@ class BaseLogic extends Controller
         $validate_rule = [];
         $name_map = [];
         foreach ($field_definded as $value) {
-            if (!empty($value['validate_rule'])) {
+            if (!empty($value['validate_rule']) && $value['form_type']!='none') {
                 $validate_rule[$value['value']] = $value['validate_rule'];
                 $name_map[$value['value']] = $value['name'];
             }
