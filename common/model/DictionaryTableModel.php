@@ -9,8 +9,8 @@
 namespace app\model;
 
 
-class DicModel extends BaseModel
+class DictionaryTableModel extends BaseModel
 {
-    public $tableName = 'dic';
+    public $tableName = 'dictionary_table';
     public $pk = 'id';
 } 

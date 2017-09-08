@@ -7,6 +7,7 @@
  */
 
 namespace app\controller;
+
 use app\logic\Dic;
 use app\model\DicModel;
 use app\model\DictionaryFieldModel;
@@ -84,18 +85,18 @@ class DicController extends UserBaseController
      */
     public function addAttribute()
     {
-       $DictionaryModel = new DictionaryModel();
+        $DictionaryModel = new DictionaryModel();
         $dicModel = new DicModel();
         $DictionaryFieldModel = new DictionaryFieldModel();
-        $orm = $dicModel->orm()->where('deleted',0);
+        $orm = $dicModel->orm()->where('deleted', 0);
         $tableResult = $dicModel->getAllRecord($orm);
-        foreach($tableResult as $value){
-            $orm = $DictionaryModel->orm()->where('value',$value['value'])->where('deleted',0);
+        foreach ($tableResult as $value) {
+            $orm = $DictionaryModel->orm()->where('value', $value['value'])->where('deleted', 0);
             $result = $DictionaryModel->getRecordInfo($orm);
-            if($result){
-                $orm = $DictionaryModel->orm()->where('pid',$result['id'])->where('deleted',0);
+            if ($result) {
+                $orm = $DictionaryModel->orm()->where('pid', $result['id'])->where('deleted', 0);
                 $d = $DictionaryModel->getAllRecord($orm);
-                foreach($d as $v){
+                foreach ($d as $v) {
                     $data = [
                         'dictionary_id' => $value['id'],
                         'field_name' => $v['name'],
