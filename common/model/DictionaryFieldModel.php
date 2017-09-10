@@ -11,6 +11,6 @@ namespace app\model;
 
 class DictionaryFieldModel extends BaseModel
 {
-    public $tableName = 'dictionary_field';
+    public $tableName = 'dictionary_table_field';
     public $pk = 'id';
 } 

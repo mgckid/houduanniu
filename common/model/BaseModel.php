@@ -131,7 +131,7 @@ class BaseModel extends Model
      */
     public function getRecordList($orm = '', $offset = '', $limit = '', $for_count = false, $order_by_id_desc = true, $field = '*')
     {
-        //$orm = $this->getOrm($orm)->where_equal('deleted', 0);
+        $orm = $this->getOrm($orm)->where_equal('deleted', 0);
         if ($for_count) {
             $result = $orm->count();
         } else {
@@ -166,6 +166,20 @@ class BaseModel extends Model
             $result = $result->as_array();
         }
         return $result;
+    }
+
+    public function delRecord($orm)
+    {
+        $orm = $this->getOrm($orm);
+        $result = $orm->find_array();
+        foreach ($result as $value) {
+            $del_result = $this->deleteRecordById($value['id']);
+            if (!$del_result) {
+                throw new \Exception('删除记录失败');
+                return false;
+            }
+        }
+        return true;
     }
 
 

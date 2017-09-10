@@ -3,7 +3,10 @@
 namespace app\controller;
 
 use app\logic\BaseLogic;
+use app\model\DictionaryAttributeModel;
+use app\model\DictionaryFieldModel;
 use app\model\DictionaryModel;
+use app\model\DictionaryTableModel;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
 
@@ -21,16 +24,15 @@ class DataController extends UserBaseController
      */
     public function dictionaryManage()
     {
-        $pid = isset($_REQUEST['pid']) ? intval($_REQUEST['pid']) : 0;
         #查询列表
         {
-            $dictionaryModel = new DictionaryModel();
-            $condition = ['pid' => $pid];
-            $result = $dictionaryModel->getRecordList($dictionaryModel->orm()->where($condition), 0, 999, false, false);
+            $dictionaryModel = new DictionaryTableModel();
+            $count = $dictionaryModel->getRecordList('', '', '', true);
+            $result = $dictionaryModel->getRecordList('', 0, $count, false, false);
         }
         #获取列表字段
         $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('dictionarys');
+        $list_init = $dictionaryLogic->getListInit($dictionaryModel->getTableName());
         $data = array(
             'list' => $result,
             'list_init' => $list_init,
@@ -49,26 +51,28 @@ class DataController extends UserBaseController
      */
     public function fieldManage()
     {
-        $pid = isset($_REQUEST['pid']) ? intval($_REQUEST['pid']) : 0;
-        $dictionaryModel = new DictionaryModel();
-        #查询字典信息
-        {
-            $dictionary_info = $dictionaryModel->getRecordInfoById($pid);
+        $dictionary_id = isset($_REQUEST['dictionary_id']) ? intval($_REQUEST['dictionary_id']) : 0;
+        if (empty($dictionary_id)) {
+            die('字典id不能为空');
         }
         #查询列表
         {
-            $condition = ['pid' => $pid];
-            $result = $dictionaryModel->getRecordList($dictionaryModel->orm()->where($condition), 0, 999, false, false);
-            #整理数据
-            foreach ($result as $key => $value) {
-                $counts = $dictionaryModel->getDictionaryList($dictionaryModel->orm()->where('pid', $value['id']), '', '', true);
-                $value['attr_count'] = $counts;
-                $result[$key] = $value;
-            }
+            $model = new DictionaryFieldModel();
+            $condition = ['dictionary_id' => $dictionary_id];
+            $orm = $model->orm()->where($condition);
+            $count = $model->getRecordList($orm, '', '', true);
+            $result = $model->getRecordList($orm, 0, $count, false, false);
         }
         #获取列表字段
-        $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('dictionarys');
+        {
+            $logic = new BaseLogic();
+            $list_init = $logic->getListInit($model->getTableName());
+        }
+        #获取字典信息
+        {
+            $dictionaryModel = new DictionaryTableModel();
+            $dictionary_info = $dictionaryModel->getRecordInfoById($dictionary_id);
+        }
 
         $data = array(
             'list' => $result,
@@ -78,52 +82,36 @@ class DataController extends UserBaseController
         #面包屑导航
         $this->crumb(array(
             '字典管理' => U('Data/dictionaryManage'),
-            $dictionary_info['name'] . '字段管理' => '',
+            $dictionary_info['dictionary_name'] . '(' . $dictionary_info['dictionary_value'] . ')字段管理' => '',
         ));
         $this->display('data/fieldManage', $data);
     }
 
     /**
      * 字典管理
-     * @privilege 属性管理|Admin/Data/attributeManage|4e030640-6166-11e7-ba80-5996e3b2d0ff|3
+     * @privilege 属性管理|Admin/Data/attributeManage|4e030640-6166-11e7-ba80-5996e3b2d0ff|2
      */
     public function attributeManage()
     {
-        $pid = isset($_REQUEST['pid']) ? intval($_REQUEST['pid']) : 0;
-        $dictionaryModel = new DictionaryModel();
-        #查询字典信息
-        {
-            #查询字段信息
-            $field_info = $dictionaryModel->getRecordInfoById($pid);
-            #查询字典信息
-            $dictionary_info = $dictionaryModel->getRecordInfoById($field_info['pid']);
-        }
-
         #查询列表
         {
-            $condition = ['pid' => $pid];
-            $result = $dictionaryModel->getRecordList($dictionaryModel->orm()->where($condition), 0, 999, false, false);
-            #整理数据
-            foreach ($result as $key => $value) {
-                $counts = $dictionaryModel->getDictionaryList($dictionaryModel->orm()->where('pid', $value['id']), '', '', true);
-                $value['attr_count'] = $counts;
-                $result[$key] = $value;
-            }
+            $model = new DictionaryAttributeModel();
+            $count = $model->getRecordList('', '', '', true);
+            $result = $model->getRecordList('', 0, $count, false, false);
         }
         #获取列表字段
-        $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('dictionarys');
-
+        {
+            $logic = new BaseLogic();
+            $list_init = $logic->getListInit($model->getTableName());
+        }
         $data = array(
             'list' => $result,
-            'list_init' => $list_init,
-            'field_info' => $field_info,
+            'list_init' => $list_init
         );
         #面包屑导航
         $this->crumb(array(
             '字典管理' => U('Data/dictionaryManage'),
-            $dictionary_info['name'] . '字段管理' => U('Data/fieldManage', ['pid' => $field_info['pid']]),
-            $field_info['name'] . '属性管理' => '',
+            '属性管理' => '',
         ));
         $this->display('data/attributeManage', $data);
     }
@@ -136,38 +124,21 @@ class DataController extends UserBaseController
     public function addDictionary()
     {
         if (IS_POST) {
+            $model = new DictionaryTableModel();
             $logic = new BaseLogic();
-            $request_data = $logic->getRequestData('dictionarys', 'table');
-            $model = new DictionaryModel();
-            $result = $model->addDictionary($request_data);
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail();
             } else {
                 $this->ajaxSuccess();
             }
         } else {
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $pid = isset($_GET['pid']) ? intval($_GET['pid']) : 0;
             #查询记录
-            $model = new DictionaryModel();
-            $result = [];
-            if ($id) {
-                $result = $model->getRecordInfoById($id);
-            }
-            if (!$result && $pid) {
-                $result['pid'] = $pid;
-            }
+            $model = new DictionaryTableModel();
             $logic = new BaseLogic();
-            $form_init = $logic->getFormInit('dictionarys', 'table');
-            if(in_array($result['data_type'],['table','attribute'])){
-                foreach($form_init as $key=> $value){
-                    if(!in_array($key,['id','pid','name','value','data_type'])){
-                        $value['type']='none';
-                    }
-                    $form_init[$key]=$value;
-                }
-            }
-            Form::getInstance()->form_schema($form_init)->form_data($result);
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init);
             #面包屑导航
             $this->crumb(array(
                 '字典管理' => U('Data/dictionaryManage'),
@@ -175,7 +146,175 @@ class DataController extends UserBaseController
             ));
             $this->display('Data/addDictionary');
         }
+    }
 
+    /**
+     * 修改字典
+     * @privilege 修改字典|Admin/Data/editDictionary|de8ba38e-95dd-11e7-b91c-e03f49a02407|3
+     */
+    public function editDictionary()
+    {
+        if (IS_POST) {
+            $model = new DictionaryTableModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+            #查询记录
+            $model = new DictionaryTableModel();
+            $logic = new BaseLogic();
+            $result = $model->getRecordInfoById($id);
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('Data/dictionaryManage'),
+                '修改字典' => '',
+            ));
+            $this->display('Data/addDictionary');
+        }
+    }
+
+    /**
+     * 添加字段
+     * @privilege 添加字段|Admin/Data/addField|adf91514-95e1-11e7-b91c-e03f49a02407|3
+     */
+    public function addField()
+    {
+        if (IS_POST) {
+            $model = new DictionaryFieldModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
+            $dictionary_id = isset($_REQUEST['dictionary_id']) ? intval($_REQUEST['dictionary_id']) : 0;
+            if (empty($dictionary_id)) {
+                die('字典id不能为空');
+            }
+            #表单初始化
+            $model = new DictionaryFieldModel();
+            $logic = new BaseLogic();
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            $result['dictionary_id'] = $dictionary_id;
+            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('Data/dictionaryManage'),
+                '添加字段' => '',
+            ));
+            $this->display('Data/addField');
+        }
+    }
+
+    /**
+     * 修改字段
+     * @privilege 修改字段|Admin/Data/editField|bff848a8-95e1-11e7-b91c-e03f49a02407|3
+     */
+    public function editField()
+    {
+        if (IS_POST) {
+            $model = new DictionaryFieldModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
+            $id = isset($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+            if (empty($id)) {
+                die('字段id不能为空');
+            }
+            #表单初始化
+            $model = new DictionaryFieldModel();
+            $logic = new BaseLogic();
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            $result = $model->getRecordInfoById($id);
+            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('Data/dictionaryManage'),
+                '编辑字段' => '',
+            ));
+            $this->display('Data/addField');
+        }
+    }
+
+    /**
+     * 添加属性
+     * @privilege 添加属性|Admin/Data/addAttribute|58144bf7-961d-11e7-b91c-e03f49a02407|3
+     */
+    public function addAttribute()
+    {
+        if (IS_POST) {
+            $model = new DictionaryTableModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
+            #查询记录
+            $model = new DictionaryAttributeModel();
+            $logic = new BaseLogic();
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init);
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('Data/dictionaryManage'),
+                '添加属性' => '',
+            ));
+            $this->display('Data/addAttribute');
+        }
+    }
+
+    /**
+     * 修改属性
+     * @privilege 修改属性|Admin/Data/editAttribute|4f73508a-961d-11e7-b91c-e03f49a02407|3
+     */
+    public function editAttribute()
+    {
+        if (IS_POST) {
+            $model = new DictionaryTableModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+            #查询记录
+            $model = new DictionaryAttributeModel();
+            $logic = new BaseLogic();
+            $result = $model->getRecordInfoById($id);
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('Data/dictionaryManage'),
+                '修改属性' => '',
+            ));
+            $this->display('Data/addAttribute');
+        }
     }
 
 
@@ -188,13 +327,13 @@ class DataController extends UserBaseController
         if (!IS_POST) {
             $this->ajaxFail('非法请求');
         }
-        $model = new DictionaryModel();
+        $model = new DictionaryTableModel();
         #验证
         $rule = array(
             'id' => 'required|integer',
         );
         $attr = array(
-            'id' => '配置id',
+            'id' => '字典id',
         );
         $validate = $model->validate()->make($_POST, $rule, [], $attr);
         if (false === $validate->passes()) {
@@ -202,17 +341,86 @@ class DataController extends UserBaseController
         }
         #获取参数
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
-        #检查是否能删除
-        $all_dictionary = $model->getAllRecord();
-        $subDictionary = getChilden($all_dictionary, $id);
-        if (!empty($subDictionary)) {
-            $this->ajaxFail('请删除该字典下数据');
-        }
+        $model->beginTransaction();
         #删除记录
-        if (!$model->deleteRecordById($id)) {
-            $this->ajaxFail($this->getMessage());
+        try {
+            $result = $model->deleteRecordById($id);
+            if (!$result) {
+                throw new \Exception('删除字典失败');
+            }
+            $fieldModel = new DictionaryFieldModel();
+            $orm = $fieldModel->orm()->where('dictionary_id', $id);
+            $del_result = $fieldModel->delRecord($orm);
+            if (!$del_result) {
+                throw new \Exception('删除字段失败');
+            }
+            $model->commit();
+            $this->ajaxSuccess('删除成功');
+        } catch (\Exception $ex) {
+            $model->rollBack();
+            $this->ajaxFail($ex->getMessage());
+        }
+    }
+
+    /**
+     * 删除字段
+     * @privilege 删除字段|Admin/Data/delField|027c39d9-9623-11e7-b91c-e03f49a02407|3
+     */
+    public function delField()
+    {
+        if (!IS_POST) {
+            $this->ajaxFail('非法请求');
+        }
+        $model = new DictionaryFieldModel();
+        #验证
+        $rule = array(
+            'id' => 'required|integer',
+        );
+        $attr = array(
+            'id' => '字段id',
+        );
+        $validate = $model->validate()->make($_POST, $rule, [], $attr);
+        if (false === $validate->passes()) {
+            $this->ajaxFail($validate->messages()->first());
+        }
+        #获取参数
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $result = $model->deleteRecordById($id);
+        if (!$result) {
+            $this->ajaxFail('删除失败');
         } else {
-            $this->ajaxSuccess($this->getMessage());
+            $this->ajaxSuccess('删除成功');
+        }
+    }
+
+    /**
+     * 删除属性
+     * @privilege 删除属性|Admin/Data/delAttribute|efd7e749-9622-11e7-b91c-e03f49a02407|3
+     */
+    public function delAttribute()
+    {
+        if (!IS_POST) {
+            $this->ajaxFail('非法请求');
+        }
+        $model = new DictionaryAttributeModel();
+        #验证
+        $rule = array(
+            'id' => 'required|integer',
+        );
+        $attr = array(
+            'id' => '字段id',
+        );
+        $validate = $model->validate()->make($_POST, $rule, [], $attr);
+        if (false === $validate->passes()) {
+            $this->ajaxFail($validate->messages()->first());
+        }
+        #获取参数
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $result = $model->deleteRecordById($id);
+        if (!$result) {
+            $this->ajaxFail('删除失败');
+        } else {
+            $this->ajaxSuccess('删除成功');
         }
     }
 

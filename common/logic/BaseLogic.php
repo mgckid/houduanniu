@@ -59,16 +59,17 @@ class BaseLogic extends Controller
     public function getTableDefinded($table_name, $field_field = 'f.field_name,f.field_value,f.form_type,f.validate_rule,f.data_type')
     {
         $model = new DictionaryTableModel();
-        $field_result = $model->orm()->table_alias('t')
-            ->left_join('dictionary_field', ['t.id', '=', 'f.dictionary_id'], 'f')
+        $field_result = $model->orm()->table_alias('d')
+            ->left_join('dictionary_table_field', ['d.id', '=', 'f.dictionary_id'], 'f')
             ->select_expr('f.*')
-            ->where('t.value', $table_name)
+            ->where('d.dictionary_value', $table_name)
+            ->where('d.deleted', 0)
             ->where('f.deleted', 0)
             ->find_array();
         if ($field_result) {
             $dictionaryAttributeModel = new DictionaryAttributeModel();
             foreach ($field_result as $key => $value) {
-                $orm = $dictionaryAttributeModel->orm()->where('field_value', $value['field_value']);
+                $orm = $dictionaryAttributeModel->orm()->where('field_value', $value['field_value'])->where('deleted', 0);
                 $enum_result = $dictionaryAttributeModel->getAllRecord($orm, 'attribute_name,attribute_value');
                 $enum = [];
                 if (!empty($enum_result)) {
@@ -220,7 +221,7 @@ class BaseLogic extends Controller
         $list_init = [];
         foreach ($table_defined as $value) {
             #只显示列表运许显示显示的字段
-            if ($value['list_display'] == 0) {
+            if ($value['list_ignore'] == 1) {
                 continue;
             }
             $field = $value['field_value'];
@@ -232,6 +233,7 @@ class BaseLogic extends Controller
             }
             $list_init[$field] = [
                 'field_name' => $value['field_name'],
+                'field_value' => $value['field_value'],
                 'enum' => $enum,
             ];
         }

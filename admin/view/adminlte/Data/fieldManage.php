@@ -2,27 +2,23 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="operate_box mb10">
-            <a class="btn btn-success btn-xs" data-power="Data/addDictionary" href="<?= U('Data/addDictionary',['pid'=>$dictionary_info['id']]) ?>">添加字段</a>
+            <a class="btn btn-success btn-xs" data-power="Data/addField" href="<?= U('Data/addField',['dictionary_id'=>$dictionary_info['id']]) ?>">添加字段</a>
         </div>
         <table class="table ">
             <tr>
                 <?php foreach ($list_init as $key=> $value):?>
-                    <th><?=$value['name']?></th>
+                    <th><?=$value['field_name']?></th>
                 <?php endforeach;?>
                 <th>操作</th>
             </tr>
-            <?php foreach ($list as  $value):?>
+            <?php foreach ($list as  $val):?>
                 <tr id="row<?=$value['id']?>">
-                    <?php foreach ($list_init as $key => $val): ?>
-                        <td><?= isset($val['enum'][$value[$key]]) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
+                    <?php foreach ($list_init as $key => $value): ?>
+                        <td><?=  $val[$key] ?></td>
                     <?php endforeach;?>
                     <td>
-                        <a class="btn btn-success btn-xs"  href="<?= U('Data/addDictionary', array('id' => $value['id'])) ?>" data-power="Data/addDictionary">编辑</a>
-                        <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delRecord(<?= $value['id'] ?>)" data-power="Data/delDictionary">删除</a>
-                        <a class="btn btn-info btn-xs"  href="<?= U('Data/addDictionary', array('pid' => $value['id'])) ?>" data-power="Data/fieldManage">添加属性</a>
-                        <?php if($value['attr_count']>0):?>
-                            <a class="btn btn-default btn-xs"  href="<?= U('Data/attributeManage', array('pid' => $value['id'])) ?>" data-power="Data/fieldManage">属性管理</a>
-                        <?php endif;?>
+                        <a class="btn btn-success btn-xs"  href="<?= U('Data/editField', array('id' => $val['id'])) ?>" data-power="Data/editField">编辑</a>
+                        <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delRecord(<?= $val['id'] ?>)" data-power="Data/delField">删除</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -38,7 +34,7 @@
         layer.confirm('您确定要删除选中的记录么？', {
             btn: ['确定', '取消'] //按钮
         }, function () {
-            $.post('<?= U('Data/delDictionary') ?>', {id: id}, function (data) {
+            $.post('<?= U('Data/delField') ?>', {id: id}, function (data) {
                 layer.msg(data.msg);
                 if (data.status == 1) {
                     $("#row" + id).remove();

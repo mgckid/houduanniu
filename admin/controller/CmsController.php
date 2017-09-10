@@ -207,7 +207,8 @@ class CmsController extends UserBaseController
         #获取列表字段
         $dictionarylogic = new BaseLogic();
         $list_init = $dictionarylogic->getListInit('cms_category');
-        #完善列表字段枚举值
+//        print_g($list_init);
+/*        #完善列表字段枚举值
         {
             #父级栏目
             $enum = [];
@@ -224,7 +225,7 @@ class CmsController extends UserBaseController
                 $enum[$value['id']] = $value['name'];
             }
             $list_init['model_id']['enum'] = $enum;
-        }
+        }*/
         $data = array(
             'list' => $list,
             'list_init' => $list_init,

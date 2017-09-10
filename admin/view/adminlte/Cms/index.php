@@ -7,20 +7,20 @@
         <table class="table">
             <tr>
                 <?php foreach ($list_init as $key=> $value):?>
-                    <th><?=$value['name']?></th>
+                    <th><?=$value['field_name']?></th>
                 <?php endforeach;?>
                 <th>操作</th>
             </tr>
-            <?php foreach ($list as  $value) {?>
+            <?php foreach ($list as  $val) {?>
                 <tr>
-                    <?php foreach ($list_init as $key => $val): ?>
-                        <td><?= isset($val['enum'][$value[$key]]) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
+                    <?php foreach ($list_init as $key => $value): ?>
+                        <td><?= $val[$key] ?></td>
                     <?php endforeach;?>
                     <td>
-                        <a class="btn btn-primary btn-xs" data-power="Cms/postList" href="<?= U('Cms/postList', array('category_id' => $value['id'])) ?>">查看内容</a>
-                        <a class="btn btn-success btn-xs" data-power="Cms/addPost" href="<?= U('Cms/addPost', array('category_id' => $value['id'])) ?>">添加文档</a>
-                        <a class="btn btn-success btn-xs" data-power="Cms/editCategory" href="<?= U('Cms/editCategory', array('id' => $value['id'])) ?>">修改栏目</a>
-                        <a class="btn btn-danger btn-xs" data-power="Cms/delCategory" href="javascript:void(0)" onclick="deleteColumn(<?= $value['id'] ?>)">删除</a>
+                        <a class="btn btn-primary btn-xs" data-power="Cms/postList" href="<?= U('Cms/postList', array('category_id' => $val['id'])) ?>">查看内容</a>
+                        <a class="btn btn-success btn-xs" data-power="Cms/addPost" href="<?= U('Cms/addPost', array('category_id' => $val['id'])) ?>">添加文档</a>
+                        <a class="btn btn-success btn-xs" data-power="Cms/editCategory" href="<?= U('Cms/editCategory', array('id' => $val['id'])) ?>">修改栏目</a>
+                        <a class="btn btn-danger btn-xs" data-power="Cms/delCategory" href="javascript:void(0)" onclick="deleteColumn(<?= $val['id'] ?>)">删除</a>
                     </td>
                 </tr>
             <?php } ?>
