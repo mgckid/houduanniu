@@ -7,7 +7,7 @@
         <table class="table ">
             <tr>
                 <?php foreach ($list_init as $value):?>
-                    <th><?=$value['name']?></th>
+                    <th><?=$value['field_name']?></th>
                 <?php endforeach;?>
                 <th>操作</th>
             </tr>
@@ -17,10 +17,9 @@
                         <td><?= isset($val['enum'][$value[$key]]) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                     <?php endforeach;?>
                     <td>
-                        <a class="btn btn-success btn-xs"  href="<?= U('CmsModel/addModel', array('id' => $value['id'])) ?>" data-power="CmsModel/addModel">编辑</a>
-                        <a class="btn btn-primary btn-xs"  href="<?= U('CmsModel/addField', array('model_id' => $value['id'])) ?>" data-power="CmsModel/addField">添加字段</a>
-                        <a class="btn btn-info btn-xs"  href="<?= U('CmsModel/fieldManage', array('model_id' => $value['id'])) ?>" data-power="CmsModel/fieldManage">字段管理</a>
-                        <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delRecord(<?= $value['id'] ?>)" data-power="CmsModel/delRecord">删除</a>
+                        <a class="btn btn-success btn-xs"  href="<?= U('CmsModel/editModel', array('id' => $value['id'])) ?>" data-power="CmsModel/editModel">编辑</a>
+                        <a class="btn btn-info btn-xs"  href="<?= U('CmsModel/fieldManage', array('dictionary_id' => $value['id'])) ?>" data-power="CmsModel/fieldManage">字段管理</a>
+                        <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delRecord(<?= $value['id'] ?>)" data-power="CmsModel/delDictionary">删除</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

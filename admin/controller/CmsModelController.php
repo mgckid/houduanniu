@@ -9,6 +9,8 @@ use app\model\CmsFieldModel;
 use app\model\CmsModelModel;
 use app\model\DictionaryModel;
 use app\logic\BaseLogic;
+use app\model\DictionaryModelFieldModel;
+use app\model\DictionaryModelModel;
 use houduanniu\web\Form;
 use houduanniu\base\Page;
 
@@ -30,11 +32,12 @@ class CmsModelController extends UserBaseController
     public function modelManage()
     {
         $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_model');
+        $model = new DictionaryModelModel();
+        $list_init = $dictionaryLogic->getListInit($model->getTableName());
         #查询列表
         {
-            $cmsModelModel = new CmsModelModel();
-            $result = $cmsModelModel->orm()->find_array();
+            $count = $model->getRecordList('', '', '', true);
+            $result = $model->getRecordList('', 0, $count, false, false);
         }
         $data = array(
             'list' => $result,
@@ -42,7 +45,7 @@ class CmsModelController extends UserBaseController
         );
         #面包屑导航
         $this->crumb(array(
-            '内容模型' => U('Cms/index'),
+            '内容模型' => U('CmsModel/modelManage'),
             '模型管理' => ''
         ));
         $this->display('CmsModel/modelManage', $data);
@@ -55,58 +58,42 @@ class CmsModelController extends UserBaseController
      */
     public function fieldManage()
     {
-        $model_id = isset($_GET['model_id']) ? intval($_GET['model_id']) : 0;
-        $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_field');
+        $dictionary_id = isset($_REQUEST['dictionary_id']) ? intval($_REQUEST['dictionary_id']) : 0;
+        if (empty($dictionary_id)) {
+            die('字典id不能为空');
+        }
         #查询列表
         {
-            $cmsFieldModel = new CmsFieldModel();
-            $result = $cmsFieldModel->getRecordList($cmsFieldModel->orm()->where('model_id', $model_id), '', 999, false, false);
-            if ($result) {
-                $cmsAttributeModel = new CmsAttributeModel();
-                foreach ($result as $key => $value) {
-                    $value['attr_count'] = $cmsAttributeModel->getRecordList($cmsAttributeModel->orm()->where('field_id', $value['id']), '', '', true);
-                    $result[$key] = $value;
-                }
-            }
+            $model = new DictionaryModelFieldModel();
+            $condition = ['dictionary_id' => $dictionary_id];
+            $orm = $model->orm()->where($condition);
+            $count = $model->getRecordList($orm, '', '', true);
+            $result = $model->getRecordList($orm, 0, $count, false, false);
         }
+        #获取列表字段
+        {
+            $logic = new BaseLogic();
+            $list_init = $logic->getListInit($model->getTableName());
+        }
+        #获取字典信息
+        {
+            $dictionaryModel = new DictionaryModelModel();
+            $dictionary_info = $dictionaryModel->getRecordInfoById($dictionary_id);
+        }
+
         $data = array(
             'list' => $result,
             'list_init' => $list_init,
+            'dictionary_info' => $dictionary_info
         );
         #面包屑导航
         $this->crumb(array(
-            '模型管理' => U('CmsModel/modelManage'),
-            '字段管理' => '',
+            '字典管理' => U('CmsModel/modelManage'),
+            $dictionary_info['dictionary_name'] . '(' . $dictionary_info['dictionary_value'] . ')字段管理' => '',
         ));
         $this->display('CmsModel/fieldManage', $data);
     }
 
-    /**
-     * 字段管理
-     * @privilege 字段管理|Admin/CmsModel/attributeManage|06173ad3-72a4-11e7-ba80-5996e3b2d0fb|3
-     */
-    public function attributeManage()
-    {
-        $field_id = isset($_GET['field_id']) ? intval($_GET['field_id']) : 0;
-        $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_attribute');
-        #查询列表
-        {
-            $cmsAttributeModel = new CmsAttributeModel();
-            $result = $cmsAttributeModel->getRecordList($cmsAttributeModel->orm()->where('field_id', $field_id), '', 999, false, false);
-        }
-        $data = array(
-            'list' => $result,
-            'list_init' => $list_init,
-        );
-        #面包屑导航
-        $this->crumb(array(
-            '模型管理' => U('CmsModel/modelManage'),
-            '属性管理' => '',
-        ));
-        $this->display('CmsModel/attributeManage', $data);
-    }
 
     /**
      * 添加内容模型
@@ -115,25 +102,63 @@ class CmsModelController extends UserBaseController
     public function addModel()
     {
         if (IS_POST) {
-            $dictionaryLogic = new BaseLogic();
-            $request_data = $dictionaryLogic->getRequestData('cms_model', 'table');
-
-            $cmsModelModel = new CmsModelModel();
-            $result = $cmsModelModel->addCmsModel($request_data);
-            if ($result) {
-                $this->ajaxSuccess();
-            } else {
+            $model = new DictionaryModelModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
                 $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
             }
         } else {
-            $cmsModelModel = new CmsModelModel();
+            $model = new DictionaryModelModel();
+            $logic = new BaseLogic();
+            #初始化表单
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            Form::getInstance()->form_schema($form_init);
+            #面包屑导航
+            $this->crumb(array(
+                '模型管理' => U('CmsModel/modelManage'),
+                '添加内容模型' => '',
+            ));
+            $this->display('CmsModel/addModel');
+        }
+    }
+
+    /**
+     * 修改内容模型
+     * @privilege 修改内容模型|Admin/CmsModel/editModel|f7e9d801-9639-11e7-b91c-e03f49a02407|3
+     */
+    public function editModel()
+    {
+        if (IS_POST) {
+            $model = new DictionaryModelModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $result = $cmsModelModel->getCmsModelInfo($cmsModelModel->orm()->where('id', $id));
-
-            $dictionaryLogic = new BaseLogic();
-            $form_init = $dictionaryLogic->getFormInit('cms_model', 'table');
-
+            if (!$id) {
+                die('模型id不能为空');
+            }
+            $model = new DictionaryModelModel();
+            $logic = new BaseLogic();
+            #查询数据
+            $result = $model->getRecordInfoById($id);
+            #初始化表单
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
             Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '模型管理' => U('CmsModel/modelManage'),
+                '修改内容模型' => '',
+            ));
             $this->display('CmsModel/addModel');
         }
     }
@@ -146,101 +171,98 @@ class CmsModelController extends UserBaseController
     public function addField()
     {
         if (IS_POST) {
-            $dictionaryLogic = new BaseLogic();
-            $request_data = $dictionaryLogic->getRequestData('cms_field', 'table');
-
-            $cmsFieldModel = new CmsFieldModel();
-            $result = $cmsFieldModel->addRecord($request_data);
-            if ($result) {
-                $this->ajaxSuccess();
-            } else {
+            $model = new DictionaryModelFieldModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
                 $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
             }
         } else {
-            $cmsModelModel = new CmsModelModel();
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $model_id = isset($_GET['model_id']) ? intval($_GET['model_id']) : 0;
-            $result = [];
-            if ($id) {
-                $result = $cmsModelModel->orm()->for_table('cms_field')->where('id', $id)->find_one()->as_array();
+            $dictionary_id = isset($_REQUEST['dictionary_id']) ? intval($_REQUEST['dictionary_id']) : 0;
+            if (empty($dictionary_id)) {
+                die('字典id不能为空');
             }
-            if (!$result && $model_id) {
-                $result['model_id'] = $model_id;
-            }
-
-            $dictionaryLogic = new BaseLogic();
-            $form_init = $dictionaryLogic->getFormInit('cms_field', 'table');
-            #补充枚举数据
-            {
-                $model_result = $cmsModelModel->orm()->select_expr('name,id')->find_array();
-                $enum = [];
-                foreach ($model_result as $value) {
-                    $enum[] = [
-                        'value' => $value['id'],
-                        'option' => $value['name'],
-                    ];
-                }
-                $form_init['model_id']['enum'] = $enum;
-            }
+            #表单初始化
+            $model = new DictionaryModelFieldModel();
+            $logic = new BaseLogic();
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            $result['dictionary_id'] = $dictionary_id;
             Form::getInstance()->form_schema($form_init)->form_data($result);
+            #获取字典信息
+            {
+                $dictionaryModel = new DictionaryModelModel();
+                $dictionary_info = $dictionaryModel->getRecordInfoById($dictionary_id);
+            }
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('CmsModel/modelManage'),
+                $dictionary_info['dictionary_name'] . '(' . $dictionary_info['dictionary_value'] . ')添加字段' => '',
+            ));
             $this->display('CmsModel/addField');
         }
     }
 
     /**
-     * 添加模型字段字段属性
-     * @privilege 添加模型字段属性|Admin/CmsModel/addAttribute|ee75adda-772a-11e7-ba80-5996e3b2d0fb|3
+     * 修改字段
+     * @privilege 修改字段|Admin/CmsModel/editField|080a60fb-9646-11e7-b91c-e03f49a02407|3
      */
-    public function addAttribute()
+    public function editField()
     {
         if (IS_POST) {
-            $dictionaryLogic = new BaseLogic();
-            $request_data = $dictionaryLogic->getRequestData('cms_attribute', 'table');
-
-            $cmsAttributeModel = new CmsAttributeModel();
-            $result = $cmsAttributeModel->addRecord($request_data);
-            if ($result) {
-                $this->ajaxSuccess();
-            } else {
+            $model = new DictionaryModelFieldModel();
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData($model->getTableName(), 'table');
+            $result = $model->addRecord($request_data);
+            if (!$result) {
                 $this->ajaxFail();
+            } else {
+                $this->ajaxSuccess();
             }
         } else {
-            $cmsAttributeModel = new CmsAttributeModel();
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $field_id = isset($_GET['field_id']) ? intval($_GET['field_id']) : 0;
-            $result = [];
-            if ($id) {
-                $result = $cmsAttributeModel->getRecordInfoById($id);
+            $id = isset($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+            if (empty($id)) {
+                die('字段id不能为空');
             }
-            if (!$result && $field_id) {
-                $result['field_id'] = $field_id;
-            }
-            $dictionaryLogic = new BaseLogic();
-            $form_init = $dictionaryLogic->getFormInit('cms_attribute', 'table');
-
+            #表单初始化
+            $model = new DictionaryModelFieldModel();
+            $logic = new BaseLogic();
+            $form_init = $logic->getFormInit($model->getTableName(), 'table');
+            $result = $model->getRecordInfoById($id);
             Form::getInstance()->form_schema($form_init)->form_data($result);
-            $this->display('CmsModel/addAttribute');
+            #获取字典信息
+            {
+                $dictionaryModel = new DictionaryModelModel();
+                $dictionary_info = $dictionaryModel->getRecordInfoById($result['dictionary_id']);
+            }
+            #面包屑导航
+            $this->crumb(array(
+                '字典管理' => U('CmsModel/modelManage'),
+                $dictionary_info['dictionary_name'] . '(' . $dictionary_info['dictionary_value'] . ')编辑字段' => '',
+            ));
+            $this->display('CmsModel/addField');
         }
     }
 
+
     /**
-     * 删除记录
-     * @privilege 删除记录|Admin/CmsModel/delRecord|b53ee342-774d-11e7-ba80-5996e3b2d0fb|3
+     * 删除字典
+     * @privilege 删除字典|Admin/CmsModel/delDictionary|b53ee342-774d-11e7-ba80-5996e3b2d0fb|3
      */
-    public function delRecord()
+    public function delDictionary()
     {
         if (!IS_POST) {
             $this->ajaxFail('非法请求');
         }
-        $model = new BaseModel();
+        $model = new DictionaryModelModel();
         #验证
         $rule = array(
             'id' => 'required|integer',
-            'type' => 'in:model,field,attribute'
         );
         $attr = array(
-            'id' => '配置id',
-            'type' => '类型'
+            'id' => '字典id',
         );
         $validate = $model->validate()->make($_POST, $rule, [], $attr);
         if (false === $validate->passes()) {
@@ -248,19 +270,55 @@ class CmsModelController extends UserBaseController
         }
         #获取参数
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
-        $type = isset($_POST['type']) ? trim($_POST['type']) : '';
-        if ($type == 'model') {
-            $model == new CmsModelModel();
-        } elseif ($type == 'field') {
-            $model = new CmsFieldModel();
-        } elseif ($type == 'attribute') {
-            $model = new CmsAttributeModel();
-        }
+        $model->beginTransaction();
         #删除记录
-        if (!$model->deleteRecordById($id)) {
-            $this->ajaxFail($this->getMessage());
+        try {
+            $result = $model->deleteRecordById($id);
+            if (!$result) {
+                throw new \Exception('删除字典失败');
+            }
+            $fieldModel = new DictionaryModelFieldModel();
+            $orm = $fieldModel->orm()->where('dictionary_id', $id);
+            $del_result = $fieldModel->delRecord($orm);
+            if (!$del_result) {
+                throw new \Exception('删除字段失败');
+            }
+            $model->commit();
+            $this->ajaxSuccess('删除成功');
+        } catch (\Exception $ex) {
+            $model->rollBack();
+            $this->ajaxFail($ex->getMessage());
+        }
+    }
+
+    /**
+     * 删除字段
+     * @privilege 删除字段|Admin/CmsModel/delField|b56ac400-9648-11e7-b91c-e03f49a02407|3
+     */
+    public function delField()
+    {
+        if (!IS_POST) {
+            $this->ajaxFail('非法请求');
+        }
+        $model = new DictionaryModelFieldModel();
+        #验证
+        $rule = array(
+            'id' => 'required|integer',
+        );
+        $attr = array(
+            'id' => '字段id',
+        );
+        $validate = $model->validate()->make($_POST, $rule, [], $attr);
+        if (false === $validate->passes()) {
+            $this->ajaxFail($validate->messages()->first());
+        }
+        #获取参数
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $result = $model->deleteRecordById($id);
+        if (!$result) {
+            $this->ajaxFail('删除失败');
         } else {
-            $this->ajaxSuccess($this->getMessage());
+            $this->ajaxSuccess('删除成功');
         }
     }
 

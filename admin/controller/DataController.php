@@ -260,7 +260,7 @@ class DataController extends UserBaseController
     public function addAttribute()
     {
         if (IS_POST) {
-            $model = new DictionaryTableModel();
+            $model = new DictionaryAttributeModel();
             $logic = new BaseLogic();
             $request_data = $logic->getRequestData($model->getTableName(), 'table');
             $result = $model->addRecord($request_data);
@@ -291,7 +291,7 @@ class DataController extends UserBaseController
     public function editAttribute()
     {
         if (IS_POST) {
-            $model = new DictionaryTableModel();
+            $model = new DictionaryAttributeModel();
             $logic = new BaseLogic();
             $request_data = $logic->getRequestData($model->getTableName(), 'table');
             $result = $model->addRecord($request_data);
