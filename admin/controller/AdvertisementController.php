@@ -119,7 +119,7 @@ class AdvertisementController extends UserBaseController
             {
                 #获取广告位下拉
                 $AdvertisementPositionModel = new AdvertisementPositioModel();
-                $positionList = $AdvertisementPositionModel->getRecordList('',0, 999, false, 'id,position_name');
+                $positionList = $AdvertisementPositionModel->getRecordList('',0, 999, false);
                 $enum = [];
                 foreach ($positionList as $key => $value) {
                     $enum[] = [

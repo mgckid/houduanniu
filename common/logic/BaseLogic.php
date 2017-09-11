@@ -329,13 +329,13 @@ class BaseLogic extends Controller
     public function getModelData()
     {
         #模型分类
-        $cmsModelModel = new CmsModelModel();
-        $model_result = $cmsModelModel->getAllCmsModel('id,name');
+        $cmsModelModel = new DictionaryModelModel();
+        $model_result = $cmsModelModel->getAllRecord();
         $data = [];
         foreach ($model_result as $key => $value) {
             $data[] = [
                 'id' => $value['id'],
-                'name' => $value['name'],
+                'name' => $value['dictionary_name'],
             ];
         }
         return $data;

@@ -28,7 +28,7 @@ class DataController extends UserBaseController
         {
             $dictionaryModel = new DictionaryTableModel();
             $count = $dictionaryModel->getRecordList('', '', '', true);
-            $result = $dictionaryModel->getRecordList('', 0, $count, false, false);
+            $result = $dictionaryModel->getRecordList('', 0, $count, false);
         }
         #获取列表字段
         $dictionaryLogic = new BaseLogic();
@@ -97,7 +97,7 @@ class DataController extends UserBaseController
         {
             $model = new DictionaryAttributeModel();
             $count = $model->getRecordList('', '', '', true);
-            $result = $model->getRecordList('', 0, $count, false, false);
+            $result = $model->getRecordList('', 0, $count, false,'field_value');
         }
         #获取列表字段
         {

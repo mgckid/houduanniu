@@ -11,15 +11,15 @@
                 <?php endforeach;?>
                 <th>操作</th>
             </tr>
-            <?php foreach ($list as  $val):?>
-                <tr id="row<?=$val['id']?>">
-                    <?php foreach ($list_init as $key => $value): ?>
-                        <td><?= $val[$key] ?></td>
+            <?php foreach ($list as  $value):?>
+                <tr id="row<?= $value['id'] ?>">
+                    <?php foreach ($list_init as $key => $val): ?>
+                        <td><?= !empty($val['enum']) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                     <?php endforeach;?>
                     <td>
-                        <a class="btn btn-success btn-xs"  href="<?= U('Data/editDictionary', array('id' => $val['id'])) ?>" data-power="Data/editDictionary">编辑</a>
-                        <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delRecord(<?= $val['id'] ?>)" data-power="Data/delDictionary">删除</a>
-                        <a class="btn btn-info btn-xs"  href="<?= U('Data/fieldManage', array('dictionary_id' => $val['id'])) ?>" data-power="Data/fieldManage">字段管理</a>
+                        <a class="btn btn-success btn-xs"  href="<?= U('Data/editDictionary', array('id' => $value['id'])) ?>" data-power="Data/editDictionary">编辑</a>
+                        <a class="btn btn-danger ml10 btn-xs" href="javascript:void(0)" onclick="delRecord(<?= $value['id'] ?>)" data-power="Data/delDictionary">删除</a>
+                        <a class="btn btn-info btn-xs"  href="<?= U('Data/fieldManage', array('dictionary_id' => $value['id'])) ?>" data-power="Data/fieldManage">字段管理</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -13,7 +13,7 @@ use app\model\BaseModel;
 
 /**
  * 弹出层控制器
- * @privilege 弹出层管理|Admin/Pop|e902296d-2006-11e7-8ad5-9cb3ab404099|1
+ * @privilege 弹出层管理|Admin/Pop|e902296d-2006-11e7-8ad5-9cb3ab404099|3
  * @date 2016年5月4日 21:17:23
  * @author Administrator
  */
@@ -47,7 +47,7 @@ class PopController extends UserBaseController
         }
         $model_name = 'app\\logic\\' . ucfirst($_REQUEST['model_name']);
         $methid_name = $_REQUEST['method_name'];
-        $param = isset($_REQUEST['param'])?$_REQUEST['param']:[];
+        $param = isset($_REQUEST['param']) ? $_REQUEST['param'] : [];
         if (!class_exists($model_name)) {
             $this->ajaxFail('模块不存在');
         }

@@ -10,14 +10,14 @@
             <thead>
             <tr>
                 <?php foreach ($list_init as $key=> $value):?>
-                    <th><?=$value['name']?></th>
+                    <th><?=$value['field_name']?></th>
                 <?php endforeach;?>
                 <th>操作</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($adList as $value): ?>
-                <tr id="list<?= $value['id'] ?>">
+                <tr id="row<?= $value['id'] ?>">
                     <?php foreach ($list_init as $key => $val): ?>
                         <td><?= !empty($val['enum']) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                     <?php endforeach;?>

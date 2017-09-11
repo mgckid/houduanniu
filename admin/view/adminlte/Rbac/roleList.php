@@ -12,7 +12,7 @@
             <thead>
             <tr>
                 <?php foreach ($list_init as $key=> $value):?>
-                    <th><?=$value['name']?></th>
+                    <th><?=$value['field_name']?></th>
                 <?php endforeach;?>
             </tr>
             </thead>

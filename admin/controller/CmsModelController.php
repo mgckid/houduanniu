@@ -37,7 +37,7 @@ class CmsModelController extends UserBaseController
         #查询列表
         {
             $count = $model->getRecordList('', '', '', true);
-            $result = $model->getRecordList('', 0, $count, false, false);
+            $result = $model->getRecordList('', 0, $count, false);
         }
         $data = array(
             'list' => $result,
@@ -68,7 +68,7 @@ class CmsModelController extends UserBaseController
             $condition = ['dictionary_id' => $dictionary_id];
             $orm = $model->orm()->where($condition);
             $count = $model->getRecordList($orm, '', '', true);
-            $result = $model->getRecordList($orm, 0, $count, false, false);
+            $result = $model->getRecordList($orm, 0, $count, false);
         }
         #获取列表字段
         {

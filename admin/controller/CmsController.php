@@ -145,7 +145,8 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '添加文档' => ''
             ));
-            $this->display($model_result['post_add_template']);
+            $template = !empty($model_result['post_add_template'])?$model_result['post_add_template']:'Cms/addPost';
+            $this->display($template);
         }
     }
 
@@ -189,7 +190,8 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '编辑文档' => ''
             ));
-            $this->display($model_result['post_add_template']);
+            $template = !empty($model_result['post_add_template'])?$model_result['post_add_template']:'Cms/addPost';
+            $this->display($template);
         }
     }
 

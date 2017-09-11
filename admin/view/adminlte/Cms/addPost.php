@@ -9,7 +9,6 @@
                 <div class="col-sm-10">
                     <button class="btn btn-success" type="submit">提交</button>
                     <button type="reset" class="btn btn-danger ml10">重置</button>
-                    <button type="button" id="fenci" class="btn btn-primary ml10">文章分词</button>
                 </div>
             </div>
             </form>
@@ -17,6 +16,13 @@
     </div>
 </div>
 <!--/panel-->
+<div class="tag_list" style="display: none;">
+    <div class="padding10">
+        <?php foreach ($tag_list as $val): ?>
+            <span class="label label-primary" data-id="<?= $val['tag_id'] ?>"><?= $val['tag_name'] ?></span>
+        <?php endforeach; ?>
+    </div>
+</div>
 <!--js组件 开始-->
 <!--上传 开始-->
 <?= $this->insert('Common/plug_upload_fileinput') ?>
@@ -49,7 +55,7 @@
                 if (data.status == 1) {
                     $('form[name=autoform]').find('input:reset').click();
                     setTimeout(function () {
-                          window.history.go(-1)
+                        window.history.go(-1)
                     }, 2000);
                 }
             }
@@ -76,29 +82,5 @@
             }
         }, 'json')
     })
-    //分词操作
-    $('#fenci').on('click', function () {
-        var content = $('[name=content]').val();
-        var json = {
-            model_name: 'Article',
-            method_name: 'getFenci',
-            param: {
-                content: content
-            }
-        };
-        $.post('<?=U('pop/index')?>', json, function (data) {
-            if (data.status != 1) {
-                layer.alert(data.msg);
-            }
-            //关键字
-            $('[name=keywords]').val(data.data.keyword);
-            //描述
-            $('[name=description]').val(data.data.description);
-            //标签
-            $('[name=post_tag]').val(data.data.tag)
-        }, 'json')
-    })
-    //获取栏目数据
-
 </script>
 

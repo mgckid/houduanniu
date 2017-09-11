@@ -138,7 +138,7 @@ class BaseModel extends Model
             $model = $orm->offset($offset)
                 ->limit($limit)
                 ->select($field);
-            if ($order = 'desc') {
+            if ($order == 'desc') {
                 $model = $model->order_by_desc($sort_field);
             } else {
                 $model = $model->order_by_asc($sort_field);
