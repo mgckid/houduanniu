@@ -9,12 +9,13 @@
 namespace app\controller;
 
 
-use app\model\CmsAttributeModel;
+use app\logic\BaseLogic;
 use app\model\CmsPostExtendAttributeModel;
 use houduanniu\api\Controller;
 use app\model\CmsPostModel;
 use houduanniu\base\Page;
 use app\model\CmsCategoryModel;
+use app\model\DictionaryModelModel;
 
 class PostController extends Controller
 {
@@ -45,11 +46,11 @@ class PostController extends Controller
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $page_size = $_REQUEST['page_size'];
-        $result = $cmsPostModel->getRecordList('',0,$page_size,false,'click');
-        $list=[];
+        $result = $cmsPostModel->getRecordList('', 0, $page_size, false, 'click');
+        $list = [];
         foreach ($result as $key => $value) {
             $post = $cmsPostModel->getRecordInfoById($value['id']);
-            $list[] =$post;
+            $list[] = $post;
         }
         $this->response($list, self::S200_OK, null, true);
     }
@@ -150,4 +151,64 @@ class PostController extends Controller
         }
         $this->response($result, self::S200_OK, '', true);
     }
+
+    public function siteNavigation()
+    {
+        $model = new CmsCategoryModel();
+        $dictionaryModelModel = new DictionaryModelModel();
+        $cateResult = $model->getAllRecord();
+        $this->response($cateResult, self::S200_OK, null, true);
+    }
+
+    public function category()
+    {
+        $cmsCategoryModel = new CmsCategoryModel();
+        $rules = [
+            'category_alias' => 'required',
+            'page_size' => 'required|integer',
+            'p' => 'required|integer',
+        ];
+        $map = [
+            'category_alias' => '栏目标识',
+            'page_size' => '列表记录数',
+            'p' => '当前页数',
+        ];
+        $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+        if (false == $validate->passes()) {
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+        }
+        $category_alias = $_REQUEST['category_alias'];
+        $page_size = $_REQUEST['page_size'];
+        $p = $_REQUEST['p'];
+        #获取栏目信息
+        {
+            $logic = new BaseLogic();
+            $orm = $cmsCategoryModel->orm()->where('category_alias', $category_alias);
+            $category_result = $cmsCategoryModel->getRecordInfo($orm);
+            $model_result = $logic->getModelInfo($category_result['model_id']);
+            $category_result['dictionary_value'] = $model_result['dictionary_value'];
+        }
+        #获取栏目下文档
+        {
+            $cmsPostModel = new CmsPostModel();
+            $orm = $cmsPostModel->orm()->where('category_id', $category_result['id']);
+            $count = $cmsPostModel->getRecordList($orm, '', '', true);
+            $page = new Page($count, $p, $page_size);
+            $result = $cmsPostModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false);
+            $list = [];
+            foreach ($result as $key => $value) {
+                $post = $cmsPostModel->getRecordInfoByPostid($value['post_id']);
+                $post['category_name'] = $category_result['category_name'];
+                $list[] = $post;
+            }
+        }
+        $return = [
+            'count' => $count,
+            'list' => $list,
+            'category_info' => $category_result,
+        ];
+        $this->response($return, self::S200_OK, null, true);
+
+    }
+
 }

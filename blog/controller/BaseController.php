@@ -149,6 +149,11 @@ class BaseController extends Controller
             $result = $this->apiRequest('Site/flink', [], 'Api');
             $reg['flink'] = $result['data'];
         }
+        #网站导航
+        {
+            $result = $this->apiRequest('Post/siteNavigation', [], 'Api');
+            $reg['siteNavgation'] = $result['data'];
+        }
         View::addData($reg);
         View::setDirectory(__PROJECT__ . '/' . strtolower(Application::getModule()) . '/' . C('DIR_VIEW'));
         View::display($view, $data);

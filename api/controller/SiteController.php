@@ -9,6 +9,7 @@
 namespace app\controller;
 
 
+use app\model\CmsCategoryModel;
 use app\model\SiteConfigModel;
 use app\model\SiteFlinkModel;
 use houduanniu\api\Controller;
@@ -30,5 +31,7 @@ class SiteController extends Controller
         $result = $siteConfigModel->getAllRecord($orm, 'fname,furl,fdesc');
         $this->response($result, self::S200_OK, null, true);
     }
+
+
 
 }

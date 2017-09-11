@@ -10,21 +10,9 @@
                 <div class="mr-auto">
                     <ul id="main-nav" class="navbar-nav mr-auto">
                         <li class="nav-item active"><a title="首页" href="/" class="nav-link">首页</a></li>
-                        <li class="nav-item"><a title="WordPress" href="##wordpress" class="nav-link">WordPress</a></li>
-                        <li class="nav-item"><a title="运营" href="##growth" class="nav-link">运营</a></li>
-                        <li class="nav-item"><a title="状态" href="http://blog.houduanniu.com/type/status" class="nav-link">状态</a></li>
-                        <li class="nav-item"><a title="链接" href="http://blog.houduanniu.com/type/link" class="nav-link">链接</a></li>
-                        <li class="nav-item"><a title="关于" href="http://blog.houduanniu.com/about" class="nav-link">关于</a></li>
-                        <li class="nav-item"><a title="留言板" href="http://blog.houduanniu.com/contact" class="nav-link">留言板</a></li>
-                        <li class="nav-item dropdown dropdown"><a title="更多" href="#" data-toggle="dropdown" class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">更多 <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="nav-item"><a title="标签云" href="http://blog.houduanniu.com/tag" class="nav-link">标签云</a></li>
-                                <li class="nav-item"><a title="知识管理" href="##knowledge-management" class="nav-link">知识管理</a></li>
-                                <li class="nav-item"><a title="日常随笔" href="##essay" class="nav-link">日常随笔</a></li>
-                                <li class="nav-item"><a title="没地方可放的" href="##uncategorized" class="nav-link">没地方可放的</a></li>
-                                <li class="nav-item"><a title="主题" href="http://blog.houduanniu.com/theme" class="nav-link">主题</a></li>
-                            </ul>
-                        </li>
+                        <?php foreach($siteNavgation as $value):?>
+                        <li class="nav-item"><a title="<?=$value['category_name']?>" href="<?=U('Index/category',['cate'=>$value['category_alias']])?>" class="nav-link"><?=$value['category_name']?></a></li>
+                        <?php endforeach;?>
                     </ul>
                 </div>
                 <form class="form-inline" role="search" method="get" id="searchform" action="###">
