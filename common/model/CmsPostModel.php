@@ -167,17 +167,17 @@ class CmsPostModel extends BaseModel
         foreach ($model_defined as $value) {
             switch ($value['belong_to_table']) {
                 case 'cms_post':
-                    if (isset($request_data[$value['value']])) {
-                        $cms_post_data[$value['value']] = $request_data[$value['value']];
+                    if (isset($request_data[$value['field_value']])) {
+                        $cms_post_data[$value['field_value']] = $request_data[$value['field_value']];
                     }
                     break;
                 default:
-                    if (isset($request_data[$value['value']])) {
+                    if (isset($request_data[$value['field_value']])) {
                         $extend_data[] = [
                             'table_name' => $value['belong_to_table'],
                             'post_id' => $request_data['post_id'],
-                            'field' => $value['value'],
-                            'value' => $request_data[$value['value']],
+                            'field' => $value['field_value'],
+                            'value' => $request_data[$value['field_value']],
                         ];
                     }
             }

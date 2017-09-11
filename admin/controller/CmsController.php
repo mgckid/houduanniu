@@ -100,7 +100,7 @@ class CmsController extends UserBaseController
             if (!$model_result) {
                 $this->ajaxSuccess('内容模型不存在');
             }
-            $model_name = $model_result['value'];
+            $model_name = $model_result['dictionary_value'];
             $request_data = $baseLogic->getRequestData($model_name, 'model');
             $cmsPostModel = new CmsPostModel();
             $result = $cmsPostModel->addRecord($request_data);
@@ -164,7 +164,7 @@ class CmsController extends UserBaseController
             if (!$model_result) {
                 $this->ajaxSuccess('内容模型不存在');
             }
-            $model_name = $model_result['value'];
+            $model_name = $model_result['dictionary_value'];
             $request_data = $baseLogic->getRequestData($model_name, 'model');
             $cmsPostModel = new CmsPostModel();
             $result = $cmsPostModel->addRecord($request_data);
