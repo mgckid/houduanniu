@@ -130,9 +130,8 @@ class CmsController extends UserBaseController
             if (!$model_result) {
                 die('内容模型不存在');
             }
-
             #获取表单初始化数据
-            $form_init = $baseLogic->getFormInit($model_result['value'], 'model');
+            $form_init = $baseLogic->getFormInit($model_result['dictionary_value'], 'model');
             #添加文档是默认数据
             $form_data['category_id'] = $category_id;
             $form_data['model_id'] = $model_result['id'];
@@ -290,8 +289,8 @@ class CmsController extends UserBaseController
         $list = $model->getRecordList($orm, $page->getOffset(), $fetch_row, FALSE);
         #获取列表字段
         $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('cms_post');
-        #完善列表字段枚举值
+        $list_init = $dictionaryLogic->getListInit('article','model');
+/*        #完善列表字段枚举值
         {
             #父级栏目
             $cmsCategoryModel = new CmsCategoryModel();
@@ -310,7 +309,7 @@ class CmsController extends UserBaseController
                 $enum[$value['id']] = $value['name'];
             }
             $list_init['model_id']['enum'] = $enum;
-        }
+        }*/
         $data = array(
             'list' => $list,
             'list_init' => $list_init,

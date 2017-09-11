@@ -11,6 +11,8 @@ namespace app\logic;
 use app\model\CmsFieldModel;
 use app\model\CmsModelModel;
 use app\model\DictionaryModel;
+use app\model\DictionaryModelFieldModel;
+use app\model\DictionaryModelModel;
 use houduanniu\base\Hook;
 use houduanniu\base\Model;
 use houduanniu\web\Controller;
@@ -90,26 +92,27 @@ class BaseLogic extends Controller
     public function getModelDefined($model_name)
     {
         $model_result = $this->getModelInfo($model_name);
-        $model_name = $model_result['field_value'];
-        $model = new CmsFieldModel();
-        $field_result = $model->orm()->table_alias('f')
-            ->left_join('cms_model', ['f.model_id', '=', 'm.id'], 'm')
+        $model_name = $model_result['dictionary_value'];
+        $model = new DictionaryModelModel();
+        $field_result = $model->orm()->table_alias('d')
+            ->left_join('dictionary_model_field', ['d.id', '=', 'f.dictionary_id'], 'f')
             ->select_expr('f.*')
-            ->where('m.value', $model_name)
+            ->where('d.dictionary_value', $model_name)
+            ->where('d.deleted', 0)
             ->where('f.deleted', 0)
             ->find_array();
         if ($field_result) {
+            $dictionaryAttributeModel = new DictionaryAttributeModel();
             foreach ($field_result as $key => $value) {
-                $enum_result = $model->orm()->for_table('cms_attribute')
-                    ->use_id_column('id')
-                    ->select_expr('name,value')
-                    ->where('field_id', $value['id'])
-                    ->where('deleted', 0)
-                    ->find_array();
+                $orm = $dictionaryAttributeModel->orm()->where('field_value', $value['field_value'])->where('deleted', 0);
+                $enum_result = $dictionaryAttributeModel->getAllRecord($orm, 'attribute_name,attribute_value');
                 $enum = [];
                 if (!empty($enum_result)) {
                     foreach ($enum_result as $e) {
-                        $enum[$e['field_value']] = $e;
+                        $enum[$e['attribute_value']] = [
+                            'value' => $e['attribute_value'],
+                            'name' => $e['attribute_name'],
+                        ];
                     }
                 }
                 $value['enum'] = $enum;
@@ -215,9 +218,13 @@ class BaseLogic extends Controller
         return $request_data;
     }
 
-    public function getListInit($table_name)
+    public function getListInit($table_name,$mode = 'table')
     {
-        $table_defined = $this->getTableDefinded($table_name);
+        if($mode=='table'){
+            $table_defined = $this->getTableDefinded($table_name);
+        }elseif($mode=='model'){
+            $table_defined = $this->getModelDefined($table_name);
+        }
         $list_init = [];
         foreach ($table_defined as $value) {
             #只显示列表运许显示显示的字段
@@ -245,9 +252,9 @@ class BaseLogic extends Controller
         if (is_numeric($model_name)) {
             $where = ['id' => $model_name];
         } else {
-            $where = ['field_value' => $model_name];
+            $where = ['dictionary_value' => $model_name];
         }
-        $cmsModel = new CmsModelModel();
+        $cmsModel = new DictionaryModelModel();
         $result = $cmsModel->getRecordInfo($cmsModel->orm()->where($where));
         return $result;
     }

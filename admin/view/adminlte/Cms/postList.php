@@ -6,7 +6,7 @@
                 <table class="table">
                     <tr>
                         <?php foreach ($list_init as $key=> $value):?>
-                            <th><?=$value['name']?></th>
+                            <th><?=$value['field_name']?></th>
                         <?php endforeach;?>
                         <th width="10%">操作</th>
                     </tr>

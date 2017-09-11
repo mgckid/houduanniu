@@ -351,7 +351,7 @@ class CmsPostModel extends BaseModel
         #获取模型定义
         $model_defined = $baseLogic->getModelDefined($cms_post_result['model']);
         #获取扩展数据
-        $fields = array_unique(array_column($model_defined, 'value'));
+        $fields = array_unique(array_column($model_defined, 'field_value'));
         $tables = array_unique(array_column($model_defined, 'belong_to_table'));
         $tables = array_flip($tables);
         if (isset($tables['cms_post'])) {
