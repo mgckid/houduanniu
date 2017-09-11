@@ -12,6 +12,7 @@ use app\model\CmsPostModel;
 use app\model\CmsPageModel;
 use app\model\CmsTagModel;
 use app\model\CoreTextModel;
+use app\model\DictionaryModelModel;
 use houduanniu\base\Application;
 use houduanniu\base\BosonNLP;
 use houduanniu\base\Hook;
@@ -176,13 +177,13 @@ class CmsController extends UserBaseController
             $baseLogic = new BaseLogic();
             $cmsPostModel = new CmsPostModel();
             #获取文档信息
-            $post_result = $cmsPostModel->getPostInfoById($id);
+            $post_result = $cmsPostModel->getRecordInfoById($id, '*');
             #获取表单初始化数据
-            $form_init = $baseLogic->getFormInit($post_result['model'], 'model');
+            $form_init = $baseLogic->getFormInit($post_result['model_id'], 'model');
             Form::getInstance()->form_data($post_result)
                 ->form_schema($form_init);
             #获取模型信息
-            $model_result = $baseLogic->getModelInfo($post_result['model']);
+            $model_result = $baseLogic->getModelInfo($post_result['model_id']);
             #面包屑导航
             $this->crumb(array(
                 '内容管理' => U('Cms/index'),
@@ -201,30 +202,30 @@ class CmsController extends UserBaseController
     {
         #获取栏目列表数据
         $cmsCategoryModel = new CmsCategoryModel();
-        $all_category_result = $cmsCategoryModel->getAllRecord($cmsCategoryModel->orm()->where('deleted',0));
+        $all_category_result = $cmsCategoryModel->getAllRecord($cmsCategoryModel->orm()->where('deleted', 0));
         $list = treeStructForLevel($all_category_result);
         #获取列表字段
         $dictionarylogic = new BaseLogic();
         $list_init = $dictionarylogic->getListInit('cms_category');
 //        print_g($list_init);
-/*        #完善列表字段枚举值
-        {
-            #父级栏目
-            $enum = [];
-            foreach ($all_category_result as $value) {
-                $enum[$value['id']] = $value['category_name'];
-            }
-            $enum[0] = '根目录';
-            $list_init['pid']['enum'] = $enum;
-            #栏目模型
-            $enum = [];
-            $cmsModelModel = new CmsModelModel();
-            $model_result = $cmsModelModel->getAllRecord();
-            foreach ($model_result as $value) {
-                $enum[$value['id']] = $value['name'];
-            }
-            $list_init['model_id']['enum'] = $enum;
-        }*/
+        /*        #完善列表字段枚举值
+                {
+                    #父级栏目
+                    $enum = [];
+                    foreach ($all_category_result as $value) {
+                        $enum[$value['id']] = $value['category_name'];
+                    }
+                    $enum[0] = '根目录';
+                    $list_init['pid']['enum'] = $enum;
+                    #栏目模型
+                    $enum = [];
+                    $cmsModelModel = new CmsModelModel();
+                    $model_result = $cmsModelModel->getAllRecord();
+                    foreach ($model_result as $value) {
+                        $enum[$value['id']] = $value['name'];
+                    }
+                    $list_init['model_id']['enum'] = $enum;
+                }*/
         $data = array(
             'list' => $list,
             'list_init' => $list_init,
@@ -279,21 +280,29 @@ class CmsController extends UserBaseController
             die('栏目列表不能为空');
         }
 
+        #获取栏目信息
+        {
+            $cmsCategoryModel = new CmsCategoryModel();
+            $category_result = $cmsCategoryModel->getRecordInfoById($category_id);
+        }
         #获取列表数据
-        $model = new CmsPostModel();
-        $orm = $model->orm()->where('category_id', $category_id);
-        #统计记录数
-        $count = $model->getRecordList($orm, '', '', TRUE);
-        #分页
-        $page = new Page($count, $p, $fetch_row);
-        $list = $model->getRecordList($orm, $page->getOffset(), $fetch_row, FALSE);
+        {
+            $model = new CmsPostModel();
+            $orm = $model->orm()->where('category_id', $category_id);
+            #统计记录数
+            $count = $model->getRecordList($orm, '', '', TRUE);
+            #分页
+            $page = new Page($count, $p, $fetch_row);
+            $list = $model->getRecordList($orm, $page->getOffset(), $fetch_row, FALSE);
+        }
         #获取列表字段
-        $dictionaryLogic = new BaseLogic();
-        $list_init = $dictionaryLogic->getListInit('article','model');
-/*        #完善列表字段枚举值
+        {
+            $dictionaryLogic = new BaseLogic();
+            $list_init = $dictionaryLogic->getListInit($model->getTableName());
+        }
+        #完善列表字段枚举值
         {
             #父级栏目
-            $cmsCategoryModel = new CmsCategoryModel();
             $all_category_result = $cmsCategoryModel->getAllRecord();
             $enum = [];
             foreach ($all_category_result as $value) {
@@ -303,13 +312,13 @@ class CmsController extends UserBaseController
             $list_init['category_id']['enum'] = $enum;
             #栏目模型
             $enum = [];
-            $cmsModelModel = new CmsModelModel();
+            $cmsModelModel = new DictionaryModelModel();
             $model_result = $cmsModelModel->getAllRecord();
             foreach ($model_result as $value) {
                 $enum[$value['id']] = $value['name'];
             }
             $list_init['model_id']['enum'] = $enum;
-        }*/
+        }
         $data = array(
             'list' => $list,
             'list_init' => $list_init,
@@ -320,7 +329,6 @@ class CmsController extends UserBaseController
             '内容管理' => U('Cms/index'),
             '文档列表' => ''
         ));
-
         $this->display('Cms/postList', $data);
     }
 

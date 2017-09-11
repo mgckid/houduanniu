@@ -74,40 +74,19 @@ class ArticleController extends Controller
         $field_name = $_REQUEST['field_name'];
         $field_value = $_REQUEST['field_value'];
         if ($field_name == 'title_alias') {
-            $post_result = $cmsPostModel->getRecordInfoByTitleAlias($field_value);
+            $article = $cmsPostModel->getRecordInfoByTitleAlias($field_value);
         } elseif ($field_name = 'post_id') {
-            $post_result = $cmsPostModel->getRecordInfoByPostid($field_value);
+            $article = $cmsPostModel->getRecordInfoByPostid($field_value);
         }
-        $article = $cmsPostModel->getPostInfoById($post_result['id']);
-        if (!$article) {
+        if (!$field_value) {
             $this->response(null, self::S404_NOT_FOUND);
         }else{
             $post_id = $article['post_id'];
-            $pre_result = $cmsPostModel->getPre($post_id, $article['category_id']);
-            $next_result = $cmsPostModel->getNext($post_id, $article['category_id']);
-            $pre = [];
-            if ($pre_result) {
-                $pre = [
-                    'title_alias' => $pre_result['title_alias'],
-                    'title' => $pre_result['title'],
-                    'id'=>$pre_result['id'],
-                    'post_id'=>$pre_result['post_id'],
-                    'main_image'=>$pre_result['main_image'],
-                ];
-            }
-            $next = [];
-            if ($next_result) {
-                $next = [
-                    'title_alias' => $next_result['title_alias'],
-                    'title' => $next_result['title'],
-                    'id'=>$next_result['id'],
-                    'post_id'=>$next_result['post_id'],
-                    'main_image'=>$next_result['main_image'],
-                ];
-            }
+            $pre_result = $cmsPostModel->getPre($post_id,'title_alias,id,post_id,title,main_image');
+            $next_result = $cmsPostModel->getNext($post_id,'title_alias,id,post_id,title,main_image');
             $result['article'] = $article;
-            $result['pre'] = $pre;
-            $result['next'] = $next;
+            $result['pre'] = $pre_result;
+            $result['next'] = $next_result;
             $this->response($result, self::S200_OK, null, true);
         }
     }

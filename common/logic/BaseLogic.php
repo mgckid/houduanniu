@@ -58,7 +58,7 @@ class BaseLogic extends Controller
         return $name;
     }
 
-    public function getTableDefinded($table_name, $field_field = 'f.field_name,f.field_value,f.form_type,f.validate_rule,f.data_type')
+    public function getTableDefinded($table_name)
     {
         $model = new DictionaryTableModel();
         $field_result = $model->orm()->table_alias('d')
@@ -127,6 +127,10 @@ class BaseLogic extends Controller
         if ($mode == 'table') {
             $field_definded = $this->getTableDefinded($table_name);
         } elseif ($mode = 'model') {
+            if (is_numeric($table_name)) {
+                $model_result = $this->getModelInfo($table_name);
+                $table_name = $model_result['dictionary_value'];
+            }
             $field_definded = $this->getModelDefined($table_name);
         }
         $form_init = [];
@@ -157,6 +161,10 @@ class BaseLogic extends Controller
         if ($mode == 'table') {
             $field_definded = $this->getTableDefinded($name);
         } elseif ($mode = 'model') {
+            if (is_numeric($name)) {
+                $model_result = $this->getModelInfo($name);
+                $name = $model_result['dictionary_value'];
+            }
             $field_definded = $this->getModelDefined($name);
         }
         #注册钩子方法
@@ -218,14 +226,18 @@ class BaseLogic extends Controller
         return $request_data;
     }
 
-    public function getListInit($table_name,$mode = 'table')
+    public function getListInit($table_name, $mode = 'table')
     {
-        if($mode=='table'){
+        $list_init = [];
+        if ($mode == 'table') {
             $table_defined = $this->getTableDefinded($table_name);
-        }elseif($mode=='model'){
+        } elseif ($mode == 'model') {
+            if (is_numeric($table_name)) {
+                $model_result = $this->getModelInfo($table_name);
+                $table_name = $model_result['dictionary_value'];
+            }
             $table_defined = $this->getModelDefined($table_name);
         }
-        $list_init = [];
         foreach ($table_defined as $value) {
             #只显示列表运许显示显示的字段
             if ($value['list_ignore'] == 1) {
@@ -233,16 +245,13 @@ class BaseLogic extends Controller
             }
             $field = $value['field_value'];
             $enum = [];
-            if ($value['enum']) {
+            if (!empty($value['enum'])) {
                 foreach ($value['enum'] as $v) {
-                    $enum[$v['field_value']] = $v['field_name'];
+                    $enum[$v['value']] = $v['name'];
                 }
             }
-            $list_init[$field] = [
-                'field_name' => $value['field_name'],
-                'field_value' => $value['field_value'],
-                'enum' => $enum,
-            ];
+            $value['enum'] = $enum;
+            $list_init[$field] = $value;
         }
         return $list_init;
     }
@@ -331,6 +340,7 @@ class BaseLogic extends Controller
         }
         return $data;
     }
+
 
 
 }

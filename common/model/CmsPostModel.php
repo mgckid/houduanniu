@@ -11,8 +11,6 @@
 namespace app\model;
 
 use app\logic\BaseLogic;
-use app\model\BaseModel;
-use Core\DB;
 
 class CmsPostModel extends BaseModel
 {
@@ -20,70 +18,6 @@ class CmsPostModel extends BaseModel
     public $tableName = 'cms_post';
     public $pk = 'id';
 
-    /**
-     * 获取文章列表
-     * @param type $condition 条件
-     * @param type $offset 偏移量
-     * @param type $limit 获取条数
-     * @param type $forCount 统计
-     * @param type $field 字段
-     * @return type
-     */
-    public function getArticleList($condition, $offset, $limit, $forCount = false, $field = 'a.*')
-    {
-        $orm = $this->orm()
-            ->table_alias('a')
-            ->select_expr($field)
-            ->left_outer_join('cms_category', array('a.column_id', '=', 'c.id'), 'c');
-        if ($condition) {
-            foreach ($condition as $key => $value) {
-                $orm = call_user_func_array(array($orm, $key), $value);
-            }
-        }
-        if ($forCount) {
-            $result = $orm->count();
-        } else {
-            $result = $orm
-                ->limit($limit)
-                ->offset($offset)
-                ->order_by_desc('id')
-                ->find_array();
-        }
-        return $result;
-    }
-
-
-    /**
-     * 获取文章信息
-     * @param type $id 文章id
-     * @param type $field 字段名
-     * @return type
-     */
-    public function getArticleInfoById($id, $field = "a.*")
-    {
-        $result = $this->orm()
-            ->table_alias('a')
-            ->left_outer_join('cms_category', array('a.column_id', '=', 'c.id'), 'c')
-            ->select_expr($field)
-            ->find_one($id);
-        if (!$result) {
-            return false;
-        }
-        return $result->as_array();;
-    }
-
-
-    /**
-     * 获取推荐文章列表
-     * @param array $condition
-     * @param $rows
-     * @param string $field
-     * @return type
-     */
-    public function getRecommendArticleList(array $condition, $rows, $field = '*')
-    {
-        return $this->getArticleList($condition, 0, $rows, false, $field);
-    }
 
     /**
      * 获取下一篇文章
@@ -92,18 +26,18 @@ class CmsPostModel extends BaseModel
      * @param string $field
      * @return mixed
      */
-    public function getNext($post_id, $category_id)
+    public function getNext($post_id, $field = '*')
     {
         $post_result = $this->getRecordInfoByPostid($post_id);
         $next_result = $this->orm()
-            ->where('category_id', $category_id)
+            ->where('category_id', $post_result['category_id'])
             ->where_gt('id', $post_result['id'])
-            ->order_by_asc('id')
+            ->order_by_desc('id')
             ->find_one();
         $result = [];
         if ($next_result) {
             $next_result = $next_result->as_array();
-            $result = $this->getPostInfoById($next_result['id']);
+            $result = $this->getRecordInfoById($next_result['id'], $field);
         }
         return $result;
     }
@@ -115,151 +49,45 @@ class CmsPostModel extends BaseModel
      * @param string $field
      * @return mixed
      */
-    public function getPre($post_id, $category_id)
+    public function getPre($post_id, $field = '*')
     {
         $post_result = $this->getRecordInfoByPostid($post_id);
         $pre_result = $this->orm()
-            ->where('category_id', $category_id)
+            ->where('category_id', $post_result['category_id'])
             ->where_lt('id', $post_result['id'])
             ->order_by_asc('id')
             ->find_one();
         $result = [];
         if ($pre_result) {
             $pre_result = $pre_result->as_array();
-            $result = $this->getPostInfoById($pre_result['id']);
+            $result = $this->getRecordInfoById($pre_result['id'], $field);
         }
         return $result;
     }
 
-    /**
-     * 获取热门文章
-     * @access public
-     * @author furong
-     * @param int $limit
-     * @param string $field
-     * @param string $cateId
-     * @return mixed
-     * @since 2017年4月24日 16:09:09
-     * @abstract
-     */
-    public function getHotPost($limit = 10, $field = 'a.*', $cateId = '')
+
+    /**改版后****/
+    public function getRecordInfoByPostid($post_id, $field = '*')
     {
-        $orm = $this->orm()
-            ->table_alias('a')
-            ->select_expr($field)
-            ->left_outer_join('cms_category', array('a.column_id', '=', 'c.id'), 'c');
-        if ($cateId) {
-            $orm = $orm->where('a.column_id', $cateId);
-        }
-        $result = $orm
-            ->limit($limit)
-            ->order_by_desc('click')
-            ->find_array();
-        return $result;
-    }
-
-    /**
-     * 获取相关文章
-     * @access public
-     * @author furong
-     * @param $postId
-     * @param string $field
-     * @param int $limit
-     * @return array
-     * @since 2017年4月25日 18:01:30
-     * @abstract
-     */
-    public function getRelatedPost($postId, $field = 'p.*', $limit = 10)
-    {
-
-        $cateRelatedResult = [];
-        #标签相关文章
-        $tagRelatedResult = $this->orm()
-            ->for_table('cms_post_tag')
-            ->table_alias('pt')
-            ->select_expr($field)
-            ->left_join('cms_post_tag', 'ptt.tag_id = pt.tag_id', 'ptt')
-            ->left_join('cms_post', 'ptt.post_id = p.id', 'p')
-            ->where('pt.post_id', $postId)
-            ->where_not_equal('p.id', $postId)
-            ->group_by('p.id')
-            ->order_by_desc('p.id')
-            ->limit($limit)
-            ->find_array();
-        $resultRows = count($tagRelatedResult);
-        #栏目相关文章
-        if ($resultRows < $limit) {
-
-            $limit = $limit - $resultRows;
-            $cateId = current($this->getArticleInfoById($postId, 'a.column_id'));
-            $cateModel = new CmsCategoryModel();
-            $condition = [
-                'where' => ['cate_type', $cateModel::CATE_TYPE_LIST],
-            ];
-            $cateList = $cateModel->getColumnList($condition);
-            $subCate = array_column(treeStructForLevel($cateList, $cateId), 'id');
-            $subCate[] = $cateId;
-            $notInPostId = array_values(array_column($tagRelatedResult, 'id')) + [$postId];
-            $condition = [
-                'where_not_in' => ['a.id', $notInPostId],
-                'where_in' => ['a.column_id', $subCate],
-            ];
-            $cateRelatedResult = $this->getArticleList($condition, 0, $limit, false, 'a.id,a.title,a.image_name,a.title_alias');
-        }
-        $result = array_merge($tagRelatedResult, $cateRelatedResult);
-        return $result;
-    }
-
-    public function addCmsPostExtendData($table_name, $post_id, $field, $value)
-    {
-        $orm = $this->orm()->for_table($table_name)->use_id_column('id');
-        $data = [
-            'post_id' => $post_id,
-            'field' => $field,
-            'value' => $value
-        ];
-        $result = $orm->where('post_id', $post_id)
-            ->where('field', $field)
-            ->find_one();
-        if ($result) {
-            $return = $result->set($data)->save();
-        } else {
-            $return = $orm->create($data)->save();
-        }
-        if (!$return) {
-            throw new \Exception('文档扩展记录添加失败');
+        $return = [];
+        $orm = $this->orm()->where('post_id', $post_id);
+        $cms_post_result = $this->getRecordInfo($orm, $field);
+        if ($cms_post_result) {
+            $return = $this->getRecordInfoById($cms_post_result['id'], $field);
         }
         return $return;
     }
 
-
-
-
-
-
-
-    /**改版后****/
-    public function getRecordInfoByPostid($post_id, $field = 'p.*,m.value as model,c.category_name')
+    public function getRecordInfoByTitleAlias($title_alias, $field = '*')
     {
-        $orm = $this->orm()->select_expr($field)->table_alias('p')
-            ->table_alias('p')
-            ->left_join('cms_model', ['p.model_id', '=', 'm.id'], 'm')
-            ->left_join('cms_category', ['p.category_id', '=', 'c.id'], 'c')
-            ->where('p.post_id', $post_id);
-        $result = $this->getRecordInfo($orm, $field);
-        return $result;
-    }
-
-    public function getRecordInfoByTitleAlias($title_alias)
-    {
-        $post_info = [];
+        $return = [];
         $cmsPostExtendAttributeModel = new CmsPostExtendAttributeModel();
         $orm = $cmsPostExtendAttributeModel->orm()->where(['field' => 'title_alias', 'value' => $title_alias]);
         $result = $cmsPostExtendAttributeModel->getRecordInfo($orm);
         if ($result) {
-            $post_info = $this->getRecordInfoByPostid($result['post_id']);
+            $return = $this->getRecordInfoByPostid($result['post_id'], $field);
         }
-        return $post_info;
+        return $return;
     }
 
     /**
@@ -272,14 +100,51 @@ class CmsPostModel extends BaseModel
      * @since 2017年7月28日 09:40:34
      * @abstract
      */
-    public function getRecordInfoById($id, $field = 'p.*,m.value as model,c.category_name')
+    public function getRecordInfoById($id, $field = '*')
     {
-        $orm = $this->orm()->select_expr($field)->table_alias('p')
-            ->table_alias('p')
-            ->left_join('cms_model', ['p.model_id', '=', 'm.id'], 'm')
-            ->left_join('cms_category', ['p.category_id', '=', 'c.id'], 'c')
-            ->where('p.id', $id);
-        $result = $this->getRecordInfo($orm, $field);
+        $cms_post_result = parent::getRecordInfoById($id);
+        if (!$cms_post_result) {
+            return false;
+        }
+        $logic = new BaseLogic();
+        $model_defined = $logic->getModelDefined($cms_post_result['model_id']);
+
+        $cms_post_extend_attribute_select[] = 'post_id';
+        $cms_post_extend_text_select[] = 'post_id';
+        $select_expr = '';
+        foreach ($model_defined as $value) {
+            if ($field != '*') {
+                $fields = explode(',', $field);
+                foreach ($fields as $val) {
+                    if ($value['field_value'] == $val) {
+                        $select_expr[] = $value['belong_to_table'] . '.' . $value['field_value'];
+                    }
+                }
+            } else {
+                $select_expr[] = $value['belong_to_table'] . '.' . $value['field_value'];
+            }
+            if ($value['belong_to_table'] == 'cms_post_extend_attribute') {
+                $cms_post_extend_attribute_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+            }
+            if ($value['belong_to_table'] == 'cms_post_extend_text') {
+                $cms_post_extend_text_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+            }
+        }
+        #cms_post_extend_attribute
+        {
+            $cms_post_extend_attribute_select = implode(',', $cms_post_extend_attribute_select);
+            $cms_post_extend_attribute_raw_join = "left join (SELECT {$cms_post_extend_attribute_select} FROM cms_post_extend_attribute  GROUP BY post_id )";
+        }
+        #cms_post_extend_text
+        {
+            $cms_post_extend_text_select = implode(',', $cms_post_extend_text_select);
+            $cms_post_extend_text_raw_join = "left join (SELECT {$cms_post_extend_text_select} FROM cms_post_extend_text  GROUP BY post_id )";
+        }
+
+        $orm = $this->orm()->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
+            ->raw_join($cms_post_extend_text_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_text.post_id'], 'cms_post_extend_text')
+            ->where('cms_post.id', $id);
+        $result = $this->getRecordInfo($orm, implode(',', $select_expr));
         return $result;
     }
 
@@ -341,39 +206,30 @@ class CmsPostModel extends BaseModel
         return $return;
     }
 
-    public function getPostInfoById($id)
+    public function addCmsPostExtendData($table_name, $post_id, $field, $value)
     {
-        $baseLogic = new BaseLogic();
-        $cms_post_result = $this->getRecordInfoById($id);
-        if (empty($cms_post_result)) {
-            die('文章不存在');
+        $orm = $this->orm()->for_table($table_name)->use_id_column('id');
+        $data = [
+            'post_id' => $post_id,
+            'field' => $field,
+            'value' => $value
+        ];
+        $result = $orm->where('post_id', $post_id)
+            ->where('field', $field)
+            ->find_one();
+        if ($result) {
+            $return = $result->set($data)->save();
+        } else {
+            $return = $orm->create($data)->save();
         }
-        #获取模型定义
-        $model_defined = $baseLogic->getModelDefined($cms_post_result['model']);
-        #获取扩展数据
-        $fields = array_unique(array_column($model_defined, 'field_value'));
-        $tables = array_unique(array_column($model_defined, 'belong_to_table'));
-        $tables = array_flip($tables);
-        if (isset($tables['cms_post'])) {
-            unset ($tables['cms_post']);
+        if (!$return) {
+            throw new \Exception('文档扩展记录添加失败');
         }
-        $tables = array_keys($tables);
-        $extend_data = [];
-        foreach ($tables as $value) {
-            $result = $this->orm()->for_table($value)->select_expr('field,value')->where(['post_id' => $cms_post_result['post_id']])->find_array();
-            if ($result) {
-                $extend_data = array_merge($extend_data, $result);
-            }
-        }
-        if (!empty($extend_data)) {
-            foreach ($extend_data as $value) {
-                if (in_array($value['field'], $fields)) {
-                    $cms_post_result[$value['field']] = $value['value'];
-                }
-            }
-        }
-        return $cms_post_result;
+        return $return;
     }
+
+
+
 
     /**
      * 获取文章列表
@@ -424,6 +280,64 @@ class CmsPostModel extends BaseModel
             $field = array_column($result, 'field');
             $value = array_column($result, 'value');
             $result = array_combine($field, $value);
+        }
+        return $result;
+    }
+
+    /**
+     * 获取记录列表
+     * @access public
+     * @author furong
+     * @param $orm
+     * @param string $offset
+     * @param string $limit
+     * @param bool $for_count
+     * @param string $field
+     * @return void
+     * @since 2017年7月6日 17:14:49
+     * @abstract
+     */
+    public function getRecordList1($orm = '', $offset = '', $limit = '', $for_count = false, $order_by_id_desc = true, $field = '*')
+    {
+        $orm = $this->getOrm($orm)->where_equal('deleted', 0);
+        if ($for_count) {
+            $result = $orm->count();
+        } else {
+            $cms_post_extend_attribute_select[] = 'post_id';
+            $cms_post_extend_text_select[] = 'post_id';
+            $select_expr = '';
+            foreach ($field as $value) {
+                $select_expr[] = $value['belong_to_table'] . '.' . $value['field_value'];
+                if ($value['belong_to_table'] == 'cms_post_extend_attribute') {
+                    $cms_post_extend_attribute_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+                }
+                if ($value['belong_to_table'] == 'cms_post_extend_text') {
+                    $cms_post_extend_text_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+                }
+
+
+            }
+            #cms_post_extend_attribute
+            {
+                $cms_post_extend_attribute_select = implode(',', $cms_post_extend_attribute_select);
+                $cms_post_extend_attribute_raw_join = "left join (SELECT {$cms_post_extend_attribute_select} FROM cms_post_extend_attribute  GROUP BY post_id )";
+            }
+            #cms_post_extend_text
+            {
+                $cms_post_extend_text_select = implode(',', $cms_post_extend_text_select);
+                $cms_post_extend_text_raw_join = "left join (SELECT {$cms_post_extend_text_select} FROM cms_post_extend_text  GROUP BY post_id )";
+            }
+            $model = $orm->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
+                ->raw_join($cms_post_extend_text_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_text.post_id'], 'cms_post_extend_text')
+                ->offset($offset)
+                ->limit($limit)
+                ->select_expr('*');
+            if ($order_by_id_desc) {
+                $model = $model->order_by_desc($this->pk);
+            } else {
+                $model = $model->order_by_asc($this->pk);
+            }
+            $result = $model->find_array();
         }
         return $result;
     }
