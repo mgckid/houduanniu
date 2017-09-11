@@ -9,6 +9,7 @@
 namespace app\controller;
 
 
+use app\logic\BaseLogic;
 use app\model\CmsCategoryModel;
 use app\model\CmsPostModel;
 use houduanniu\api\Controller;
@@ -41,17 +42,20 @@ class ArticleController extends Controller
         }
         $p = $_REQUEST['p'];
         $page_size = $_REQUEST['page_size'];
-        $count = $cmsPostModel->getPostList('', '', '', true);
+        $count = $cmsPostModel->getRecordList('', '', '', true);
         $page = new Page($count, $p, $page_size);
-        $result = $cmsPostModel->getPostList('', $page->getOffset(), $page->getPageSize(), false);
+        $result = $cmsPostModel->getRecordList('', $page->getOffset(), $page->getPageSize(), false);
+        $list = [];
+        $cmsCategoryModel = new CmsCategoryModel();
         foreach ($result as $key => $value) {
-            $extend_data = $cmsPostModel->getPostExtendAttrbute($value['post_id']);
-            $value = !empty($extend_data) ? array_merge($value, $extend_data) : $value;
-            $result[$key] = $value;
+            $post = $cmsPostModel->getRecordInfoById($value['id']);
+            $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
+            $post['category_name'] = $category_result['category_name'];
+            $list[] =$post;
         }
         $return = [
             'count' => $count,
-            'list' => $result,
+            'list' => $list,
         ];
         $this->response($return, self::S200_OK, null, true);
     }
@@ -80,10 +84,10 @@ class ArticleController extends Controller
         }
         if (!$field_value) {
             $this->response(null, self::S404_NOT_FOUND);
-        }else{
+        } else {
             $post_id = $article['post_id'];
-            $pre_result = $cmsPostModel->getPre($post_id,'title_alias,id,post_id,title,main_image');
-            $next_result = $cmsPostModel->getNext($post_id,'title_alias,id,post_id,title,main_image');
+            $pre_result = $cmsPostModel->getPre($post_id, 'title_alias,id,post_id,title,main_image');
+            $next_result = $cmsPostModel->getNext($post_id, 'title_alias,id,post_id,title,main_image');
             $result['article'] = $article;
             $result['pre'] = $pre_result;
             $result['next'] = $next_result;
