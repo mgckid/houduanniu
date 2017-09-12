@@ -165,21 +165,15 @@ class PostController extends Controller
         $cmsCategoryModel = new CmsCategoryModel();
         $rules = [
             'category_alias' => 'required',
-            'page_size' => 'required|integer',
-            'p' => 'required|integer',
         ];
         $map = [
             'category_alias' => '栏目标识',
-            'page_size' => '列表记录数',
-            'p' => '当前页数',
         ];
         $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $category_alias = $_REQUEST['category_alias'];
-        $page_size = $_REQUEST['page_size'];
-        $p = $_REQUEST['p'];
         #获取栏目信息
         {
             $logic = new BaseLogic();
@@ -256,7 +250,7 @@ class PostController extends Controller
         $orm = $cmsCategoryModel->orm()->table_alias('c')->right_join('dictionary_model', ['c.model_id', '=', 'm.id'], 'm')->where(['c.id' => $category_id]);
         $field = 'c.*,m.dictionary_value';
         $model_result = $cmsCategoryModel->getRecordInfo($orm, $field);
-        if ($model_result['dictionary_value'] = 'article') {
+        if ($model_result['dictionary_value'] == 'article') {
             $rules = [
                 'p' => 'required|integer',
                 'page_size' => 'required|integer',

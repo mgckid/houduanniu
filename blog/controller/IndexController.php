@@ -54,24 +54,34 @@ class IndexController extends BaseController
     public function category()
     {
         $cate = isset($_GET['cate']) ? trim($_GET['cate']) : '';
-        $page_size = 10;
-        $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         if (!$cate) {
             die('页面不存在');
         }
         #获取栏目数据
         {
             $param = [
-                'category_alias' => $cate,
-                'page_size' => $page_size,
-                'p' => $p
+                'category_alias' => $cate
             ];
             $result = $this->apiRequest('Post/category', $param, 'Api');
             if ($result['code'] == 200) {
                 $category_info = $result['data']['category_info'];
-                $reg['category_info'] = $category_info;
             }
         }
+        #处理不同模型
+        switch ($category_info['dictionary_value']) {
+            case 'article':
+                $this->categoryArticle($category_info);
+                break;
+            case 'page':
+                $this->categoryPage($category_info);
+                break;
+        }
+    }
+
+    protected function categoryArticle($category_info)
+    {
+        $page_size = 10;
+        $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         #获取栏目文档列表
         {
             $param = [
@@ -96,7 +106,37 @@ class IndexController extends BaseController
                 'description' => $category_info['description'],
             ];
         }
-        $this->display('Index/category', $reg, $seoInfo);
+        $reg['category_info'] = $category_info;
+        $this->display('Index/categoryArticle', $reg, $seoInfo);
+    }
+
+    public function categoryPage($category_info)
+    {
+        #获取栏目文档列表
+        {
+            $param = [
+                'category_id' => $category_info['id']
+            ];
+            $result = $this->apiRequest('Post/categoryPostList', $param, 'Api');
+            if ($result['code'] == 200) {
+                $list_data = $result['data']['list'];
+                $list = [];
+                foreach ($list_data as $value) {
+                    $list[$value['title']] = $value;
+                }
+                $reg['list_data'] = $list;
+            }
+        }
+        #seo标题
+        {
+            $seoInfo = [
+                'title' => $category_info['category_name'],
+                'keyword' => $category_info['keywords'],
+                'description' => $category_info['description'],
+            ];
+        }
+        $reg['category_info'] = $category_info;
+        $this->display('Index/categoryPage', $reg, $seoInfo);
     }
 
 
