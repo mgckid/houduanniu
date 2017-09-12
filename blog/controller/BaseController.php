@@ -132,17 +132,6 @@ class BaseController extends Controller
             $reg['siteInfo'] = $siteInfo;
             $reg['crumbs'] = $this->crumbHtml;
         }
-//        #获取头部导航
-//        {
-//            $cateModel = new CmsCategoryModel();
-//            $condition = [
-//                'where' => array('nav_display', $cateModel::NAV_DISPLAY),
-//            ];
-//            $field = 'id,pid,name,alias,jump_url,cate_type';
-//            $result = $cateModel->getColumnList($condition, $field);
-//            $navList = treeStructForLayer($result);
-//            $reg['navList'] = $navList;
-//        }
         #友情链接
         {
 
