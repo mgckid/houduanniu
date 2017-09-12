@@ -1,4 +1,4 @@
-<?php $this->layout('Layout/index')?>
+<?php $this->layout('Layout/index') ?>
 <main class="site-content">
 
     <div class="container mt-4">
@@ -7,24 +7,22 @@
                 <div class="col-lg-8">
                     <main class="main-content">
                         <div class="card">
-                            <h1 class="card-header bg-white py-4"><?=$category_info['category_name']?></h1>
+                            <h1 class="card-header bg-white py-4"><?= $category_info['category_name'] ?></h1>
 
                             <div class="card-body">
                                 <div class="entry-content">
-                                    <?=htmlspecialchars_decode($list_data['about']['content'])?>
+                                    <?= htmlspecialchars_decode($list_data['about']['content']) ?>
                                 </div>
                             </div>
                         </div>
-
-
-
                     </main>
                 </div>
                 <!--侧边栏 开始-->
-                <?=$this->insert('Common/sidebar')?>
+                <?= $this->insert('Common/sidebar') ?>
                 <!--侧边栏 结束-->
             </div>
         </div>
-    </div><!--./container -->
+    </div>
+    <!--./container -->
 
 </main>
