@@ -302,14 +302,14 @@ class PostController extends Controller
     }
 
     public function search(){
-        $cmsCategoryModel = new CmsCategoryModel();
+        $cmsPost = new CmsPostModel();
         $map = [
             'keyword' => '关键字',
         ];
         $rules = [
-            'category_id' => 'required|integer',
+            'keyword' => 'required',
         ];
-        $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+        $validate = $cmsPost->validate()->make($_REQUEST, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
