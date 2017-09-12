@@ -301,7 +301,8 @@ class PostController extends Controller
         $this->response($return, self::S200_OK, null, true);
     }
 
-    public function search(){
+    public function search()
+    {
         $cmsPost = new CmsPostModel();
         $map = [
             'keyword' => '关键字',
@@ -313,6 +314,10 @@ class PostController extends Controller
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
+        $keyword = $_REQUEST['keyword'];
+        $sql = "SELECT  post_id FROM cms_post_extend_attribute WHERE `value` LIKE '%{$keyword}%' UNION SELECT  post_id FROM cms_post_extend_text WHERE `value` LIKE '%{$keyword}%'";
+        $post_ids = $cmsPost->orm()->raw_query($sql)->find_array();
+        print_g($post_ids);
     }
 
 }
