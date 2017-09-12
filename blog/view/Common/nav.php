@@ -15,7 +15,9 @@
                         <?php endforeach;?>
                     </ul>
                 </div>
-                <form class="form-inline" role="search" method="get" id="searchform" action="###">
+                <form class="form-inline" id="search_form"   action="<?=U('Index/search')?>"   method="get">
+                    <input type="hidden" name="c" value="index"/>
+                    <input type="hidden" name="a" value="search"/>
                     <input class="form-control mr-sm-2" type="text" placeholder="搜索..." aria-label="搜索" name="s">
                 </form>
             </div>

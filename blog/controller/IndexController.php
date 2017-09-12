@@ -110,7 +110,7 @@ class IndexController extends BaseController
         $this->display('Index/categoryArticle', $reg, $seoInfo);
     }
 
-    public function categoryPage($category_info)
+    protected function categoryPage($category_info)
     {
         #获取栏目文档列表
         {
@@ -137,6 +137,41 @@ class IndexController extends BaseController
         }
         $reg['category_info'] = $category_info;
         $this->display('Index/categoryPage', $reg, $seoInfo);
+    }
+
+    public function search()
+    {
+        $page_size = 10;
+        $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
+        $keyword = isset($_GET['s']) && !empty($_REQUEST['s']) ? trim($_REQUEST['s']) : '';
+        if (empty($keyword)) {
+            die('请输入关键字搜索');
+        }
+        #获取搜索数据
+        {
+            $param = [
+                'keyword' => $keyword,
+                'page_size' => $page_size,
+                'p' => $p
+            ];
+            $result = $this->apiRequest('Post/search', $param, 'Api');
+            if ($result['code'] == 200) {
+                $count = $result['data']['count'];
+                $list_data = $result['data']['list'];
+                $page = new Page($count, $p, $page_size);
+                $reg['pages'] = $page->getPageStruct();
+                $reg['list_data'] = $list_data;
+            }
+        }
+        #seo标题
+        {
+            $seoInfo = [
+                'title' => "“{$keyword}”的搜索结果",
+                'keyword' => $this->siteInfo['site_keywords'],
+                'description' => $this->siteInfo['site_description'],
+            ];
+        }
+        $this->display('Index/search', $reg, $seoInfo);
     }
 
 

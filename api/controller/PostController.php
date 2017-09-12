@@ -303,21 +303,42 @@ class PostController extends Controller
 
     public function search()
     {
-        $cmsPost = new CmsPostModel();
+        $cmsPostModel = new CmsPostModel();
         $map = [
             'keyword' => '关键字',
+            'p' => '当前页数',
+            'page_size' => '每页记录条数',
         ];
         $rules = [
             'keyword' => 'required',
+            'p' => 'required|integer',
+            'page_size' => 'required|integer',
         ];
-        $validate = $cmsPost->validate()->make($_REQUEST, $rules, [], $map);
+        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $keyword = $_REQUEST['keyword'];
+        $p = intval($_REQUEST['p']);
+        $page_size = intval($_REQUEST['page_size']);
         $sql = "SELECT  post_id FROM cms_post_extend_attribute WHERE `value` LIKE '%{$keyword}%' UNION SELECT  post_id FROM cms_post_extend_text WHERE `value` LIKE '%{$keyword}%'";
-        $post_ids = $cmsPost->orm()->raw_query($sql)->find_array();
-        print_g($post_ids);
+        $post_ids = $cmsPostModel->orm()->raw_query($sql)->find_array();
+        $count = count($post_ids);
+        $page = new Page($count, $p, $page_size);
+        $page_list = array_slice($post_ids, $page->getOffset(), $page_size);
+        $list = [];
+        $cmsCategoryModel = new CmsCategoryModel();
+        foreach ($page_list as $value) {
+            $post = $cmsPostModel->getRecordInfoByPostid($value['post_id']);
+            $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
+            $post['category_name'] = $category_result['category_name'];
+            $list[] = $post;
+        }
+        $return = [
+            'count' => $count,
+            'list' => $list,
+        ];
+        $this->response($return, self::S200_OK, null, true);
     }
 
 }

@@ -1,23 +1,10 @@
 <?php $this->layout('Layout/index')?>
 <main class="site-content">
-    <!-- 上面是复用的头部 -->
-
-    <!-- <div class="header-bg">
-
-    </div> -->
-
     <div class="container mt-4">
         <div class="row">
             <div class="col-lg-8">
                 <div class="main-content">
-
-                    <header class="jumbotron bg-white border card-shadow mb-3 py-4 pl-3">
-                        <h1><?=$category_info['category_name']?></h1>
-                   <!--     <div class="text-muted">
-                            <p></p>
-                        </div>-->
-                    </header>
-
+                    <h1 class="page-title mb-3">“<span><?=htmlspecialchars($_GET['s'])?></span>”的搜索结果：</h1>
                     <div class="posts">
                         <?php foreach($list_data as $value):?>
                             <?php if(empty($value['main_image'])):?>
@@ -70,21 +57,16 @@
 
                         <?php endforeach;?>
                     </div>
-
                     <div class="pagination">
                         <nav aria-label="Page navigation">
                             <?=$pages?>
                         </nav>
                     </div>
-
                 </div>
             </div>
-
             <!--侧边栏 开始-->
             <?=$this->insert('Common/sidebar')?>
             <!--侧边栏 结束-->
-
-        </div>
+        </div><!--/.row-->
     </div>
-
 </main>
