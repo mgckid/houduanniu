@@ -188,27 +188,123 @@ class PostController extends Controller
             $model_result = $logic->getModelInfo($category_result['model_id']);
             $category_result['dictionary_value'] = $model_result['dictionary_value'];
         }
-        #获取栏目下文档
-        {
-            $cmsPostModel = new CmsPostModel();
-            $orm = $cmsPostModel->orm()->where('category_id', $category_result['id']);
-            $count = $cmsPostModel->getRecordList($orm, '', '', true);
-            $page = new Page($count, $p, $page_size);
-            $result = $cmsPostModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false);
-            $list = [];
-            foreach ($result as $key => $value) {
-                $post = $cmsPostModel->getRecordInfoByPostid($value['post_id']);
-                $post['category_name'] = $category_result['category_name'];
-                $list[] = $post;
-            }
-        }
         $return = [
-            'count' => $count,
-            'list' => $list,
             'category_info' => $category_result,
         ];
         $this->response($return, self::S200_OK, null, true);
 
+    }
+
+    public function latestPost()
+    {
+        $cmsPostModel = new CmsPostModel();
+        $rules = [
+            'dictionary_value' => 'required|not_in:page',
+            'page_size' => 'required|integer',
+            'p' => 'required|integer',
+        ];
+        $map = [
+            'dictionary_value' => '文档模型',
+            'p' => '当前页数',
+            'page_size' => '每页记录条数',
+        ];
+        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        if (false == $validate->passes()) {
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+        }
+        $dictionary_value = $_REQUEST['dictionary_value'];
+        $p = isset($_REQUEST['p']) && !empty($_REQUEST['p']) ? intval($_REQUEST['p']) : 0;
+        $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
+
+        $orm = $cmsPostModel->orm()->table_alias('p')->right_join('dictionary_model', ['p.model_id', '=', 'm.id'], 'm')->where(['m.dictionary_value' => $dictionary_value]);
+        $field = 'p.*,m.dictionary_value';
+        $count = $cmsPostModel->getRecordList($orm, '', '', true);
+        $page = new Page($count, $p, $page_size);
+        $result = $cmsPostModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false, 'p.id', 'desc', $field);
+
+        $list = [];
+        $cmsCategoryModel = new CmsCategoryModel();
+        foreach ($result as $key => $value) {
+            $post = $cmsPostModel->getRecordInfoById($value['id']);
+            $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
+            $post['category_name'] = $category_result['category_name'];
+            $list[] = $post;
+        }
+        $return = [
+            'count' => $count,
+            'list' => $list,
+        ];
+        $this->response($return, self::S200_OK, null, true);
+    }
+
+    public function categoryPostList()
+    {
+        $cmsCategoryModel = new CmsCategoryModel();
+        $map = [
+            'category_id' => '栏目id',
+            'p' => '当前页数',
+            'page_size' => '每页记录条数',
+        ];
+        $rules = [
+            'category_id' => 'required|integer',
+        ];
+        $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+        if (false == $validate->passes()) {
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+        }
+        $category_id = isset($_REQUEST['category_id']) && !empty($_REQUEST['category_id']) ? intval($_REQUEST['category_id']) : 0;
+        $orm = $cmsCategoryModel->orm()->table_alias('c')->right_join('dictionary_model', ['c.model_id', '=', 'm.id'], 'm')->where(['c.id' => $category_id]);
+        $field = 'c.*,m.dictionary_value';
+        $model_result = $cmsCategoryModel->getRecordInfo($orm, $field);
+        if ($model_result['dictionary_value'] = 'article') {
+            $rules = [
+                'p' => 'required|integer',
+                'page_size' => 'required|integer',
+            ];
+            $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+            if (false == $validate->passes()) {
+                $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+            }
+        }
+        switch ($model_result['dictionary_value']) {
+            case 'page':
+                $cmsPostModel = new CmsPostModel();
+                $orm = $cmsPostModel->orm()->where(['category_id' => $category_id]);
+                $count = $cmsPostModel->getRecordList($orm, '', '', true);
+                $result = $cmsPostModel->getRecordList($orm, 0, $count, false);
+                $list = [];
+                foreach ($result as $key => $value) {
+                    $post = $cmsPostModel->getRecordInfoById($value['id']);
+                    $list[] = $post;
+                }
+                $return = [
+                    'list' => $list,
+                ];
+                break;
+            case 'article':
+                $p = isset($_REQUEST['p']) && !empty($_REQUEST['p']) ? intval($_REQUEST['p']) : 0;
+                $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
+                $cmsPostModel = new CmsPostModel();
+                $orm = $cmsPostModel->orm()->where(['category_id' => $category_id]);
+                $count = $cmsPostModel->getRecordList($orm, '', '', true);
+                $page = new Page($count, $p, $page_size);
+                $result = $cmsPostModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false);
+                $list = [];
+                $cmsCategoryModel = new CmsCategoryModel();
+                foreach ($result as $key => $value) {
+                    $post = $cmsPostModel->getRecordInfoById($value['id']);
+                    $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
+                    $post['category_name'] = $category_result['category_name'];
+                    $list[] = $post;
+                }
+                $return = [
+                    'count' => $count,
+                    'list' => $list,
+                ];
+                break;
+        }
+
+        $this->response($return, self::S200_OK, null, true);
     }
 
 }

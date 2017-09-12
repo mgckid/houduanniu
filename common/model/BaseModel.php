@@ -136,8 +136,12 @@ class BaseModel extends Model
             $result = $orm->count();
         } else {
             $model = $orm->offset($offset)
-                ->limit($limit)
-                ->select($field);
+                ->limit($limit);
+            if (is_array($field)) {
+                $model = $model->select($field);
+            } elseif (is_string($field)) {
+                $model = $model->select_expr($field);
+            }
             if ($order == 'desc') {
                 $model = $model->order_by_desc($sort_field);
             } else {

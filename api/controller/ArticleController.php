@@ -25,14 +25,18 @@ class ArticleController extends Controller
      * @since
      * @abstract
      */
-    public function articleList()
+    public function articleList1()
     {
         $cmsPostModel = new CmsPostModel();
         $rules = [
-            'p' => 'required|integer',
-            'page_size' => 'required|integer',
+            'dictionary_value' => 'in:article,page',
+            'category_id' => 'required_without:dictionary_value|integer',
+            'p' => 'required_if:dictionary_value,article|integer',
+            'page_size' => 'required_if:dictionary_value,article|integer',
         ];
         $map = [
+            'dictionary_value' => '文档模型',
+            'category_id' => '栏目id',
             'p' => '当前页数',
             'page_size' => '每页记录条数',
         ];
@@ -40,8 +44,10 @@ class ArticleController extends Controller
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $p = $_REQUEST['p'];
-        $page_size = $_REQUEST['page_size'];
+        $dictionary_value = $_REQUEST['dictionary_value'];
+        $category_id = isset($_REQUEST['category_id']) && !empty($_REQUEST['category_id']) ? intval($_REQUEST['category_id']) : 0;
+        $p = isset($_REQUEST['p']) && !empty($_REQUEST['p']) ? intval($_REQUEST['p']) : 0;
+        $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
         $count = $cmsPostModel->getRecordList('', '', '', true);
         $page = new Page($count, $p, $page_size);
         $result = $cmsPostModel->getRecordList('', $page->getOffset(), $page->getPageSize(), false);
@@ -51,7 +57,7 @@ class ArticleController extends Controller
             $post = $cmsPostModel->getRecordInfoById($value['id']);
             $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
             $post['category_name'] = $category_result['category_name'];
-            $list[] =$post;
+            $list[] = $post;
         }
         $return = [
             'count' => $count,

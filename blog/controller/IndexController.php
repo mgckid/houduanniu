@@ -25,10 +25,11 @@ class IndexController extends BaseController
         #获取最近更新文章
         {
             $param = [
+                'dictionary_value' => 'article',
                 'p' => $p,
                 'page_size' => $page_size
             ];
-            $result = $this->apiRequest('Article/articleList', $param, 'Api');
+            $result = $this->apiRequest('post/latestPost', $param, 'Api');
 
             if ($result['code'] == 200) {
                 $count = $result['data']['count'];
@@ -67,13 +68,24 @@ class IndexController extends BaseController
             ];
             $result = $this->apiRequest('Post/category', $param, 'Api');
             if ($result['code'] == 200) {
+                $category_info = $result['data']['category_info'];
+                $reg['category_info'] = $category_info;
+            }
+        }
+        #获取栏目文档列表
+        {
+            $param = [
+                'category_id' => $category_info['id'],
+                'page_size' => $page_size,
+                'p' => $p
+            ];
+            $result = $this->apiRequest('Post/categoryPostList', $param, 'Api');
+            if ($result['code'] == 200) {
                 $count = $result['data']['count'];
                 $list_data = $result['data']['list'];
-                $category_info = $result['data']['category_info'];
                 $page = new Page($count, $p, $page_size);
                 $reg['pages'] = $page->getPageStruct();
                 $reg['list_data'] = $list_data;
-                $reg['category_info'] = $category_info;
             }
         }
         #seo标题
