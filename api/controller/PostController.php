@@ -301,4 +301,18 @@ class PostController extends Controller
         $this->response($return, self::S200_OK, null, true);
     }
 
+    public function search(){
+        $cmsCategoryModel = new CmsCategoryModel();
+        $map = [
+            'keyword' => '关键字',
+        ];
+        $rules = [
+            'category_id' => 'required|integer',
+        ];
+        $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+        if (false == $validate->passes()) {
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+        }
+    }
+
 }
