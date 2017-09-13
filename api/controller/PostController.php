@@ -345,4 +345,32 @@ class PostController extends Controller
         $this->response($return, self::S200_OK, null, true);
     }
 
+    public function post()
+    {
+        $cmsPostModel = new CmsPostModel();
+        $rules = [
+            'post_id' => 'required|numeric'
+        ];
+        $map = [
+            'post_id' => '文档id',
+        ];
+        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        if (false == $validate->passes()) {
+            $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
+        }
+        $post_id = $_REQUEST['post_id'];
+        $article = $cmsPostModel->getRecordInfoByPostid($post_id);
+        if (!$article) {
+            $this->response(null, self::S404_NOT_FOUND);
+        } else {
+            $post_id = $article['post_id'];
+            $pre_result = $cmsPostModel->getPre($post_id, 'title_alias,id,post_id,title,main_image');
+            $next_result = $cmsPostModel->getNext($post_id, 'title_alias,id,post_id,title,main_image');
+            $result['article'] = $article;
+            $result['pre'] = $pre_result;
+            $result['next'] = $next_result;
+            $this->response($result, self::S200_OK, null, true);
+        }
+    }
+
 }

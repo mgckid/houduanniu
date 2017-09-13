@@ -21,10 +21,9 @@ class PostController extends BaseController
         #获取文章详情
         {
             $param = [
-                'field_name' => 'title_alias',
-                'field_value' => $id,
+                'post_id' => $id,
             ];
-            $result = $this->apiRequest('Article/article', $param, 'Api');
+            $result = $this->apiRequest('Post/Post', $param, 'Api');
             if ($result['code'] != 200) {
                 die('页面不存在');
             }

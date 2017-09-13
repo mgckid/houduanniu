@@ -23,7 +23,7 @@ class testController extends BaseController
         $result = $m->find_array();
         foreach ($result as $value) {
             $post_data = [
-                'category_id' => 1,
+                'category_id' => $value['column_id'],
                 'model_id' => 1,
                 'title' => $value['title'],
                 'title_alias' => $value['title_alias'],

@@ -39,12 +39,12 @@
                                 <h4 class="sr-only sr-only-focusable">Post navigation</h4>
                                 <div class="nav-links clearfix">
                                     <div class="nav-previous float-left">&larr;
-                                        <a href="<?=!empty($info['pre'])?U('Post/detail',['id'=>$info['pre']['title_alias']]):'javascript:void(0)'?>" rel="prev">
+                                        <a href="<?=!empty($info['pre'])?U('Post/detail',['id'=>$info['pre']['post_id']]):'javascript:void(0)'?>" rel="prev">
                                             <?=!empty($info['pre'])?$info['pre']['title']:'无'?>
                                         </a>
                                     </div>
                                     <div class="nav-next float-right">
-                                        <a href="<?=!empty($info['next'])?U('Post/detail',['id'=>$info['next']['title_alias']]):'javascript:void(0)'?>" rel="prev">
+                                        <a href="<?=!empty($info['next'])?U('Post/detail',['id'=>$info['next']['post_id']]):'javascript:void(0)'?>" rel="prev">
                                             <?=!empty($info['next'])?$info['next']['title']:'无'?>
                                         </a>
                                     </div>
@@ -60,12 +60,12 @@
                                 <?php foreach($related_article as $value):?>
                                     <div class="col-md-4 col-6">
                                         <div class="card border-0">
-                                            <a class="entry-img" href="<?=U('Post/detail',['id'=>$value['title_alias']])?>">
+                                            <a class="entry-img" href="<?=U('Post/detail',['id'=>$value['post_id']])?>">
                                                 <img src="<?=$value['main_image']?>" alt="<?=$value['title']?>" class="card-img rounded-0">
                                             </a>
                                             <div class="card-body px-0 py-3">
                                                 <p class="card-title text-link-color line-clamp-2 text-overflow-ellipsis">
-                                                    <a href="<?=U('Post/detail',['id'=>$value['title_alias']])?>" rel="bookmark"><?=$value['title']?></a>
+                                                    <a href="<?=U('Post/detail',['id'=>$value['post_id']])?>" rel="bookmark"><?=$value['title']?></a>
                                                 </p>
                                             </div>
                                         </div>

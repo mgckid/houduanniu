@@ -3,7 +3,7 @@
     <ul class="list-unstyled">
         <?php foreach($posts as $value):?>
         <li>
-            <a href="<?=U('Post/detail',['id'=>$value['title_alias']])?>" rel="bookmark" title="<?=$value['title']?>"><?=msubstr($value['title'],0,26)?></a>
+            <a href="<?=U('Post/detail',['id'=>$value['post_id']])?>" rel="bookmark" title="<?=$value['title']?>"><?=msubstr($value['title'],0,26)?></a>
         </li>
         <!--./li-->
         <?php endforeach;?>
