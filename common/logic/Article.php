@@ -9,11 +9,7 @@
 namespace app\logic;
 
 
-use app\model\CmsCategoryModel;
-use app\model\CmsPostModel;
 use Overtrue\Pinyin\Pinyin;
-use app\library\BosonNLP;
-use app\model\CmsModelModel;
 
 class Article extends BaseLogic
 {

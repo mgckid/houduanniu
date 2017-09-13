@@ -4,7 +4,7 @@ namespace app\controller;
 
 use app\logic\BaseLogic;
 use app\model\DictionaryAttributeModel;
-use app\model\DictionaryFieldModel;
+use app\model\DictionaryTableFieldModel;
 use app\model\DictionaryModel;
 use app\model\DictionaryTableModel;
 use houduanniu\web\Form;
@@ -57,11 +57,11 @@ class DataController extends UserBaseController
         }
         #查询列表
         {
-            $model = new DictionaryFieldModel();
+            $model = new DictionaryTableFieldModel();
             $condition = ['dictionary_id' => $dictionary_id];
             $orm = $model->orm()->where($condition);
             $count = $model->getRecordList($orm, '', '', true);
-            $result = $model->getRecordList($orm, 0, $count, false, false);
+            $result = $model->getRecordList($orm, 0, $count, false);
         }
         #获取列表字段
         {
@@ -188,7 +188,7 @@ class DataController extends UserBaseController
     public function addField()
     {
         if (IS_POST) {
-            $model = new DictionaryFieldModel();
+            $model = new DictionaryTableFieldModel();
             $logic = new BaseLogic();
             $request_data = $logic->getRequestData($model->getTableName(), 'table');
             $result = $model->addRecord($request_data);
@@ -203,7 +203,7 @@ class DataController extends UserBaseController
                 die('字典id不能为空');
             }
             #表单初始化
-            $model = new DictionaryFieldModel();
+            $model = new DictionaryTableFieldModel();
             $logic = new BaseLogic();
             $form_init = $logic->getFormInit($model->getTableName(), 'table');
             $result['dictionary_id'] = $dictionary_id;
@@ -224,7 +224,7 @@ class DataController extends UserBaseController
     public function editField()
     {
         if (IS_POST) {
-            $model = new DictionaryFieldModel();
+            $model = new DictionaryTableFieldModel();
             $logic = new BaseLogic();
             $request_data = $logic->getRequestData($model->getTableName(), 'table');
             $result = $model->addRecord($request_data);
@@ -239,7 +239,7 @@ class DataController extends UserBaseController
                 die('字段id不能为空');
             }
             #表单初始化
-            $model = new DictionaryFieldModel();
+            $model = new DictionaryTableFieldModel();
             $logic = new BaseLogic();
             $form_init = $logic->getFormInit($model->getTableName(), 'table');
             $result = $model->getRecordInfoById($id);
@@ -348,7 +348,7 @@ class DataController extends UserBaseController
             if (!$result) {
                 throw new \Exception('删除字典失败');
             }
-            $fieldModel = new DictionaryFieldModel();
+            $fieldModel = new DictionaryTableFieldModel();
             $orm = $fieldModel->orm()->where('dictionary_id', $id);
             $del_result = $fieldModel->delRecord($orm);
             if (!$del_result) {
@@ -371,7 +371,7 @@ class DataController extends UserBaseController
         if (!IS_POST) {
             $this->ajaxFail('非法请求');
         }
-        $model = new DictionaryFieldModel();
+        $model = new DictionaryTableFieldModel();
         #验证
         $rule = array(
             'id' => 'required|integer',

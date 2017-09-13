@@ -9,7 +9,7 @@
 namespace app\model;
 
 
-class DictionaryFieldModel extends BaseModel
+class DictionaryTableFieldModel extends BaseModel
 {
     public $tableName = 'dictionary_table_field';
     public $pk = 'id';

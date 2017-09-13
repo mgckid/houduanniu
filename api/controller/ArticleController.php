@@ -57,6 +57,7 @@ class ArticleController extends Controller
             $post = $cmsPostModel->getRecordInfoById($value['id']);
             $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
             $post['category_name'] = $category_result['category_name'];
+            $post['category_alias'] = $category_result['category_alias'];
             $list[] = $post;
         }
         $return = [

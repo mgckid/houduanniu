@@ -18,7 +18,7 @@
                                         <p class="card-text text-link-color-muted">
                                             <small>
                                                 <span class="post-time"><?=date('Y年m月d日',strtotime($value['created']))?></span>
-                                                <span class="post-category"> &nbsp;&bull;&nbsp; <a href="###" rel="category tag"><?=$value['category_name']?></a></span>
+                                                <span class="post-category"> &nbsp;&bull;&nbsp; <a href="<?=U('Index/category',['cate'=>$value['category_alias']])?>" rel="category tag"><?=$value['category_name']?></a></span>
                                             </small>
                                         </p>
 
@@ -45,7 +45,7 @@
                                                 <p class="card-text text-link-color-muted">
                                                     <small>
                                                         <span class="post-time"><?=date('Y年m月d日',strtotime($value['created']))?></span>
-                                                        <span class="post-category"> &nbsp;&bull;&nbsp; <a href="###" rel="category tag"><?=$value['category_name']?></a></span>
+                                                        <span class="post-category"> &nbsp;&bull;&nbsp; <a href="<?=U('Index/category',['cate'=>$value['category_alias']])?>" rel="category tag"><?=$value['category_name']?></a></span>
                                                     </small>
                                                 </p>
                                             </div>
