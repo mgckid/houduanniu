@@ -89,9 +89,10 @@ class BaseController extends Controller
             }
         }
         $header = [];
-        $options = [
-            'proxy' => '127.0.0.1:7777',
-        ];
+        $options = [];
+        if (__ENVIRONMENT__ == 'develop') {
+            $options['proxy'] = '127.0.0.1:7777';
+        }
         if (!class_exists('\Requests')) {
             require_once(__VENDOR__ . '/Requests-master/library/Requests.php');
             \Requests::register_autoloader();
