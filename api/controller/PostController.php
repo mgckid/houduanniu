@@ -348,6 +348,7 @@ class PostController extends Controller
     public function post()
     {
         $cmsPostModel = new CmsPostModel();
+        $cmsCategoryModel = new CmsCategoryModel();
         $rules = [
             'post_id' => 'required|numeric'
         ];
@@ -360,6 +361,9 @@ class PostController extends Controller
         }
         $post_id = $_REQUEST['post_id'];
         $article = $cmsPostModel->getRecordInfoByPostid($post_id);
+        $category_result = $cmsCategoryModel->getRecordInfoById($article['category_id']);
+        $article['category_name']=$category_result['category_name'];
+        $article['category_alias']=$category_result['category_alias'];
         if (!$article) {
             $this->response(null, self::S404_NOT_FOUND);
         } else {

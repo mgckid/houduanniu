@@ -53,11 +53,12 @@ class PostController extends BaseController
         {
             $seoInfo = [
                 'title' => $reg['info']['article']['title'],
-                'keyword' => $reg['info']['article']['keyword'],
+                'keywords' => $reg['info']['article']['keywords'],
                 'description' => $reg['info']['article']['description']
             ];
 
         }
+
         $this->display('Post/detail', $reg, $seoInfo);
     }
 
@@ -87,7 +88,7 @@ class PostController extends BaseController
         {
             $seoInfo = [
                 'title' => $this->siteInfo['site_short_name'] . '首页',
-                'keyword' => $this->siteInfo['site_keywords'],
+                'keywords' => $this->siteInfo['site_keywords'],
                 'description' => $this->siteInfo['site_description'],
             ];
         }

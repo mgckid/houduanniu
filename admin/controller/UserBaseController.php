@@ -24,7 +24,7 @@ class UserBaseController extends BaseController
     {
         parent::__construct();
         $this->checkLogin();
-        if (!$this->checkPower() && $this->environment != 'develop') {
+        if (!$this->checkPower()) {
             if (IS_POST || IS_AJAX) {
                 $this->ajaxFail('没有权限');
             } else {

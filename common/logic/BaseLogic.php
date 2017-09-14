@@ -132,6 +132,12 @@ class BaseLogic extends Controller
                 $table_name = $model_result['dictionary_value'];
             }
             $field_definded = $this->getModelDefined($table_name);
+            #注册钩子方法
+            foreach ($field_definded as $value) {
+                $hook = $value['belong_to_table'];
+                $function = 'app\\logic\\' . ucfirst($hook) . '::' . $value['field_value'];
+                Hook::getInstance()->add_action($hook, $function);
+            }
         }
         $form_init = [];
         foreach ($field_definded as $key => $value) {
@@ -145,13 +151,6 @@ class BaseLogic extends Controller
                 'enum' => $value['enum'],
                 'description' => '这是描述',
             ];
-        }
-
-        #注册钩子方法
-        foreach ($field_definded as $value) {
-            $hook = $value['belong_to_table'];
-            $function = 'app\\logic\\' . ucfirst($hook) . '::' . $value['field_value'];
-            Hook::getInstance()->add_action($hook, $function);
         }
         return $form_init;
     }

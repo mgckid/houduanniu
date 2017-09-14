@@ -126,7 +126,7 @@ class BaseController extends Controller
         {
             $siteInfo = $this->siteInfo;
             $siteInfo['title'] = !empty($seoInfo['title']) ? $seoInfo['title'] . '_' . $siteInfo['site_name'] : $siteInfo['site_name'];
-            $siteInfo['keyword'] = !empty($seoInfo['keyword']) ? $seoInfo['keyword'] : $siteInfo['site_keywords'];
+            $siteInfo['keywords'] = !empty($seoInfo['keywords']) ? $seoInfo['keywords'] : $siteInfo['site_keywords'];
             $siteInfo['description'] = !empty($seoInfo['description']) ? $seoInfo['description'] : $siteInfo['site_description'];
 
             $reg['siteInfo'] = $siteInfo;

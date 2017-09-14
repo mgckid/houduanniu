@@ -2,7 +2,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <title><?=$siteInfo['title']?></title>
-    <meta name="keywords" content="<?=$siteInfo['keyword']?>">
+    <meta name="keywords" content="<?=$siteInfo['keywords']?>">
     <meta name="description" content="<?=$siteInfo['description']?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel='stylesheet' id='lean-toolkit-css'  href='/static/writing/css/toolkit.css' type='text/css' media='all' />

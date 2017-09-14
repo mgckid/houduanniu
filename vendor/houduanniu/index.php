@@ -9,10 +9,6 @@
 #设置页面字符编码
 header("content-type:text/html; charset=utf-8");
 
-
-#载入函数库
-require __DIR__ . '/function.php';
-
 /*框架常量设置 开始*/
 #是否ajax请求
 define('IS_AJAX', isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest" ? true : FALSE);
@@ -20,6 +16,8 @@ define('IS_AJAX', isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVE
 define('IS_GET', strtolower($_SERVER['REQUEST_METHOD']) == 'get' ? true : false);
 #是否post请求
 define('IS_POST', ($_SERVER['REQUEST_METHOD'] == 'POST' && (empty($_SERVER['HTTP_REFERER']) || preg_replace("~https?:\/\/([^\:\/]+).*~i", "\\1", $_SERVER['HTTP_REFERER']) == preg_replace("~([^\:]+).*~", "\\1", $_SERVER['HTTP_HOST']))) ? true : FALSE);
+#框架运行开发模式
+defined('__ENVIRONMENT__') || define('__ENVIRONMENT__', 'develop');
 #项目路径
 defined('__PROJECT__') or define('__PROJECT__', dirname(dirname($_SERVER['DOCUMENT_ROOT'])));
 #框架组件路径
@@ -28,15 +26,21 @@ defined('__FRAMEWORK__') or define('__FRAMEWORK__', __DIR__);
 defined('__VENDOR__') or define('__VENDOR__', dirname(__FRAMEWORK__));
 #当前域名
 defined('__HOST__') or define('__HOST__', $_SERVER['HTTP_HOST']);
-#框架运行开发模式
-defined('ENVIRONMENT') || define('ENVIRONMENT', 'develop');
 /*框架常量设置 结束*/
 
+#载入函数库
+require __DIR__ . '/function.php';
+
+
 #错误报告级别(默认全部)
-if(ENVIRONMENT=='develop'){
+if (__ENVIRONMENT__ == 'develop') {
     error_reporting(E_ALL ^ E_NOTICE);
-    ini_set('display_errors',true);
-    ini_set('error_log',__PROJECT__.'/log/phperror.txt');
+    ini_set('display_errors', true);
+    ini_set('error_log', __PROJECT__ . '/log/phperror.txt');
+} elseif (__ENVIRONMENT__ == 'product') {
+//    error_reporting(E_ALL ^ E_NOTICE);
+    ini_set('display_errors', true);
+    ini_set('error_log', __PROJECT__ . '/log/phperror.txt');
 }
 
 #时区设置

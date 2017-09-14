@@ -43,7 +43,7 @@ class IndexController extends BaseController
         {
             $seoInfo = [
                 'title' => $this->siteInfo['site_short_name'] . '首页',
-                'keyword' => $this->siteInfo['site_keywords'],
+                'keywords' => $this->siteInfo['site_keywords'],
                 'description' => $this->siteInfo['site_description'],
             ];
         }
@@ -102,7 +102,7 @@ class IndexController extends BaseController
         {
             $seoInfo = [
                 'title' => $category_info['category_name'],
-                'keyword' => $category_info['keywords'],
+                'keywords' => $category_info['keywords'],
                 'description' => $category_info['description'],
             ];
         }
@@ -131,7 +131,7 @@ class IndexController extends BaseController
         {
             $seoInfo = [
                 'title' => $category_info['category_name'],
-                'keyword' => $category_info['keywords'],
+                'keywords' => $category_info['keywords'],
                 'description' => $category_info['description'],
             ];
         }
@@ -167,7 +167,7 @@ class IndexController extends BaseController
         {
             $seoInfo = [
                 'title' => "“{$keyword}”的搜索结果",
-                'keyword' => $this->siteInfo['site_keywords'],
+                'keywords' => $this->siteInfo['site_keywords'],
                 'description' => $this->siteInfo['site_description'],
             ];
         }
