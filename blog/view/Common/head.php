@@ -10,8 +10,5 @@
     <style type="text/css" id="custom-background-css">
         body.custom-background { background-color: #f8f9fa; }
     </style>
-    <link rel="icon" href="http://assets.qingzhuti.com/wp-content/uploads/2017/07/cropped-fx-32x32.png" sizes="32x32" />
-    <link rel="icon" href="http://assets.qingzhuti.com/wp-content/uploads/2017/07/cropped-fx-192x192.png" sizes="192x192" />
-    <link rel="apple-touch-icon-precomposed" href="http://assets.qingzhuti.com/wp-content/uploads/2017/07/cropped-fx-180x180.png" />
-    <meta name="msapplication-TileImage" content="http://assets.qingzhuti.com/wp-content/uploads/2017/07/cropped-fx-270x270.png" />
+    <link rel="shortcut icon"  href="/favicon.ico">
 </head>

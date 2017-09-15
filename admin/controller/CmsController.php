@@ -317,7 +317,7 @@ class CmsController extends UserBaseController
             $cmsModelModel = new DictionaryModelModel();
             $model_result = $cmsModelModel->getAllRecord();
             foreach ($model_result as $value) {
-                $enum[$value['id']] = $value['name'];
+                $enum[$value['id']] = $value['dictionary_name'];
             }
             $list_init['model_id']['enum'] = $enum;
         }

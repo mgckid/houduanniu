@@ -34,12 +34,12 @@ require __DIR__ . '/function.php';
 
 #错误报告级别(默认全部)
 if (__ENVIRONMENT__ == 'develop') {
-    error_reporting(E_ALL ^ E_NOTICE);
+    error_reporting(E_ALL);
     ini_set('display_errors', true);
     ini_set('error_log', __PROJECT__ . '/log/phperror.txt');
 } elseif (__ENVIRONMENT__ == 'product') {
-//    error_reporting(E_ALL ^ E_NOTICE);
-    ini_set('display_errors', true);
+    error_reporting(E_ALL ^ E_NOTICE);
+    ini_set('display_errors', false);
     ini_set('error_log', __PROJECT__ . '/log/phperror.txt');
 }
 
