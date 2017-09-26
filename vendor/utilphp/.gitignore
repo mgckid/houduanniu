@@ -1,7 +1,0 @@
-/.gitignore/
-/build/*
-/composer.lock
-/report/*
-/test.php
-/tests/test*
-/vendor/

@@ -9,36 +9,19 @@
 namespace houduanniu\base;
 
 
-use Aura\Session\SessionFactory;
-use Aura\Session\Session;
-use Aura\Session\Segment;
 use Exceptions\Http\Client\NotFoundException;
 
 class Application
 {
-    public static $instance;
-    public $register;
-    public $route;
-    public $message;
-    public $info;
+    protected static $instance;
+    protected $container;
+    protected $message;
+    protected $info;
 
     private function __construct()
     {
     }
 
-    /**
-     * 定义应用程序常量
-     *
-     * @access  private
-     * @author furong
-     * @return void
-     * @since
-     * @abstract
-     */
-    private static function defineAppCons()
-    {
-
-    }
 
     /**
      * 运行应用
@@ -49,34 +32,71 @@ class Application
      * @since  2017年3月22日 16:44:31
      * @abstract
      */
-    public static function run($register)
+    public static function run($container)
     {
-        self::getInstance()->register = $register;
-        #打包http请求
-        self::getInstance()->register->set('request', new Request((new Config(__PROJECT__ . '/common/config'))->all()));
-        self::getInstance()->route = self::getInstance()->register->get('request')->run();
-        #应用加载
-        $appPath = array(
-            __PROJECT__ . '/' . strtolower(self::getModule()),
-            __PROJECT__ . '/common',
-        );
-        self::getInstance()->register->get('autoloader')->addPrefix('app', $appPath);
+        self::getInstance()->container = $container;
 
-        #载入自定义函数库
-        foreach (self::config()->get('LOAD_FILES') as $file) {
-            require $file;
+        $loader = $container['loader'];
+        #添加应用类文件加载位置
+        $appPath = array(
+            APP_PATH,
+            COMMON_PATH,
+        );
+        $loader->addPrefix('app', $appPath);
+        #添加公共第三方扩展类夹在位置
+        $common_vendor_class_map = COMMON_PATH . '/vendor/class_map.php';
+        if (file_exists($common_vendor_class_map)) {
+            $class_map_result = require($common_vendor_class_map);
+            if (is_array($class_map_result) && !empty($class_map_result)) {
+                foreach ($class_map_result as $key => $value) {
+                    $loader->addPrefix($key, $value);
+                }
+            }
         }
-        #开启session
-//        session_start();
+        #添加应用第三方扩展类夹在位置
+        $app_vendor_class_map = APP_PATH . '/vendor/class_map.php';
+        if (file_exists($app_vendor_class_map)) {
+            $class_map_result = require($app_vendor_class_map);
+            if (is_array($class_map_result) && !empty($class_map_result)) {
+                foreach ($class_map_result as $key => $value) {
+                    $loader->addPrefix($key, $value);
+                }
+            }
+        }
+        #添加应用配置
+        if (is_dir(APP_PATH . '/config')) {
+            unset($container['config']);
+            $container['config'] = function ($c) {
+                $config_path = [
+                    COMMON_PATH . '/config',
+                    APP_PATH . '/config',
+                ];
+                return new \houduanniu\base\Config($config_path);
+            };
+        }
+        #添加应用依赖注入
+        $app_container = $container['config']->get('DEPENDENCY_INJECTION_MAP');
+        if (!empty($app_container)) {
+            foreach ($app_container as $key => $value) {
+                $container[$key] = $value;
+            }
+        }
+        #加载应用依赖脚本
+        $require_script = $container['config']->get('REQUIRE_SCRIPT_MAP');
+        if (!empty($require_script)) {
+            foreach ($require_script as $value) {
+                require $value;
+            }
+        }
         #运行程序
-        $controllerName = 'app\\' . self::config()->get('DIR_CONTROLLER') . '\\' . self::getController() . self::config()->get('EXT_CONTROLLER');
-        if (!class_exists($controllerName)) {
+        $controller_name = 'app\\' . self::config()->get('DIR_CONTROLLER') . '\\' . CONTROLLER_NAME . self::config()->get('EXT_CONTROLLER');
+        if (!class_exists($controller_name)) {
             throw new NotFoundException('控制器不存在');
-        } elseif (!method_exists($controllerName, self::getAction())) {
+        } elseif (!method_exists($controller_name, ACTION_NAME)) {
             throw new NotFoundException('方法不存在');
         } else {
             #执行方法
-            call_user_func(array(new $controllerName, self::getAction()));
+            call_user_func(array(new $controller_name, ACTION_NAME));
         }
     }
 
@@ -93,90 +113,54 @@ class Application
     }
 
     /**
-     * 获取url路由请求模块
-     * @return mixed
+     * 获取类注册器
+     * @return \Pimple\Container
      */
-    public static function getModule()
+    static public function container()
     {
-        return self::getInstance()->route['module'];
+        return self::getInstance()->container;
     }
 
     /**
-     * 获取url路由请求控制器
-     * @return mixed
+     * 设置消息
+     * @param $msg
      */
-    public static function getController()
+    public static function setMessage($msg)
     {
-        return self::getInstance()->route['controller'];
+        self::getInstance()->message = $msg;
     }
 
     /**
-     * 获取url路由请求方法
+     * 获取消息
      * @return mixed
      */
-    public static function getAction()
+    public static function getMessage()
     {
-        return self::getInstance()->route['action'];
+        return self::getInstance()->message;
     }
 
     /**
-     * 获取路由打包数据
-     * @param type $name
-     * @return type
+     * 设置数据
+     * @param $name
+     * @param null $value
      */
-    public static function getRouter($name = NULL)
+    public static function setInfo($name, $value = NULL)
     {
-        $return = self::getInstance()->route;
-        if (!empty($name)) {
-            $return = $return[$name];
+        self::getInstance()->info[$name] = $value;
+    }
+
+    /**
+     * 获取数据
+     * @param $name
+     * @return null
+     */
+    public static function getInfo($name)
+    {
+        $return = null;
+        if (isset(self::getInstance()->info[$name])) {
+            $return = self::getInstance()->info[$name];
         }
         return $return;
-    }
-
-
-    public function setMessage($msg)
-    {
-        $this->message = $msg;
-    }
-
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    public function setInfo($name, $value = NULL)
-    {
-        $this->info[$name] = $value;
-    }
-
-    public function getInfo($name)
-    {
-        if (!isset($this->info[$name])) {
-            return NULL;
-        }
-        return $this->info[$name];
-    }
-
-    /**
-     * 获取类注册器
-     * @return Register
-     */
-    static public function register()
-    {
-        return self::getInstance()->register;
-    }
-
-    /**
-     * 会话组件
-     * @return  Session
-     */
-    static public function session()
-    {
-        if (!self::register()->has('session')) {
-            $session_factory = new SessionFactory();
-            self::register()->set('session', $session_factory->newInstance($_COOKIE));
-        }
-        return self::register()->get('session');
     }
 
     /**
@@ -185,11 +169,9 @@ class Application
      */
     static function config()
     {
-        if (!self::register()->has('config')) {
-            self::register()->set('config', new Config([__PROJECT__ . '/' . strtolower(self::getModule()) . '/config', __PROJECT__ . '/common/config']));
-        }
-        return self::register()->get('config');
+        return self::container()['config'];
     }
+
 
     /**
      * 缓存组件
@@ -197,24 +179,32 @@ class Application
      */
     static function cache($cache_name = null)
     {
-        if (!self::register()->has('cache')) {
-            self::register()->set('cache', (new Cache())->setCachePath(__PROJECT__ . '/cache/'));
-        }
-        return self::register()->get('cache')->setCache($cache_name);
+        return self::container()['cache']->setCache($cache_name);
+    }
+
+
+    /**
+     * @access public
+     * @author furong
+     * @return \Overtrue\Validation\Factory
+     * @since
+     * @abstract
+     */
+    static function validation()
+    {
+        return self::container()['validation'];
     }
 
     /**
-     * session 分片
-     * @return Segment
+     * 模版引擎组件
+     * @access public
+     * @author furong
+     * @return \League\Plates\Engine
+     * @since
+     * @abstract
      */
-    static function segment()
+    static function templateEngine()
     {
-        if (!self::register()->has('segment')) {
-            self::session()->setCookieParams(array('lifetime' => 1800 * 24));
-            $secure_key = self::config()->get('SEGMENT_KEY');
-            self::register()->set('segment', self::session()->getSegment($secure_key));
-        }
-        return self::register()->get('segment');
+        return self::container()['templateEngine'];
     }
-
 }

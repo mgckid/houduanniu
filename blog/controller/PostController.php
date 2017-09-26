@@ -16,7 +16,7 @@ class PostController extends BaseController
     {
         $id = isset($_GET['id']) ? trim($_GET['id']) : '';
         if (empty($id)) {
-            die('页面不存在');
+            trigger_error('页面不存在');
         }
         #获取文章详情
         {
@@ -25,7 +25,7 @@ class PostController extends BaseController
             ];
             $result = $this->apiRequest('Post/Post', $param, 'Api');
             if ($result['code'] != 200) {
-                die('页面不存在');
+                trigger_error('页面不存在');
             }
             $result['data']['article']['post_tag'] = explode(',', $result['data']['article']['post_tag']);
             $reg['info'] = $result['data'];
@@ -42,7 +42,7 @@ class PostController extends BaseController
                 foreach ($result['data'] as $value) {
                     $related_article[] = [
                         'title' => $value['title'],
-                        'title_alias' => $value['title_alias'],
+                        'post_id' => $value['post_id'],
                         'main_image' => getImage($value['main_image']),
                     ];
                 }
@@ -87,9 +87,9 @@ class PostController extends BaseController
         #seo标题
         {
             $seoInfo = [
-                'title' => $this->siteInfo['site_short_name'] . '首页',
-                'keywords' => $this->siteInfo['site_keywords'],
-                'description' => $this->siteInfo['site_description'],
+                'title' => $this->getInfo('siteInfo')['site_short_name'] . '首页',
+                'keywords' => $this->getInfo('siteInfo')['site_keywords'],
+                'description' => $this->getInfo('siteInfo')['site_description'],
             ];
         }
         $this->display('Index/index', $reg, $seoInfo);

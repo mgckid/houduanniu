@@ -9,11 +9,8 @@
 namespace app\controller;
 
 
-use app\model\SiteConfigModel;
 use app\model\SiteSetModel;
-use app\model\CmsCategoryModel;
-use app\model\FlinkModel;
-use GuzzleHttp\Client;
+use Curl\Curl;
 use houduanniu\web\Controller;
 use houduanniu\web\View;
 use houduanniu\base\Application;
@@ -24,13 +21,12 @@ class BaseController extends Controller
     protected $crumbHtml;
     public $imageSize;
 
-    public $siteInfo;
 
     function __construct()
     {
         parent::__construct();
         $this->imageSize = C('IMAGE_SIZE');
-        $this->siteInfo = $this->getSiteInfo();
+        $this->setInfo('siteInfo', $this->getSiteInfo());
     }
 
     /**
@@ -59,6 +55,18 @@ class BaseController extends Controller
     }
 
     /**
+     * @return \Curl\Curl
+     */
+    public function curl()
+    {
+        $container = Application::container();
+        if (ENVIRONMENT == 'develop') {
+            $container['curl']->setOpt(CURLOPT_PROXY, '127.0.0.1:7777');
+        }
+        return $container['curl'];
+    }
+
+    /**
      * 获取站点信息
      */
     public function getSiteInfo()
@@ -78,34 +86,26 @@ class BaseController extends Controller
             $host = C('API_URL');
         }
         if (empty($host)) {
-            die('接口地址不存在');
+            trigger_error('接口地址不存在');
         }
         #返回缓存内容
         $cache_key = md5(json_encode($data));
         $cache_name = $url;
         if ($method == 'get') {
             if (Application::cache($cache_name)->isCached($cache_key)) {
-               return Application::cache($cache_name)->retrieve($cache_key);
+                return Application::cache($cache_name)->retrieve($cache_key);
             }
         }
+        $curl = $this->curl();
         $header = [];
-        $options = [];
-        if (__ENVIRONMENT__ == 'develop') {
-            $options['proxy'] = '127.0.0.1:7777';
-        }
-        if (!class_exists('\Requests')) {
-            require_once(__VENDOR__ . '/Requests-master/library/Requests.php');
-            \Requests::register_autoloader();
-        }
         if ($method == 'get') {
             $url = $host . U($url, $data);
-            $response = \Requests::get($url, $header, $options);
+            $response = $curl->get($url);
         }
-
-        if (!$response->success) {
-            die('接口请求错误');
+        if (!is_object($response)) {
+            trigger_error('接口请求错误');
         }
-        $result = is_array(json_decode($response->body, true)) ? json_decode($response->body, true) : $response->body;
+        $result = json_decode(json_encode($response), true);;
         #缓存数据
         if ($method == 'get') {
             if (isset($result['cached']) && $result['cached']) {
@@ -125,7 +125,7 @@ class BaseController extends Controller
     {
         #站点信息
         {
-            $siteInfo = $this->siteInfo;
+            $siteInfo = $this->getSiteInfo();
             $siteInfo['title'] = !empty($seoInfo['title']) ? $seoInfo['title'] . '_' . $siteInfo['site_name'] : $siteInfo['site_name'];
             $siteInfo['keywords'] = !empty($seoInfo['keywords']) ? $seoInfo['keywords'] : $siteInfo['site_keywords'];
             $siteInfo['description'] = !empty($seoInfo['description']) ? $seoInfo['description'] : $siteInfo['site_description'];
@@ -145,7 +145,7 @@ class BaseController extends Controller
             $reg['siteNavgation'] = $result['data'];
         }
         View::addData($reg);
-        View::setDirectory(__PROJECT__ . '/' . strtolower(Application::getModule()) . '/' . C('DIR_VIEW'));
+        View::setDirectory(PROJECT_PATH . '/' . strtolower(MODULE_NAME) . '/' . C('DIR_VIEW'));
         View::display($view, $data);
     }
 

@@ -14,40 +14,73 @@ class Config extends \Noodlehaus\Config
     protected function getDefaults()
     {
         return array(
+            /*框架自定义配置 开始*/
+            /*http请求组件依赖注入*/
+            'request' => function ($c) {
+                return new \houduanniu\base\Request($c['config']->all());
+            },
+            /*http请求路由数据*/
+            'request_data' => function ($c) {
+                return $c['request']->run();
+            },
+            /*模版引擎组件依赖注入*/
+            'templateEngine' => function ($c) {
+                return new \League\Plates\Engine();
+            },
+            /*验证器组件依赖注入*/
+            'validation' => function ($c) {
+                require VENDOR_PATH . '/overtrue/validation/src/helpers.php';
+                $lang = require VENDOR_PATH . '/overtrue/zh-CN/validation.php';
+                return new \Overtrue\Validation\Factory(new \Overtrue\Validation\Translator($lang));
+            },
+            /*缓存组件依赖注入*/
+            'cache' => function ($c) {
+                $cache_dir = PROJECT_PATH . '/cache/';
+                if (!is_dir($cache_dir)) {
+                    mkdir($cache_dir);
+                }
+                $cache = new Cache();
+                return $cache->setCachePath($cache_dir);
+            },
+            /*应用组件依赖注入*/
+            'DEPENDENCY_INJECTION_MAP' => [],
+            /*应用加载脚本*/
+            'REQUIRE_SCRIPT_MAP' => [],
+            /*框架自定义配置 结束*/
+
             /* 数据库设置 开始 */
             'DB' => array(
                 'default' => array(
-                    'connection_string'          => 'sqlite::memory:',
-                    'id_column'                  => 'id',
-                    'id_column_overrides'        => array(),
-                    'error_mode'                 => \PDO::ERRMODE_EXCEPTION,
-                    'username'                   => null,
-                    'password'                   => null,
-                    'driver_options'             => [
+                    'connection_string' => 'sqlite::memory:',
+                    'id_column' => 'id',
+                    'id_column_overrides' => array(),
+                    'error_mode' => \PDO::ERRMODE_EXCEPTION,
+                    'username' => null,
+                    'password' => null,
+                    'driver_options' => [
                         \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
                         \PDO::ATTR_PERSISTENT => true,
                     ],
-                    'logging'                    => true,
-                    'caching'                    => false,
-                    'caching_auto_clear'         => false,
-                    'return_result_sets'         => false,
+                    'logging' => true,
+                    'caching' => false,
+                    'caching_auto_clear' => false,
+                    'return_result_sets' => false,
                     #下面三个配置打开会报错
-    /*                'identifier_quote_character' => null, // if this is null, will be autodetected
+                    /*
+                    'identifier_quote_character' => null, // if this is null, will be autodetected
                     'limit_clause_style'         => null, // if this is null, will be autodetected
-                    'logger'                     => null,*/
+                    'logger'                     => null,
+                    */
                 )
             ),
             /* 数据库设置 结束*/
 
             /*应用设置 开始*/
-            'EXT_CONTROLLER'=>'Controller',
-            'EXT_MODEL'=>'Model',
+            'EXT_CONTROLLER' => 'Controller',
+            'EXT_MODEL' => 'Model',
             'DIR_CONTROLLER' => 'controller',
             'DIR_MODEL' => 'model',
             'DIR_VIEW' => 'view',
-            'THEME'=>'default',
-            #session 分片默认key
-            'SEGMENT_KEY'=>'dsdhskjdhskjdhksjds',
             /*应用设置 结束*/
 
             /*http请求设置 开始*/
@@ -70,11 +103,8 @@ class Config extends \Noodlehaus\Config
                 'www' => 'home'
             ],
             /*http请求设置 结束*/
-
-            /*自定义载入文件*/
-            'LOAD_FILES' => [
-
-            ]
+            /*模版主题*/
+            'THEME' => 'default',
         );
     }
 }

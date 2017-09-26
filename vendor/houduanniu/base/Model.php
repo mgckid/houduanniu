@@ -12,15 +12,10 @@ namespace houduanniu\base;
 use Exceptions\Http\Server\InternalServerErrorException;
 use idiorm\orm\ORM;
 use Overtrue\Validation\Factory;
-use Overtrue\Validation\Translator;
-use houduanniu\base\Application;
 
 class Model
 {
-    /**
-     * @var object Laravel Validation 简化无依赖版 验证器对象
-     */
-    protected $validation;
+
     /**
      * @var string  模型表名
      */
@@ -197,7 +192,7 @@ class Model
     }
 
     /**
-     * 模型验证对象
+     * 模型验证对象 Laravel Validation 简化无依赖版 验证器对象
      * @access public
      * @author furong
      * @return Factory
@@ -206,32 +201,44 @@ class Model
      */
     public function validate()
     {
-        if (empty($this->validation)) {
-            require __VENDOR__ . '/overtrue/validation/src/helpers.php';
-            $lang = require __VENDOR__ . '/overtrue/zh-CN/validation.php';
-            $this->validation = new Factory(new Translator($lang));
-        }
-        return $this->validation;
+        return Application::validation();
     }
 
+    /**
+     * 设置消息
+     * @param type $url
+     */
     public function setMessage($msg)
     {
-        return Application::getInstance()->setMessage($msg);
+        return Application::setMessage($msg);
     }
 
+    /**
+     * 获取消息
+     * @param
+     */
     public function getMessage()
     {
-        return Application::getInstance()->getMessage();
+        return Application::getMessage();
     }
 
+    /**
+     * 获取数据
+     * @param
+     */
     public function getInfo($key)
     {
-        return Application::getInstance()->getInfo($key);
+        return Application::getInfo($key);
     }
 
+    /**
+     *  设置数据
+     * @param type $key
+     * @param type $value
+     */
     public function setInfo($key, $value)
     {
-        Application::getInstance()->setInfo($key, $value);
+        Application::setInfo($key, $value);
     }
 
     public function getTableName()

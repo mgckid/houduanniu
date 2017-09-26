@@ -42,9 +42,9 @@ class IndexController extends BaseController
         #seo标题
         {
             $seoInfo = [
-                'title' => $this->siteInfo['site_short_name'] . '首页',
-                'keywords' => $this->siteInfo['site_keywords'],
-                'description' => $this->siteInfo['site_description'],
+                'title' => $this->getInfo('siteInfo')['site_short_name'] . '首页',
+                'keywords' => $this->getInfo('siteInfo')['site_keywords'],
+                'description' => $this->getInfo('siteInfo')['site_description'],
             ];
         }
         $this->display('Index/index', $reg, $seoInfo);
@@ -55,7 +55,7 @@ class IndexController extends BaseController
     {
         $cate = isset($_GET['cate']) ? trim($_GET['cate']) : '';
         if (!$cate) {
-            die('页面不存在');
+            trigger_error('页面不存在');
         }
         #获取栏目数据
         {
@@ -145,7 +145,7 @@ class IndexController extends BaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $keyword = isset($_GET['s']) && !empty($_REQUEST['s']) ? trim($_REQUEST['s']) : '';
         if (empty($keyword)) {
-            die('请输入关键字搜索');
+            trigger_error('请输入关键字搜索');
         }
         #获取搜索数据
         {
@@ -167,8 +167,8 @@ class IndexController extends BaseController
         {
             $seoInfo = [
                 'title' => "“{$keyword}”的搜索结果",
-                'keywords' => $this->siteInfo['site_keywords'],
-                'description' => $this->siteInfo['site_description'],
+                'keywords' => $this->getInfo('siteInfo')['site_keywords'],
+                'description' => $this->getInfo('siteInfo')['site_description'],
             ];
         }
         $this->display('Index/search', $reg, $seoInfo);

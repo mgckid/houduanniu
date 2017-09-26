@@ -42,7 +42,7 @@ class DataController extends UserBaseController
             '数据管理' => U('Cms/index'),
             '字典管理' => ''
         ));
-        $this->display('data/dictionaryManage', $data);
+        $this->display('Data/dictionaryManage', $data);
     }
 
     /**
@@ -53,7 +53,7 @@ class DataController extends UserBaseController
     {
         $dictionary_id = isset($_REQUEST['dictionary_id']) ? intval($_REQUEST['dictionary_id']) : 0;
         if (empty($dictionary_id)) {
-            die('字典id不能为空');
+            trigger_error('字典id不能为空');
         }
         #查询列表
         {
@@ -84,7 +84,7 @@ class DataController extends UserBaseController
             '字典管理' => U('Data/dictionaryManage'),
             $dictionary_info['dictionary_name'] . '(' . $dictionary_info['dictionary_value'] . ')字段管理' => '',
         ));
-        $this->display('data/fieldManage', $data);
+        $this->display('Data/fieldManage', $data);
     }
 
     /**
@@ -113,7 +113,7 @@ class DataController extends UserBaseController
             '字典管理' => U('Data/dictionaryManage'),
             '属性管理' => '',
         ));
-        $this->display('data/attributeManage', $data);
+        $this->display('Data/attributeManage', $data);
     }
 
 
@@ -200,7 +200,7 @@ class DataController extends UserBaseController
         } else {
             $dictionary_id = isset($_REQUEST['dictionary_id']) ? intval($_REQUEST['dictionary_id']) : 0;
             if (empty($dictionary_id)) {
-                die('字典id不能为空');
+                trigger_error('字典id不能为空');
             }
             #表单初始化
             $model = new DictionaryTableFieldModel();
@@ -236,7 +236,7 @@ class DataController extends UserBaseController
         } else {
             $id = isset($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
             if (empty($id)) {
-                die('字段id不能为空');
+                trigger_error('字段id不能为空');
             }
             #表单初始化
             $model = new DictionaryTableFieldModel();
