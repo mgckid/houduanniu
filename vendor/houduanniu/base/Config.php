@@ -81,6 +81,7 @@ class Config extends \Noodlehaus\Config
             'DIR_CONTROLLER' => 'controller',
             'DIR_MODEL' => 'model',
             'DIR_VIEW' => 'view',
+            '404_PAGE' => '',
             /*应用设置 结束*/
 
             /*http请求设置 开始*/
