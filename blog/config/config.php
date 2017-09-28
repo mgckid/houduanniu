@@ -12,4 +12,13 @@ return [
             return new \Curl\Curl();
         },
     ],
+    'test'=>function($model_id){
+        $aaa =function($model_id){
+            print_g($model_id);
+            $model = new \app\model\CmsPostModel();
+            $data = $model->getRecordList('',0,2,false);
+            return $data;
+        };
+        return $aaa();
+    },
 ];

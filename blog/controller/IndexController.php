@@ -9,7 +9,6 @@
 namespace app\controller;
 
 
-use app\model\CmsCategoryModel;
 use houduanniu\base\Page;
 
 
@@ -20,6 +19,9 @@ class IndexController extends BaseController
      */
     public function index()
     {
+
+        $test =  C('test');
+        print_g($test(1));
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $page_size = 10;
         #获取最近更新文章
