@@ -60,7 +60,7 @@ try {
     };
 
     $loader = $container['loader'];
-    $loader->register();
+//    $loader->register();
     $loader->setPrefixes(require(VENDOR_PATH . '/class_map.php'));
 
     /*时区设置*/
@@ -88,7 +88,16 @@ try {
 
     $container['error_handler_set'];
     $container['timezone_set'];
-    $container['flow_set'];
+//    $container['flow_set'];
+    #当前模块名称常量
+    defined('MODULE_NAME') or define('MODULE_NAME', $container['request_data']['module']);
+    #当前控制器名称常量
+    defined('CONTROLLER_NAME') or define('CONTROLLER_NAME', $container['request_data']['controller']);
+    #当前方法名称常量
+    defined('ACTION_NAME') or define('ACTION_NAME', $container['request_data']['action']);
+    #当前模块路径
+    defined('APP_PATH') or define('APP_PATH', PROJECT_PATH . '/' . strtolower(MODULE_NAME));
+    \houduanniu\base\Application::run($container);
 } catch (\Exception $e) {
     errorPage($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
 };
