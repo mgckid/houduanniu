@@ -44,13 +44,11 @@ if (ENVIRONMENT == 'develop') {
     ini_set('error_log', PROJECT_PATH . '/log/phperror.txt');
 }
 
-#时区设置
-date_default_timezone_set('PRC');
-set_error_handler('errorHandle');
 try {
     require VENDOR_PATH . '/Aura.Autoload-2.x/src/Loader.php';
     require VENDOR_PATH . '/Pimple-master/src/Pimple/Container.php';
     $container = new \Pimple\Container();
+
     #注册框架配置组件
     $container['config'] = function ($c) {
         $common_config = is_dir(COMMON_PATH . '/config') ? COMMON_PATH . '/config' : [];
@@ -64,6 +62,12 @@ try {
     $loader = $container['loader'];
     $loader->register();
     $loader->setPrefixes(require(VENDOR_PATH . '/class_map.php'));
+
+    /*时区设置*/
+    $container['timezone_set']=$container['config']->get('timezone_set');
+
+    /*错误处理设置*/
+    $container['error_handler_set']=$container['config']->get('error_handler_set');
 
     #注册缓存组件
     $container['cache'] = $container['config']->get('cache');
@@ -80,19 +84,11 @@ try {
     #注册路由数据
     $container['request_data'] = $container['config']->get('request_data');
 
-    #http请求打包数据
-    $request_data = $container['request_data'];
+    $container['run_application'] = $container['config']->get('run_application');
 
-    #当前模块名称常量
-    defined('MODULE_NAME') or define('MODULE_NAME', $request_data['module']);
-    #当前控制器名称常量
-    defined('CONTROLLER_NAME') or define('CONTROLLER_NAME', $request_data['controller']);
-    #当前方法名称常量
-    defined('ACTION_NAME') or define('ACTION_NAME', $request_data['action']);
-    #当前模块路径
-    defined('APP_PATH') or define('APP_PATH', PROJECT_PATH . '/' . strtolower(MODULE_NAME));
-
-    \houduanniu\base\Application::run($container);
+    $container['error_handler_set'];
+    $container['timezone_set'];
+    $container['flow_set'];
 } catch (\Exception $e) {
     errorPage($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
 };
