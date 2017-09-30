@@ -46,13 +46,8 @@ class PostController extends Controller
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $page_size = $_REQUEST['page_size'];
-        $result = $cmsPostModel->getRecordList('', 0, $page_size, false, 'click');
-        $list = [];
-        foreach ($result as $key => $value) {
-            $post = $cmsPostModel->getRecordInfoById($value['id']);
-            $list[] = $post;
-        }
-        $this->response($list, self::S200_OK, null, true);
+        $result = $cmsPostModel->getRecordList('',1,0,$page_size,false);
+        $this->response($result, self::S200_OK, null, true);
     }
 
     public function tags()

@@ -60,7 +60,7 @@ try {
     };
 
     $loader = $container['loader'];
-//    $loader->register();
+    $loader->register();
     $loader->setPrefixes(require(VENDOR_PATH . '/class_map.php'));
 
     /*时区设置*/
@@ -88,7 +88,6 @@ try {
 
     $container['error_handler_set'];
     $container['timezone_set'];
-//    $container['flow_set'];
     #当前模块名称常量
     defined('MODULE_NAME') or define('MODULE_NAME', $container['request_data']['module']);
     #当前控制器名称常量
