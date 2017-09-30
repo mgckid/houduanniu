@@ -5,6 +5,7 @@ namespace app\controller;
 
 use app\logic\BaseLogic;
 use app\logic\Post;
+use app\logic\PostLogic;
 use app\model\BaseModel;
 use app\model\CmsCategoryModel;
 use app\model\CmsModelModel;
@@ -145,7 +146,7 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '添加文档' => ''
             ));
-            $template = !empty($model_result['post_add_template'])?$model_result['post_add_template']:'Cms/addPost';
+            $template = !empty($model_result['post_add_template']) ? $model_result['post_add_template'] : 'Cms/addPost';
             $this->display($template);
         }
     }
@@ -190,7 +191,7 @@ class CmsController extends UserBaseController
                 '内容管理' => U('Cms/index'),
                 '编辑文档' => ''
             ));
-            $template = !empty($model_result['post_add_template'])?$model_result['post_add_template']:'Cms/addPost';
+            $template = !empty($model_result['post_add_template']) ? $model_result['post_add_template'] : 'Cms/addPost';
             $this->display($template);
         }
     }
@@ -290,12 +291,13 @@ class CmsController extends UserBaseController
         #获取列表数据
         {
             $model = new CmsPostModel();
+            $postLogic = new PostLogic();
             $orm = $model->orm()->where('category_id', $category_id);
             #统计记录数
-            $count = $model->getRecordList($orm, '', '', TRUE);
+            $count = $postLogic->getRecordList($category_result['model_id'], $orm, '', '', true);s
             #分页
             $page = new Page($count, $p, $fetch_row);
-            $list = $model->getRecordList($orm, $page->getOffset(), $fetch_row, FALSE);
+            $list = $postLogic->getRecordList($category_result['model_id'], $orm, $page->getOffset(), $fetch_row, FALSE);
         }
         #获取列表字段
         {
