@@ -229,8 +229,6 @@ class CmsPostModel extends BaseModel
     }
 
 
-
-
     /**
      * 获取文章列表
      * @param type $condition 条件
@@ -284,6 +282,83 @@ class CmsPostModel extends BaseModel
         return $result;
     }
 
+    /**
+     * 获取单条记录
+     * @access public
+     * @author furong
+     * @param $id
+     * @param string $field
+     * @return array|bool
+     * @since 2017年7月28日 09:40:34
+     * @abstract
+     */
+    public function getModelRecordInfoById($id, $field = '*')
+    {
+        $orm = $this->orm()->where('id', $id);
+        $cms_post_result = $this->getRecordInfo($orm);
+        if (!$cms_post_result) {
+            return false;
+        }
+        $result = $this->getModelRecordInfoByPostId($cms_post_result['post_id'], $field);
+        return $result;
+    }
+
+    /**
+     * 获取单条记录
+     * @access public
+     * @author furong
+     * @param $id
+     * @param string $field
+     * @return array|bool
+     * @since 2017年7月28日 09:40:34
+     * @abstract
+     */
+    public function getModelRecordInfoByPostId($post_id, $field = '*')
+    {
+        $orm = $this->orm()->where('post_id', $post_id);
+        $cms_post_result = $this->getRecordInfo($orm);
+        if (!$cms_post_result) {
+            return false;
+        }
+        $logic = new BaseLogic();
+        $model_defined = $logic->getModelDefined($cms_post_result['model_id']);
+        $cms_post_extend_attribute_select_arr[] = 'post_id';
+        $cms_post_extend_text_select_arr[] = 'post_id';
+        foreach ($model_defined as $value) {
+            if ($value['belong_to_table'] == 'cms_post_extend_attribute') {
+                $cms_post_extend_attribute_select_arr[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+            }
+            if ($value['belong_to_table'] == 'cms_post_extend_text') {
+                $cms_post_extend_text_select_arr[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+            }
+        }
+
+        if ($field != '*') {
+            $fields = explode(',', $field);
+            $select_expr = [];
+            foreach ($fields as $val) {
+                if (isset($model_defined[$val])) {
+                    $select_expr[] = $model_defined[$val]['belong_to_table'] . '.' . $val;
+                }
+            }
+            $field = implode(',', $select_expr);
+        }
+
+        #cms_post_extend_attribute
+        {
+            $cms_post_extend_attribute_raw_join = "left join (SELECT " . implode(',', $cms_post_extend_attribute_select_arr) . " FROM cms_post_extend_attribute  GROUP BY post_id )";
+        }
+        #cms_post_extend_text
+        {
+            $cms_post_extend_text_raw_join = "left join (SELECT  " . implode(',', $cms_post_extend_text_select_arr) . " FROM cms_post_extend_text  GROUP BY post_id )";
+        }
+
+        $orm = $this->orm()->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
+            ->raw_join($cms_post_extend_text_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_text.post_id'], 'cms_post_extend_text')
+            ->where('cms_post.post_id', $post_id);
+        $result = $this->getRecordInfo($orm, $field);
+        return $result;
+    }
 
 
     /**
@@ -299,9 +374,9 @@ class CmsPostModel extends BaseModel
      * @since 2017年7月6日 17:14:49
      * @abstract
      */
-    public function getRecordList($orm = '', $model_id = 1, $offset = '', $limit = '', $for_count = false, $sort_field = 'id', $order = 'desc', $field = '*')
+    public function getModelRecordList($model_id, $orm, $offset = '', $limit = '', $for_count = false, $sort_field = 'created', $order = 'desc', $field = '*')
     {
-        $orm = $this->getOrm($orm)->where_equal('deleted', 0);
+        $orm = $this->getOrm($orm)->where('cms_post.model_id', $model_id);
         if ($for_count) {
             $result = $orm->count();
         } else {
@@ -309,18 +384,7 @@ class CmsPostModel extends BaseModel
             $model_defined = $logic->getModelDefined($model_id);
             $cms_post_extend_attribute_select[] = 'post_id';
             $cms_post_extend_text_select[] = 'post_id';
-            $select_expr = '';
             foreach ($model_defined as $value) {
-                if ($field != '*') {
-                    $fields = explode(',', $field);
-                    foreach ($fields as $val) {
-                        if ($value['field_value'] == $val) {
-                            $select_expr[] = $value['belong_to_table'] . '.' . $value['field_value'];
-                        }
-                    }
-                } else {
-                    $select_expr[] = $value['belong_to_table'] . '.' . $value['field_value'];
-                }
                 if ($value['belong_to_table'] == 'cms_post_extend_attribute') {
                     $cms_post_extend_attribute_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
                 }
@@ -328,6 +392,18 @@ class CmsPostModel extends BaseModel
                     $cms_post_extend_text_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
                 }
             }
+
+            if ($field != '*') {
+                $fields = explode(',', $field);
+                $select_expr = [];
+                foreach ($fields as $val) {
+                    if (isset($model_defined[$val])) {
+                        $select_expr[] = $model_defined[$val]['belong_to_table'] . '.' . $val;
+                    }
+                }
+                $field = implode(',', $select_expr);
+            }
+
             #cms_post_extend_attribute
             {
                 $cms_post_extend_attribute_select = implode(',', $cms_post_extend_attribute_select);
@@ -339,11 +415,10 @@ class CmsPostModel extends BaseModel
                 $cms_post_extend_text_raw_join = "left join (SELECT {$cms_post_extend_text_select} FROM cms_post_extend_text  GROUP BY post_id )";
             }
 
-            $orm = $this->orm()->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
+            $orm = $orm->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
                 ->raw_join($cms_post_extend_text_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_text.post_id'], 'cms_post_extend_text')
-                ->where('cms_post.model_id',$model_id)
-                ->offset($offset)
                 ->select_expr($field)
+                ->offset($offset)
                 ->limit($limit);
             if ($order == 'desc') {
                 $orm = $orm->order_by_desc($sort_field);

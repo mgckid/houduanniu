@@ -179,7 +179,7 @@ class CmsController extends UserBaseController
             $baseLogic = new BaseLogic();
             $cmsPostModel = new CmsPostModel();
             #获取文档信息
-            $post_result = $cmsPostModel->getRecordInfoById($id, '*');
+            $post_result = $cmsPostModel->getModelRecordInfoById($id, '*');
             #获取表单初始化数据
             $form_init = $baseLogic->getFormInit($post_result['model_id'], 'model');
             Form::getInstance()->form_data($post_result)
@@ -291,13 +291,12 @@ class CmsController extends UserBaseController
         #获取列表数据
         {
             $model = new CmsPostModel();
-            $postLogic = new PostLogic();
             $orm = $model->orm()->where('category_id', $category_id);
             #统计记录数
-            $count = $postLogic->getRecordList($category_result['model_id'], $orm, '', '', true);s
+            $count = $model->getModelRecordList($category_result['model_id'], $orm, '', '', true);
             #分页
             $page = new Page($count, $p, $fetch_row);
-            $list = $postLogic->getRecordList($category_result['model_id'], $orm, $page->getOffset(), $fetch_row, FALSE);
+            $list = $model->getModelRecordList($category_result['model_id'], $orm, $page->getOffset(), $fetch_row, FALSE,'created','desc');
         }
         #获取列表字段
         {

@@ -102,6 +102,7 @@ class BaseLogic extends Controller
             ->where('d.deleted', 0)
             ->where('f.deleted', 0)
             ->find_array();
+        $result=[];
         if ($field_result) {
             $dictionaryAttributeModel = new DictionaryAttributeModel();
             foreach ($field_result as $key => $value) {
@@ -117,10 +118,10 @@ class BaseLogic extends Controller
                     }
                 }
                 $value['enum'] = $enum;
-                $field_result[$key] = $value;
+                $result[$value['field_value']] = $value;
             }
         }
-        return $field_result;
+        return $result;
     }
 
     public function getFormInit($table_name, $mode = 'table')
