@@ -46,7 +46,7 @@ class PostController extends Controller
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $page_size = $_REQUEST['page_size'];
-        $result = $cmsPostModel->getRecordList('',1,0,$page_size,false);
+        $result = $cmsPostModel->getModelRecordList(1, '', 0, $page_size, false, 'click');
         $this->response($result, self::S200_OK, null, true);
     }
 
@@ -71,22 +71,20 @@ class PostController extends Controller
         $p = $_REQUEST['p'];
         $page_size = $_REQUEST['page_size'];
         $tag_name = $_REQUEST['tag_name'];
-        $orm = $cmsPostExtendAttributeModel->orm()->where('field', 'post_tag')->where_like('value', '%' . $tag_name . '%');
-        $count = $cmsPostExtendAttributeModel->getRecordList($orm, '', '', true);
+        $orm = $cmsPostModel->orm()->where_like('post_tag', '%' . $tag_name . '%');
+        $count = $cmsPostModel->getModelRecordList(1, $orm, '', '', true);
         $page = new Page($count, $p, $page_size);
-        $result = $cmsPostExtendAttributeModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false);
-        $list = [];
+        $result = $cmsPostModel->getModelRecordList(1, $orm, $page->getOffset(), $page->getPageSize(), false);
         $cmsCategoryModel = new CmsCategoryModel();
         foreach ($result as $key => $value) {
-            $post = $cmsPostModel->getRecordInfoByPostid($value['post_id']);
-            $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
-            $post['category_name'] = $category_result['category_name'];
-            $post['category_alias'] = $category_result['category_alias'];
-            $list[] = $post;
+            $category_result = $cmsCategoryModel->getRecordInfoById($value['category_id']);
+            $value['category_name'] = $category_result['category_name'];
+            $value['category_alias'] = $category_result['category_alias'];
+            $result[$key] = $value;
         }
         $return = [
             'count' => $count,
-            'list' => $list,
+            'list' => $result,
         ];
         $this->response($return, self::S200_OK, null, true);
     }
@@ -109,7 +107,7 @@ class PostController extends Controller
         }
         $post_id = $_REQUEST['post_id'];
         $page_size = $_REQUEST['page_size'];
-        $post_result = $cmsPostModel->getRecordInfoByPostid($post_id);
+        $post_result = $cmsPostModel->getModelRecordInfoByPostId($post_id);
         if (!$post_result) {
             $this->response(null, self::S400_BAD_REQUEST, '文档不存在');
         }
@@ -126,8 +124,8 @@ class PostController extends Controller
         if (count($post_ids) < $page_size) {
             $page_size = $page_size - count($post_ids);
             $orm = $cmsPostModel->orm()->where('category_id', $post_result['category_id']);
-            if($post_ids){
-               $orm = $orm ->where_not_in('post_id', $post_ids);
+            if ($post_ids) {
+                $orm = $orm->where_not_in('post_id', $post_ids);
             }
             $result = $cmsPostModel->getRecordList($orm, 0, $page_size);
             if ($result) {
@@ -137,15 +135,8 @@ class PostController extends Controller
         } else {
             $post_ids = array_slice($post_ids, 0, 6);
         }
-        $result = [];
-        $orm = $cmsPostModel->orm()->where_in('post_id', $post_ids);
-        $result = $cmsPostModel->getAllRecord($orm);
-        foreach ($result as $key => $value) {
-            $extend_data = $cmsPostModel->getPostExtendAttrbute($value['post_id']);
-            if (!empty($extend_data)) {
-                $result[$key] = array_merge($value, $extend_data);
-            }
-        }
+        $orm = $cmsPostModel->orm()->where_in('cms_post.post_id', $post_ids);
+        $result = $cmsPostModel->getModelRecordList(1, $orm);
         $this->response($result, self::S200_OK, '', true);
     }
 
@@ -209,22 +200,20 @@ class PostController extends Controller
 
         $orm = $cmsPostModel->orm()->table_alias('p')->right_join('dictionary_model', ['p.model_id', '=', 'm.id'], 'm')->where(['m.dictionary_value' => $dictionary_value]);
         $field = 'p.*,m.dictionary_value';
-        $count = $cmsPostModel->getRecordList($orm, '', '', true);
+        $count = $cmsPostModel->getModelRecordList(1, '', '', '', true);
         $page = new Page($count, $p, $page_size);
-        $result = $cmsPostModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false, 'p.id', 'desc', $field);
-
+        $result = $cmsPostModel->getModelRecordList(1, '', $page->getOffset(), $page->getPageSize(), false, 'created', 'desc');
         $list = [];
         $cmsCategoryModel = new CmsCategoryModel();
         foreach ($result as $key => $value) {
-            $post = $cmsPostModel->getRecordInfoById($value['id']);
-            $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
-            $post['category_name'] = $category_result['category_name'];
-            $post['category_alias'] = $category_result['category_alias'];
-            $list[] = $post;
+            $category_result = $cmsCategoryModel->getRecordInfoById($value['category_id']);
+            $value['category_name'] = $category_result['category_name'];
+            $value['category_alias'] = $category_result['category_alias'];
+            $result[$key] = $value;
         }
         $return = [
             'count' => $count,
-            'list' => $list,
+            'list' => $result,
         ];
         $this->response($return, self::S200_OK, null, true);
     }
@@ -278,21 +267,19 @@ class PostController extends Controller
                 $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
                 $cmsPostModel = new CmsPostModel();
                 $orm = $cmsPostModel->orm()->where(['category_id' => $category_id]);
-                $count = $cmsPostModel->getRecordList($orm, '', '', true);
+                $count = $cmsPostModel->getModelRecordList($model_result['id'], $orm, '', '', true);
                 $page = new Page($count, $p, $page_size);
-                $result = $cmsPostModel->getRecordList($orm, $page->getOffset(), $page->getPageSize(), false);
-                $list = [];
+                $result = $cmsPostModel->getModelRecordList($model_result['id'], $orm, $page->getOffset(), $page->getPageSize(), false);
                 $cmsCategoryModel = new CmsCategoryModel();
                 foreach ($result as $key => $value) {
-                    $post = $cmsPostModel->getRecordInfoById($value['id']);
-                    $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
-                    $post['category_name'] = $category_result['category_name'];
-                    $post['category_alias'] = $category_result['category_alias'];
-                    $list[] = $post;
+                    $category_result = $cmsCategoryModel->getRecordInfoById($value['category_id']);
+                    $value['category_name'] = $category_result['category_name'];
+                    $value['category_alias'] = $category_result['category_alias'];
+                    $result[$key] = $value;
                 }
                 $return = [
                     'count' => $count,
-                    'list' => $list,
+                    'list' => $result,
                 ];
                 break;
         }
@@ -356,16 +343,16 @@ class PostController extends Controller
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
         $post_id = $_REQUEST['post_id'];
-        $article = $cmsPostModel->getRecordInfoByPostid($post_id);
+        $article = $cmsPostModel->getModelRecordInfoByPostId($post_id);
         $category_result = $cmsCategoryModel->getRecordInfoById($article['category_id']);
-        $article['category_name']=$category_result['category_name'];
-        $article['category_alias']=$category_result['category_alias'];
+        $article['category_name'] = $category_result['category_name'];
+        $article['category_alias'] = $category_result['category_alias'];
         if (!$article) {
             $this->response(null, self::S404_NOT_FOUND);
         } else {
-            $post_id = $article['post_id'];
-            $pre_result = $cmsPostModel->getPre($post_id, 'title_alias,id,post_id,title,main_image');
-            $next_result = $cmsPostModel->getNext($post_id, 'title_alias,id,post_id,title,main_image');
+            $id = $article['id'];
+            $pre_result = $cmsPostModel->getPre($id, 'title_alias,id,post_id,title,main_image');
+            $next_result = $cmsPostModel->getNext($id, 'title_alias,id,post_id,title,main_image');
             $result['article'] = $article;
             $result['pre'] = $pre_result;
             $result['next'] = $next_result;

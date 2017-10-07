@@ -26,9 +26,9 @@ class CmsPostModel extends BaseModel
      * @param string $field
      * @return mixed
      */
-    public function getNext($post_id, $field = '*')
+    public function getNext($id, $field = '*')
     {
-        $post_result = $this->getRecordInfoByPostid($post_id);
+        $post_result = $this->getRecordInfoById($id);
         $next_result = $this->orm()
             ->where('category_id', $post_result['category_id'])
             ->where_gt('id', $post_result['id'])
@@ -37,7 +37,7 @@ class CmsPostModel extends BaseModel
         $result = [];
         if ($next_result) {
             $next_result = $next_result->as_array();
-            $result = $this->getRecordInfoById($next_result['id'], $field);
+            $result = $this->getModelRecordInfoByPostId($next_result['post_id'], $field);
         }
         return $result;
     }
@@ -49,9 +49,9 @@ class CmsPostModel extends BaseModel
      * @param string $field
      * @return mixed
      */
-    public function getPre($post_id, $field = '*')
+    public function getPre($id, $field = '*')
     {
-        $post_result = $this->getRecordInfoByPostid($post_id);
+        $post_result = $this->getRecordInfoById($id);
         $pre_result = $this->orm()
             ->where('category_id', $post_result['category_id'])
             ->where_lt('id', $post_result['id'])
@@ -60,12 +60,10 @@ class CmsPostModel extends BaseModel
         $result = [];
         if ($pre_result) {
             $pre_result = $pre_result->as_array();
-            $result = $this->getRecordInfoById($pre_result['id'], $field);
+            $result = $this->getModelRecordInfoByPostId($pre_result['post_id'], $field);
         }
         return $result;
     }
-
-
 
 
     public function addCmsPostExtendData($table_name, $post_id, $field, $value)
@@ -89,8 +87,6 @@ class CmsPostModel extends BaseModel
         }
         return $return;
     }
-
-
 
 
     /**
@@ -188,49 +184,55 @@ class CmsPostModel extends BaseModel
     public function getModelRecordList($model_id, $orm, $offset = '', $limit = '', $for_count = false, $sort_field = 'created', $order = 'desc', $field = '*')
     {
         $orm = $this->getOrm($orm)->where('cms_post.model_id', $model_id);
+        $logic = new BaseLogic();
+        $model_defined = $logic->getModelDefined($model_id);
+        $cms_post_extend_attribute_select[] = 'post_id';
+        $cms_post_extend_text_select[] = 'post_id';
+        foreach ($model_defined as $value) {
+            if ($value['belong_to_table'] == 'cms_post_extend_attribute') {
+                $cms_post_extend_attribute_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+            }
+            if ($value['belong_to_table'] == 'cms_post_extend_text') {
+                $cms_post_extend_text_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
+            }
+        }
+
+        if ($field != '*') {
+            $fields = explode(',', $field);
+            $select_expr = [];
+            foreach ($fields as $val) {
+                if (isset($model_defined[$val])) {
+                    $select_expr[] = $model_defined[$val]['belong_to_table'] . '.' . $val;
+                }
+            }
+            $field = implode(',', $select_expr);
+        }
+
+        #cms_post_extend_attribute
+        {
+            $cms_post_extend_attribute_select = implode(',', $cms_post_extend_attribute_select);
+            $cms_post_extend_attribute_raw_join = "left join (SELECT {$cms_post_extend_attribute_select} FROM cms_post_extend_attribute  GROUP BY post_id )";
+        }
+        #cms_post_extend_text
+        {
+            $cms_post_extend_text_select = implode(',', $cms_post_extend_text_select);
+            $cms_post_extend_text_raw_join = "left join (SELECT {$cms_post_extend_text_select} FROM cms_post_extend_text  GROUP BY post_id )";
+        }
+
+        $orm = $orm->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
+            ->raw_join($cms_post_extend_text_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_text.post_id'], 'cms_post_extend_text');
         if ($for_count) {
             $result = $orm->count();
         } else {
-            $logic = new BaseLogic();
-            $model_defined = $logic->getModelDefined($model_id);
-            $cms_post_extend_attribute_select[] = 'post_id';
-            $cms_post_extend_text_select[] = 'post_id';
-            foreach ($model_defined as $value) {
-                if ($value['belong_to_table'] == 'cms_post_extend_attribute') {
-                    $cms_post_extend_attribute_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
-                }
-                if ($value['belong_to_table'] == 'cms_post_extend_text') {
-                    $cms_post_extend_text_select[] = "max( CASE field WHEN '{$value['field_value']}' THEN `value` ELSE '' END ) AS {$value['field_value']}";
-                }
+            if ($field) {
+                $orm = $orm->select_expr($field);
             }
-
-            if ($field != '*') {
-                $fields = explode(',', $field);
-                $select_expr = [];
-                foreach ($fields as $val) {
-                    if (isset($model_defined[$val])) {
-                        $select_expr[] = $model_defined[$val]['belong_to_table'] . '.' . $val;
-                    }
-                }
-                $field = implode(',', $select_expr);
+            if ($offset) {
+                $orm = $orm->offset($offset);
             }
-
-            #cms_post_extend_attribute
-            {
-                $cms_post_extend_attribute_select = implode(',', $cms_post_extend_attribute_select);
-                $cms_post_extend_attribute_raw_join = "left join (SELECT {$cms_post_extend_attribute_select} FROM cms_post_extend_attribute  GROUP BY post_id )";
+            if ($limit) {
+                $orm = $orm->limit($limit);
             }
-            #cms_post_extend_text
-            {
-                $cms_post_extend_text_select = implode(',', $cms_post_extend_text_select);
-                $cms_post_extend_text_raw_join = "left join (SELECT {$cms_post_extend_text_select} FROM cms_post_extend_text  GROUP BY post_id )";
-            }
-
-            $orm = $orm->raw_join($cms_post_extend_attribute_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_attribute.post_id'], 'cms_post_extend_attribute')
-                ->raw_join($cms_post_extend_text_raw_join, ['cms_post.post_id', '=', 'cms_post_extend_text.post_id'], 'cms_post_extend_text')
-                ->select_expr($field)
-                ->offset($offset)
-                ->limit($limit);
             if ($order == 'desc') {
                 $orm = $orm->order_by_desc($sort_field);
             } else {
@@ -242,18 +244,19 @@ class CmsPostModel extends BaseModel
     }
 
 
-    public function addRecord($request_data){
+    public function addRecord($request_data)
+    {
         #获取模型定义
         $baseLogic = new BaseLogic();
         $model_defined = $baseLogic->getModelDefined($request_data['model_id']);
         $cms_post_data = [];
         $extend_data = [];
         foreach ($model_defined as $value) {
-            if($value['belong_to_table'] == 'cms_post'){
+            if ($value['belong_to_table'] == 'cms_post') {
                 if (isset($request_data[$value['field_value']])) {
                     $cms_post_data[$value['field_value']] = $request_data[$value['field_value']];
                 }
-            }else{
+            } else {
                 if (isset($request_data[$value['field_value']])) {
                     $extend_data[] = [
                         'table_name' => $value['belong_to_table'],

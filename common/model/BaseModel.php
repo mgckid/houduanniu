@@ -29,6 +29,7 @@ class BaseModel extends Model
         if (empty($orm)) {
             $orm = $this->orm();
         }
+        $orm = clone($orm);
         return $orm;
     }
 
