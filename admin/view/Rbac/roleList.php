@@ -14,6 +14,7 @@
                 <?php foreach ($list_init as $key=> $value):?>
                     <th><?=$value['field_name']?></th>
                 <?php endforeach;?>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody>

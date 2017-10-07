@@ -438,19 +438,26 @@ class RbacController extends UserBaseController
         $p = isset($_GET['p']) ? intval($_GET['p']) : 1;
         $pageSize = 10;
         $userModel = new AdminUserModel();
-        $count = $userModel->getUserList('', '', true);
+        $count = $userModel->getRecordList('','', '', true);
         $page = new Page($count, $p, $pageSize);
-        $list = $userModel->getUserList($page->getOffset(), $pageSize, FALSE, array('id', 'username', 'created', 'modified', 'true_name', 'email'));
+        $list = $userModel->getRecordList('',$page->getOffset(), $pageSize);
+
+        #获取列表字段
+        $dictionarylogic = new BaseLogic();
+        $list_init = $dictionarylogic->getListInit('admin_user','table');
+
+
         $data = array(
             'list' => $list,
             'page' => $page->getPageStruct(),
+            'list_init' => $list_init,
         );
         #面包屑导航
         $this->crumb(array(
             '权限管理' => U('Rbac/Index'),
             '用户管理' => ''
         ));
-        $this->display('Rbac/userList', $data);
+        $this->display('Rbac/index', $data);
     }
 
     /**

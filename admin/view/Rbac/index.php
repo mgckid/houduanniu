@@ -8,24 +8,18 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>id</th>
-                    <th>用户名称</th>
-                    <th>真实姓名</th>
-                    <th>邮箱</th>
-                    <th>创建时间</th>
-                    <th>修改时间</th>
+                    <?php foreach ($list_init as $key=> $value):?>
+                        <th><?=$value['field_name']?></th>
+                    <?php endforeach;?>
                     <th>操作</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($list as $v) { ?>
                     <tr>
-                        <td><?= $v['id'] ?></td>
-                        <td><?= $v['username'] ?></td>
-                        <td><?= $v['true_name'] ?></td>
-                        <td><?= $v['email'] ?></td>
-                        <td><?= $v['created'] ?></td>
-                        <td><?= $v['modified'] ?></td>
+                        <?php foreach ($list_init as $key => $value): ?>
+                            <td><?=$v[$key]?></td>
+                        <?php endforeach;?>
                         <td>
                             <a href="<?= U('Rbac/addUser', array('id' => $v['id'])) ?>" data-power="Rbac/addUser" class="btn btn-xs btn-danger">编辑</a>
                             <a href="<?= U('Rbac/addUserRole', array('id' => $v['id'])) ?>"  data-power="Rbac/addUserRole" class="btn btn-xs btn-success">分配角色</a>
