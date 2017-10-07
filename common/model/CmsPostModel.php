@@ -183,7 +183,7 @@ class CmsPostModel extends BaseModel
      */
     public function getModelRecordList($model_id, $orm, $offset = '', $limit = '', $for_count = false, $sort_field = 'created', $order = 'desc', $field = '*')
     {
-        $orm = $this->getOrm($orm)->where('cms_post.model_id', $model_id);
+        $orm = $this->getOrm($orm)->where('cms_post.model_id', $model_id)->where('cms_post.deleted',0);
         $logic = new BaseLogic();
         $model_defined = $logic->getModelDefined($model_id);
         $cms_post_extend_attribute_select[] = 'post_id';
