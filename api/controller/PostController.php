@@ -308,22 +308,25 @@ class PostController extends Controller
         $p = intval($_REQUEST['p']);
         $page_size = intval($_REQUEST['page_size']);
         $sql = "SELECT  post_id FROM cms_post_extend_attribute WHERE `value` LIKE '%{$keyword}%' UNION SELECT  post_id FROM cms_post_extend_text WHERE `value` LIKE '%{$keyword}%'";
-        $post_ids = $cmsPostModel->orm()->raw_query($sql)->find_array();
-        $count = count($post_ids);
+        $result = $cmsPostModel->orm()->raw_query($sql)->find_array();
+        if (!$result) {
+            $this->response(null, self::S200_OK, '没有搜索到数据');
+        }
+        $post_ids = array_column($result, 'post_id');
+        $orm = $cmsPostModel->orm()->where_in('cms_post.post_id', $post_ids);
+        $count = $cmsPostModel->getModelRecordList(1, $orm, '', '', true);
         $page = new Page($count, $p, $page_size);
-        $page_list = array_slice($post_ids, $page->getOffset(), $page_size);
-        $list = [];
+        $result = $result = $cmsPostModel->getModelRecordList(1, $orm, $page->getOffset(), $page->getPageSize(), false);
         $cmsCategoryModel = new CmsCategoryModel();
-        foreach ($page_list as $value) {
-            $post = $cmsPostModel->getRecordInfoByPostid($value['post_id']);
-            $category_result = $cmsCategoryModel->getRecordInfoById($post['category_id']);
-            $post['category_name'] = $category_result['category_name'];
-            $post['category_alias'] = $category_result['category_alias'];
-            $list[] = $post;
+        foreach ($result as $key => $value) {
+            $category_result = $cmsCategoryModel->getRecordInfoById($value['category_id']);
+            $value['category_name'] = $category_result['category_name'];
+            $value['category_alias'] = $category_result['category_alias'];
+            $result[$key] = $value;
         }
         $return = [
             'count' => $count,
-            'list' => $list,
+            'list' => $result,
         ];
         $this->response($return, self::S200_OK, null, true);
     }
