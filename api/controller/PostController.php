@@ -236,8 +236,8 @@ class PostController extends Controller
         $category_id = isset($_REQUEST['category_id']) && !empty($_REQUEST['category_id']) ? intval($_REQUEST['category_id']) : 0;
         $orm = $cmsCategoryModel->orm()->table_alias('c')->right_join('dictionary_model', ['c.model_id', '=', 'm.id'], 'm')->where(['c.id' => $category_id]);
         $field = 'c.*,m.dictionary_value';
-        $model_result = $cmsCategoryModel->getRecordInfo($orm, $field);
-        if ($model_result['dictionary_value'] == 'article') {
+        $category_info = $cmsCategoryModel->getRecordInfo($orm, $field);
+        if ($category_info['dictionary_value'] == 'article') {
             $rules = [
                 'p' => 'required|integer',
                 'page_size' => 'required|integer',
@@ -247,19 +247,14 @@ class PostController extends Controller
                 $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
             }
         }
-        switch ($model_result['dictionary_value']) {
+        switch ($category_info['dictionary_value']) {
             case 'page':
                 $cmsPostModel = new CmsPostModel();
                 $orm = $cmsPostModel->orm()->where(['category_id' => $category_id]);
-                $count = $cmsPostModel->getRecordList($orm, '', '', true);
-                $result = $cmsPostModel->getRecordList($orm, 0, $count, false);
-                $list = [];
-                foreach ($result as $key => $value) {
-                    $post = $cmsPostModel->getRecordInfoById($value['id']);
-                    $list[] = $post;
-                }
+                $count = $cmsPostModel->getModelRecordList($category_info['model_id'], $orm, '', '', true);
+                $result = $cmsPostModel->getModelRecordList($category_info['model_id'],$orm, 0, $count, false);
                 $return = [
-                    'list' => $list,
+                    'list' => $result,
                 ];
                 break;
             case 'article':
@@ -267,9 +262,9 @@ class PostController extends Controller
                 $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
                 $cmsPostModel = new CmsPostModel();
                 $orm = $cmsPostModel->orm()->where(['category_id' => $category_id]);
-                $count = $cmsPostModel->getModelRecordList($model_result['id'], $orm, '', '', true);
+                $count = $cmsPostModel->getModelRecordList($category_info['model_id'], $orm, '', '', true);
                 $page = new Page($count, $p, $page_size);
-                $result = $cmsPostModel->getModelRecordList($model_result['id'], $orm, $page->getOffset(), $page->getPageSize(), false);
+                $result = $cmsPostModel->getModelRecordList($category_info['model_id'], $orm, $page->getOffset(), $page->getPageSize(), false);
                 $cmsCategoryModel = new CmsCategoryModel();
                 foreach ($result as $key => $value) {
                     $category_result = $cmsCategoryModel->getRecordInfoById($value['category_id']);
