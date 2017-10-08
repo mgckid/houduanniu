@@ -9,13 +9,6 @@
         </p>
     </div>
 </footer>
-<?php if(ENVIRONMENT=='product'):?>
-    <script type='text/javascript' src='https://cdn.bootcss.com/jquery/3.2.0/jquery.min.js'></script>
-    <script type='text/javascript' src='https://cdn.bootcss.com/bootstrap/4.0.0-beta/js/bootstrap.min.js'></script>
-<?php else:?>
-    <script type='text/javascript' src='/static/writing/js/jquery.js'></script>
-    <script type='text/javascript' src='/static/writing/js/bootstrap.min.js'></script>
-<?php endif;?>
 <script type='text/javascript' src='/static/writing/js/popper.js'></script>
 <script type='text/javascript' src='/static/writing/js/tether.js'></script>
 

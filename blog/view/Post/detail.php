@@ -87,3 +87,22 @@
         </div><!-- /.row -->
     </div><!-- /.container -->
 </main>
+
+<!--统计文章阅览数 开始-->
+<script src="/static/writing/js/ajaxForm/jquery.form.js"></script>
+<form id="ajaxCountView" action="<?=U('Index/ajaxCountView')?>" method="post">
+    <input type="hidden" name="id" value="<?=$info['article']['post_id']?>"/>
+</form>
+<script>
+    $(function(){
+        $('#ajaxCountView').ajaxSubmit({
+            dataType: 'json',
+            sunccess:function(data){
+                if(data.status==1){
+                    $('.countView').html(data.data.click)
+                }
+            }
+        });
+    })
+</script>
+<!--统计文章阅览数 结束-->
