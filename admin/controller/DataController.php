@@ -28,7 +28,7 @@ class DataController extends UserBaseController
         {
             $dictionaryModel = new DictionaryTableModel();
             $count = $dictionaryModel->getRecordList('', '', '', true);
-            $result = $dictionaryModel->getRecordList('', 0, $count, false);
+            $result = $dictionaryModel->getRecordList('', 0, $count, false,'dictionary_value','asc');
         }
         #获取列表字段
         $dictionaryLogic = new BaseLogic();

@@ -420,9 +420,7 @@ class RbacController extends UserBaseController
         #获取参数
         $roleId = isset($_POST['role_id']) ? intval($_POST['role_id']) : 0;
 
-        $obj = $roleModel->orm()->find_one($roleId);
-        $result = $obj->delete();
-        if ($result) {
+        if ($roleModel->deleteRecordById($roleId)) {
             $this->ajaxSuccess('删除成功');
         } else {
             $this->ajaxFail('删除失败');
@@ -563,10 +561,8 @@ class RbacController extends UserBaseController
         if ($count) {
             $this->ajaxFail('该权限已被分配,请先移除该权限的分配');
         }
-        $result = $accessModel->orm()
-            ->find_one($accessId)
-            ->delete();
-        if (!$result) {
+
+        if (!$accessModel->deleteRecordById($accessId)) {
             $this->ajaxFail('删除权限失败');
         } else {
             $this->ajaxSuccess('删除权限成功');

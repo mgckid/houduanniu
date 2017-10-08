@@ -14,7 +14,7 @@
             <?php foreach ($list as  $value):?>
                 <tr id="row<?= $value['id'] ?>">
                     <?php foreach ($list_init as $key => $val): ?>
-                        <td><?= !empty($val['enum']) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
+                        <td><?= isset($val['enum'][$value[$key]]) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                     <?php endforeach;?>
                     <td>
                         <a class="btn btn-success btn-xs"  href="<?= U('Data/editField', array('id' => $value['id'])) ?>" data-power="Data/editField">编辑</a>
