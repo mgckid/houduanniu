@@ -240,7 +240,7 @@ class Form
              <div %s>
                 %s
                 <div class="col-sm-10">
-                    %s
+                   <span class="col-sm-10"> %s</span> <span class="col-sm-2">点点滴滴</span>
                 </div>
               </div>
 EOT;
