@@ -11,7 +11,7 @@ header("content-type:text/html; charset=utf-8");
 
 /*框架常量设置 开始*/
 #框架运行开发模式
-defined('ENVIRONMENT') || define('ENVIRONMENT', 'develop');
+defined('ENVIRONMENT') or define('ENVIRONMENT', 'develop');
 #是否ajax请求
 define('IS_AJAX', isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest" ? true : FALSE);
 #是否get请求

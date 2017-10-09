@@ -11,13 +11,12 @@ namespace app\controller;
 
 use app\logic\BaseLogic;
 use app\model\CmsPostExtendAttributeModel;
-use houduanniu\api\Controller;
 use app\model\CmsPostModel;
 use houduanniu\base\Page;
 use app\model\CmsCategoryModel;
 use app\model\DictionaryModelModel;
 
-class PostController extends Controller
+class PostController extends BaseController
 {
     public function tagList()
     {
@@ -41,11 +40,12 @@ class PostController extends Controller
         $map = [
             'page_size' => '每页记录条数',
         ];
-        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsPostModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $page_size = $_REQUEST['page_size'];
+        $page_size = $request_param['page_size'];
         $result = $cmsPostModel->getModelRecordList(1, '', 0, $page_size, false, 'click');
         $this->response($result, self::S200_OK, null, true);
     }
@@ -63,13 +63,14 @@ class PostController extends Controller
             'page_size' => '每页记录条数',
             'tag_name' => '标签名称'
         ];
-        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsPostModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $p = $_REQUEST['p'];
-        $page_size = $_REQUEST['page_size'];
-        $tag_name = $_REQUEST['tag_name'];
+        $p = $request_param['p'];
+        $page_size = $request_param['page_size'];
+        $tag_name = $request_param['tag_name'];
         $orm = $cmsPostModel->orm()->where_like('post_tag', '%' . $tag_name . '%');
         $count = $cmsPostModel->getModelRecordList(1, $orm, '', '', true);
         $page = new Page($count, $p, $page_size);
@@ -100,12 +101,13 @@ class PostController extends Controller
             'post_id' => '内容id',
             'page_size' => '列表记录数'
         ];
-        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsPostModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $post_id = $_REQUEST['post_id'];
-        $page_size = $_REQUEST['page_size'];
+        $post_id = $request_param['post_id'];
+        $page_size = $request_param['page_size'];
         $post_result = $cmsPostModel->getModelRecordInfoByPostId($post_id);
         if (!$post_result) {
             $this->response(null, self::S400_BAD_REQUEST, '文档不存在');
@@ -156,11 +158,12 @@ class PostController extends Controller
         $map = [
             'category_alias' => '栏目标识',
         ];
-        $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsCategoryModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $category_alias = $_REQUEST['category_alias'];
+        $category_alias = $request_param['category_alias'];
         #获取栏目信息
         {
             $logic = new BaseLogic();
@@ -189,13 +192,14 @@ class PostController extends Controller
             'p' => '当前页数',
             'page_size' => '每页记录条数',
         ];
-        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsPostModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $dictionary_value = $_REQUEST['dictionary_value'];
-        $p = isset($_REQUEST['p']) && !empty($_REQUEST['p']) ? intval($_REQUEST['p']) : 0;
-        $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
+        $dictionary_value = $request_param['dictionary_value'];
+        $p = isset($request_param['p']) && !empty($request_param['p']) ? intval($request_param['p']) : 0;
+        $page_size = isset($request_param['page_size']) && !empty($request_param['page_size']) ? intval($request_param['page_size']) : 0;
 
         $orm = $cmsPostModel->orm()->table_alias('p')->right_join('dictionary_model', ['p.model_id', '=', 'm.id'], 'm')->where(['m.dictionary_value' => $dictionary_value]);
         $field = 'p.*,m.dictionary_value';
@@ -228,11 +232,12 @@ class PostController extends Controller
         $rules = [
             'category_id' => 'required|integer',
         ];
-        $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsCategoryModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $category_id = isset($_REQUEST['category_id']) && !empty($_REQUEST['category_id']) ? intval($_REQUEST['category_id']) : 0;
+        $category_id = isset($request_param['category_id']) && !empty($request_param['category_id']) ? intval($request_param['category_id']) : 0;
         $orm = $cmsCategoryModel->orm()->table_alias('c')->right_join('dictionary_model', ['c.model_id', '=', 'm.id'], 'm')->where(['c.id' => $category_id]);
         $field = 'c.*,m.dictionary_value';
         $category_info = $cmsCategoryModel->getRecordInfo($orm, $field);
@@ -250,13 +255,13 @@ class PostController extends Controller
                 'p' => 'required|integer',
                 'page_size' => 'required|integer',
             ];
-            $validate = $cmsCategoryModel->validate()->make($_REQUEST, $rules, [], $map);
+            $validate = $cmsCategoryModel->validate()->make($request_param, $rules, [], $map);
             if (false == $validate->passes()) {
                 $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
             }
 
-            $p = isset($_REQUEST['p']) && !empty($_REQUEST['p']) ? intval($_REQUEST['p']) : 0;
-            $page_size = isset($_REQUEST['page_size']) && !empty($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 0;
+            $p = isset($request_param['p']) && !empty($request_param['p']) ? intval($request_param['p']) : 0;
+            $page_size = isset($request_param['page_size']) && !empty($request_param['page_size']) ? intval($request_param['page_size']) : 0;
             $cmsPostModel = new CmsPostModel();
             $orm = $cmsPostModel->orm()->where(['category_id' => $category_id]);
             $count = $cmsPostModel->getModelRecordList($category_info['model_id'], $orm, '', '', true);
@@ -290,13 +295,14 @@ class PostController extends Controller
             'p' => 'required|integer',
             'page_size' => 'required|integer',
         ];
-        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsPostModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $keyword = $_REQUEST['keyword'];
-        $p = intval($_REQUEST['p']);
-        $page_size = intval($_REQUEST['page_size']);
+        $keyword = $request_param['keyword'];
+        $p = intval($request_param['p']);
+        $page_size = intval($request_param['page_size']);
         $sql = "SELECT  post_id FROM cms_post_extend_attribute WHERE `value` LIKE '%{$keyword}%' UNION SELECT  post_id FROM cms_post_extend_text WHERE `value` LIKE '%{$keyword}%'";
         $result = $cmsPostModel->orm()->raw_query($sql)->find_array();
         if (!$result) {
@@ -331,11 +337,12 @@ class PostController extends Controller
         $map = [
             'post_id' => '文档id',
         ];
-        $validate = $cmsPostModel->validate()->make($_REQUEST, $rules, [], $map);
+        $request_param =$this->getRequestParam();
+        $validate = $cmsPostModel->validate()->make($request_param, $rules, [], $map);
         if (false == $validate->passes()) {
             $this->response(null, self::S400_BAD_REQUEST, $validate->messages()->first());
         }
-        $post_id = $_REQUEST['post_id'];
+        $post_id = $request_param['post_id'];
         $article = $cmsPostModel->getModelRecordInfoByPostId($post_id);
         $category_result = $cmsCategoryModel->getRecordInfoById($article['category_id']);
         $article['category_name'] = $category_result['category_name'];

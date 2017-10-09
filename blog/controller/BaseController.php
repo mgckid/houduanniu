@@ -11,6 +11,7 @@ namespace app\controller;
 
 use app\model\SiteSetModel;
 use Curl\Curl;
+use houduanniu\base\Dex3;
 use houduanniu\web\Controller;
 use houduanniu\web\View;
 use houduanniu\base\Application;
@@ -88,29 +89,31 @@ class BaseController extends Controller
         if (empty($host)) {
             trigger_error('接口地址不存在');
         }
-        #返回缓存内容
-        $cache_key = md5(json_encode($data));
-        $cache_name = $url;
+        #生产环境接口加密
+        if (ENVIRONMENT !== 'develop') {
+            $dex3 = new Dex3();
+            $encode_data = base64_encode($dex3->encrypt(json_encode($data)));
+            $data = [
+                'param' => $encode_data
+            ];
+        }
         if ($method == 'get') {
+            #返回缓存内容
+            $cache_key = md5(json_encode($data));
+            $cache_name = $url;
             if (Application::cache($cache_name)->isCached($cache_key)) {
-                return Application::cache($cache_name)->retrieve($cache_key);
-            }
-        }
-        $curl = $this->curl();
-        $header = [];
-        if ($method == 'get') {
-            $url = $host . U($url, $data);
-            $response = $curl->get($url);
-        }
-        if (!is_object($response)) {
-            trigger_error('接口请求错误');
-        }
-        $result = json_decode(json_encode($response), true);;
-        #缓存数据
-        if ($method == 'get') {
-            if (isset($result['cached']) && $result['cached']) {
-                Application::cache($cache_name)->store($cache_key, $result, 300);
-                Application::cache($cache_name)->eraseExpired();
+                $result = Application::cache($cache_name)->retrieve($cache_key);
+            } else {
+                $url = $host . U($url, $data);
+                $response = $this->curl()->get($url);
+                if (!is_object($response)) {
+                    trigger_error('接口请求错误');
+                }
+                $result = json_decode(json_encode($response), true);
+                if (isset($result['cached']) && $result['cached']) {
+                    Application::cache($cache_name)->store($cache_key, $result, 300);
+                    Application::cache($cache_name)->eraseExpired();
+                }
             }
         }
         return $result;
