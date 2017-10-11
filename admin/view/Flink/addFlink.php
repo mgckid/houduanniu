@@ -1,7 +1,7 @@
 <?php $this->Layout('Layout/admin') ?>
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <?=\houduanniu\web\Form::create()?>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">操作</label>

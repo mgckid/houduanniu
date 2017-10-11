@@ -1,7 +1,7 @@
 <?php $this->layout('Layout/admin') ?>
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <form action="<?= U('Rbac/resetPassword') ?>" name="resetPassword" class="form form-horizontal" method="post">
                 <input type="hidden" name="id" value="<?= $info['id'] ?>" />
                 <div class="form-group">

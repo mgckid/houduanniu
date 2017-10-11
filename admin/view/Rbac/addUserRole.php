@@ -1,7 +1,7 @@
 <?php $this->layout('Layout/admin'); ?>
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <form class="form-horizontal" name='add_user_role' action="<?= U('Rbac/addUserRole') ?>"
                   method="post">
                 <div class="form-group">

@@ -1,7 +1,7 @@
 <?php $this->layout('Layout/admin'); ?>
     <div class="panel panel-default">
         <div class="panel-body">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <form class="form form-horizontal" name="addAccess" action="<?= U('Rbac/addAccess') ?>"
                       method="post">
                     <input type="hidden" name="id" value="<?= $accessInfo['id'] ?>">

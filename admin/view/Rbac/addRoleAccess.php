@@ -12,7 +12,7 @@
 
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <form class="form-horizontal" name='add_role_access' action="<?= U('Rbac/addRoleAccess') ?>" method="post">
                 <div class="form-group">
                     <label class="col-sm-1 control-label">选择角色</label>

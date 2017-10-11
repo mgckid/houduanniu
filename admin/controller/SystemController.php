@@ -51,6 +51,8 @@ class SystemController extends UserBaseController
         }
     }
 
+
+
     /**
      * 系统配置
      * @privilege 系统配置|Admin/System/sysConfig|3d22cfea-5673-11e7-8c47-14dda97b937d|2
@@ -67,7 +69,7 @@ class SystemController extends UserBaseController
             }
             $this->ajaxSuccess();
         } else {
-            $siteConfigModel = new SiteConfigModel();
+ /*           $siteConfigModel = new SiteConfigModel();
             $result = $siteConfigModel->getConfigList();
             $data = [
                 'configList' => $result,
@@ -77,8 +79,11 @@ class SystemController extends UserBaseController
             $this->crumb(array(
                 '系统设置' => U('System/index'),
                 '系统配置' => ''
-            ));
-            $this->display('System/sysConfig', $data);
+            ));*/
+            $siteConfigModel = new SiteConfigModel();
+            $result = $siteConfigModel->getAllRecord();
+            print_g($result);
+            //$this->display('System/sysConfig', $data);
         }
     }
 
