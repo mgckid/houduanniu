@@ -120,4 +120,22 @@ class SystemController extends UserBaseController
             $this->ajaxSuccess($this->getMessage());
         }
     }
+
+    public function configList(){
+        $dictionaryLogic = new BaseLogic();
+        $list_init = $dictionaryLogic->getListInit('site_config');
+
+        $model  = new SiteConfigModel();
+        $result = $model->getAllRecord();
+
+        $data['list_data'] = $result;
+        $data['list_init'] = $list_init;
+
+        #面包屑导航
+        $this->crumb([
+            '广告管理' => U('Advertisement/index'),
+            '广告位列表' => ''
+        ]);
+        $this->display('Advertisement/index', $data);
+    }
 }
