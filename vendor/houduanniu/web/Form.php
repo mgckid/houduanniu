@@ -190,28 +190,22 @@ class Form
                     $form_group_str = self::getInstance()->text($title, $name, $placeholder, $description, $default_value);
                     break;
                 case "radio":
-                    $form_group_str = self::getInstance()->radio($title,$name,$enum,$description,$default_value);
+                    $form_group_str = self::getInstance()->radio($title, $name, $enum, $description, $default_value);
                     break;
                 case 'checkboxs':
-                    foreach ($enum as $key => $value) {
-                        $radio_str = self::getInstance()->buildInput('checkbox', $name, '', '', $value) . ' ' . $value;
-                        $form_control_str .= self::getInstance()->buildLabel('', 'checkbox-inline', $radio_str);
-                    }
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str, $description);
+                    $form_group_str = self::getInstance()->checkbox($title, $name, $enum, $description, $default_value);
                     break;
                 case 'select':
-                    $form_control_str = self::getInstance()->buildSelect($name, $enum, $fieldHtmlClass, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str, $description);
+                    $form_group_str = self::getInstance()->select($title, $name, $enum, $description, $default_value);
                     break;
                 case 'mtext':
-                    $form_group_str = self::getInstance()->textarea($title,$name,$placeholder,$description,$default_value);
+                    $form_group_str = self::getInstance()->textarea($title, $name, $placeholder, $description, $default_value);
                     break;
                 case 'editor':
-                    $form_group_str = self::getInstance()->editor($title,$name,$placeholder,$description,$default_value);
+                    $form_group_str = self::getInstance()->editor($title, $name, $placeholder, $description, $default_value);
                     break;
                 case 'upload':
-                    $form_control_str = self::getInstance()->buildUpload($name, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str, $description);
+                    $form_group_str = self::getInstance()->upload($title, $name, $description, $default_value);
                     break;
             }
             $form_str .= $form_group_str;
@@ -434,7 +428,8 @@ EOT;
         return $html;
     }
 
-    public function radio($title,$name, $enum, $description, $default_value = ''){
+    public function radio($title, $name, $enum, $description, $default_value = '')
+    {
         $radis_str = '';
         $type_str = 'type="radio"';
         $name_str = !empty($name) ? 'name="' . $name . '"' : '';
@@ -450,28 +445,72 @@ EOT;
         return $html;
     }
 
-    protected function textarea($title,$name,  $placeholder,$description, $default_value = '')
+    public function checkbox($title, $name, $enum, $description, $default_value = '')
+    {
+        $form_control_str = '';
+        foreach ($enum as $key => $value) {
+            $radio_str = self::getInstance()->buildInput('checkbox', $name, '', '', $value) . ' ' . $value;
+            $form_control_str .= self::getInstance()->buildLabel('', 'checkbox-inline', $radio_str);
+        }
+        $html = $this->buildFormGroup1($title, $form_control_str, $description);
+        return $html;
+    }
+
+    public function textarea($title, $name, $placeholder, $description, $default_value = '')
     {
         $name_str = !empty($name) ? 'name="' . $name . '"' : '';
         $id_str = !empty($name) ? 'id="' . $name . '"' : '';
-        $class_str ='class="form-control"';
+        $class_str = 'class="form-control"';
         $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
         $value_str = $default_value;
         $template = '<textarea %s %s %s %s >%s</textarea>';
 
-        $html =  sprintf($template, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
+        $html = sprintf($template, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
         $html = $this->buildFormGroup1($title, $html, $description);
         return $html;
     }
 
-    protected function editor($title,$name, $placeholder, $description, $default_value = '')
+    public function editor($title, $name, $placeholder, $description, $default_value = '')
     {
         $name_str = !empty($name) ? 'name="' . $name . '"' : '';
         $id_str = !empty($name) ? 'id="' . $name . '"' : '';
         $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
         $value_str = !empty($default_value) ? $default_value : '';
         $template = '<textarea %s %s %s style="height:500px;" >%s</textarea>';
-        $html =  sprintf($template, $name_str, $id_str, $placeholder_str, $value_str);
+        $html = sprintf($template, $name_str, $id_str, $placeholder_str, $value_str);
+        $html = $this->buildFormGroup1($title, $html, $description);
+        return $html;
+    }
+
+    public function upload($title, $name, $description, $default_value = '')
+    {
+        $hiddenInput = $this->buildInput('hidden', $name, '', '', $default_value);
+        $image_url = !empty($default_value) ? getImage($default_value) : '';
+        $fileInput = '<input type="file" id="upload_file" data-preview="' . $image_url . '" />';
+
+        $html = $hiddenInput . $fileInput;
+        $html = $this->buildFormGroup1($title, $html, $description);
+        return $html;
+    }
+
+    protected function select($title, $input_name, $option_data, $description, $select_value)
+    {
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+        $class_str = 'class="form-control"';
+        $selected_data_str = !empty($select_value) ? 'data-selected="' . $select_value . '"' : '';
+        $options_str = '<option value="">请选择</option>';
+        foreach ($option_data as $key => $value) {
+            $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
+            $selected_str = ($select_value == $value['value']) ? 'selected="true"' : '';
+
+            $option = !empty($value['option']) ? $value['option'] : '';
+
+            $option_template = '<option %s %s >%s</option>';
+            $options_str .= sprintf($option_template, $value_str, $selected_str, $option);
+        }
+        $select_template = '<select %s %s %s %s>%s</select>';
+        $html = sprintf($select_template, $name_str, $id_str, $class_str, $selected_data_str, $options_str);
         $html = $this->buildFormGroup1($title, $html, $description);
         return $html;
     }
