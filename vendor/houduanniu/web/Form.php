@@ -7,6 +7,7 @@
  */
 
 namespace houduanniu\web;
+
 use houduanniu\base\Application;
 
 
@@ -180,42 +181,37 @@ class Form
             $form_group_str = '';
             switch ($type) {
                 case 'text':
-                    $form_control_str = self::getInstance()->buildInput($type, $name, $fieldHtmlClass, $placeholder, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description,$description);
+                    $form_group_str = self::getInstance()->text($title, $name, $placeholder, $description, $default_value);
                     break;
                 case 'hidden':
-                    $form_group_str = self::getInstance()->buildInput($type, $name, '', '', $default_value);
+                    $form_group_str = self::getInstance()->hidden($name, $default_value);
                     break;
                 case 'password':
-                    $form_control_str = self::getInstance()->buildInput($type, $name, $fieldHtmlClass, $placeholder, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->text($title, $name, $placeholder, $description, $default_value);
                     break;
                 case "radio":
-                    $form_control_str = self::getInstance()->buildInputRadio($name, $enum, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->radio($title,$name,$enum,$description,$default_value);
                     break;
                 case 'checkboxs':
                     foreach ($enum as $key => $value) {
                         $radio_str = self::getInstance()->buildInput('checkbox', $name, '', '', $value) . ' ' . $value;
                         $form_control_str .= self::getInstance()->buildLabel('', 'checkbox-inline', $radio_str);
                     }
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str, $description);
                     break;
                 case 'select':
                     $form_control_str = self::getInstance()->buildSelect($name, $enum, $fieldHtmlClass, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str, $description);
                     break;
                 case 'mtext':
-                    $form_control_str = self::getInstance()->buildTextarea($name, $fieldHtmlClass, $placeholder, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->textarea($title,$name,$placeholder,$description,$default_value);
                     break;
                 case 'editor':
-                    $form_control_str = self::getInstance()->buildEditor($name, $placeholder, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->editor($title,$name,$placeholder,$description,$default_value);
                     break;
                 case 'upload':
                     $form_control_str = self::getInstance()->buildUpload($name, $default_value);
-                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str,$description);
+                    $form_group_str = self::getInstance()->buildFormGroup($htmlClass, $title_str, $form_control_str, $description);
                     break;
             }
             $form_str .= $form_group_str;
@@ -234,46 +230,21 @@ class Form
      * @since 2017年7月13日 16:56:17
      * @abstract
      */
-    protected function buildFormGroup($htmlClass, $title_str, $form_control_str,$description)
+    protected function buildFormGroup($htmlClass, $title_str, $form_control_str, $description)
     {
         $class_str = !empty($htmlClass) ? 'class="' . $htmlClass . '"' : '';
         $template = <<<EOT
              <div %s>
                 %s
-                <div class="col-sm-10">
-                   <span class="col-sm-10"> %s</span>
-                   <span class="col-sm-2"> %s</span>
+                <div class="col-sm-8">
+                   %s
                 </div>
+                <label class="col-sm-2"> %s</label>
               </div>
 EOT;
-        return sprintf($template, $class_str, $title_str, $form_control_str,$description);
+        return sprintf($template, $class_str, $title_str, $form_control_str, $description);
     }
 
-    /**
-     * 构建input表单
-     * @access protected
-     * @author furong
-     * @param $type 表单类型
-     * @param $name 表单名称
-     * @param $fieldHtmlClass 字段样式class
-     * @param $placeholder 默认提示
-     * @return string
-     * @since  2017年7月13日 16:22:14
-     * @abstract
-     */
-    protected function buildInput($type, $name, $fieldHtmlClass, $placeholder, $default_value = '')
-    {
-        $type_str = !empty($type) ? 'type="' . $type . '"' : '';
-        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
-        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
-        $class_str = !empty($fieldHtmlClass) ? 'class="' . $fieldHtmlClass . '"' : '';
-        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
-        $value_str = !empty($default_value) ? 'value="' . $default_value . '"' : '';
-
-        $template = '<input %s %s %s %s %s %s />';
-
-        return sprintf($template, $type_str, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
-    }
 
     /**
      * 构建input表单
@@ -441,5 +412,120 @@ EOT;
 
         return $hiddenInput . $fileInput;
     }
+
+    /*改版后*/
+    public function text($title, $name, $placholder, $description, $value = '')
+    {
+        $input_str = $this->buildInput('text', $name, 'form-control', $placholder, $value);
+        $html = $this->buildFormGroup1($title, $input_str, $description);
+        return $html;
+    }
+
+    public function hidden($name, $value = '')
+    {
+        $html = $this->buildInput('hidden', $name, '', '', $value);
+        return $html;
+    }
+
+    public function password($title, $name, $placholder, $description, $value = '')
+    {
+        $input_str = $this->buildInput('password', $name, 'form-control', $placholder, $value);
+        $html = $this->buildFormGroup1($title, $input_str, $description);
+        return $html;
+    }
+
+    public function radio($title,$name, $enum, $description, $default_value = ''){
+        $radis_str = '';
+        $type_str = 'type="radio"';
+        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
+        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
+        foreach ($enum as $key => $value) {
+            $checked_str = $value['value'] == $default_value ? 'checked="true"' : '';
+            $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
+            $radio_text_str = $value['name'];
+            $template = '<input %s %s %s %s %s /> %s';
+            $radis_str .= sprintf($template, $type_str, $name_str, $id_str, $value_str, $checked_str, $radio_text_str);
+        }
+        $html = $this->buildFormGroup1($title, $radis_str, $description);
+        return $html;
+    }
+
+    protected function textarea($title,$name,  $placeholder,$description, $default_value = '')
+    {
+        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
+        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
+        $class_str ='class="form-control"';
+        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
+        $value_str = $default_value;
+        $template = '<textarea %s %s %s %s >%s</textarea>';
+
+        $html =  sprintf($template, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
+        $html = $this->buildFormGroup1($title, $html, $description);
+        return $html;
+    }
+
+    protected function editor($title,$name, $placeholder, $description, $default_value = '')
+    {
+        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
+        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
+        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
+        $value_str = !empty($default_value) ? $default_value : '';
+        $template = '<textarea %s %s %s style="height:500px;" >%s</textarea>';
+        $html =  sprintf($template, $name_str, $id_str, $placeholder_str, $value_str);
+        $html = $this->buildFormGroup1($title, $html, $description);
+        return $html;
+    }
+
+    /**
+     * 构建表单组
+     * @access  protected
+     * @author furong
+     * @param $htmlClass
+     * @param $title_str
+     * @param $form_control_str
+     * @return string
+     * @since 2017年7月13日 16:56:17
+     * @abstract
+     */
+    protected function buildFormGroup1($title, $input_str, $description, $form_group_class = "", $title_class = "", $input_class = "", $description_class = "")
+    {
+        $template = <<<EOT
+             <div class="form-group">
+               <label class="control-label col-sm-2"> %s</label>
+                <div class="col-sm-8">
+                  %s
+                </div>
+                <label class="col-sm-2"> %s</label>
+              </div>
+EOT;
+        return sprintf($template, $title, $input_str, $description);
+    }
+
+    /**
+     * 构建input表单
+     * @access protected
+     * @author furong
+     * @param $type 表单类型
+     * @param $name 表单名称
+     * @param $fieldHtmlClass 字段样式class
+     * @param $placeholder 默认提示
+     * @return string
+     * @since  2017年7月13日 16:22:14
+     * @abstract
+     */
+    protected function buildInput($type, $name, $input_class, $placeholder, $default_value = '')
+    {
+        $type_str = !empty($type) ? 'type="' . $type . '"' : '';
+        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
+        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
+        $class_str = !empty($input_class) ? 'class="' . $input_class . '"' : '';
+        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
+        $value_str = !empty($default_value) ? 'value="' . $default_value . '"' : '';
+
+        $template = '<input %s %s %s %s %s %s />';
+
+        return sprintf($template, $type_str, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
+    }
+
 
 } 
