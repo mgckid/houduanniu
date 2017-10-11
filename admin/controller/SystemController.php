@@ -69,21 +69,25 @@ class SystemController extends UserBaseController
             }
             $this->ajaxSuccess();
         } else {
- /*           $siteConfigModel = new SiteConfigModel();
-            $result = $siteConfigModel->getConfigList();
-            $data = [
-                'configList' => $result,
-            ];
-
+            $siteConfigModel = new SiteConfigModel();
+            $result = $siteConfigModel->getAllRecord();
+            $form_init = [];
+           foreach($result as $value){
+               $form_init[$value['name']] = [
+                   'field' => $value['name'],
+                   'title' => $value['description'],
+                   'type' => $value['form_type'],
+//                   'enum' => $value['enum'],
+                   'description' => $value['description'],
+               ];
+           }
+            Form::getInstance()->form_schema($form_init);
             #面包屑导航
             $this->crumb(array(
                 '系统设置' => U('System/index'),
-                '系统配置' => ''
-            ));*/
-            $siteConfigModel = new SiteConfigModel();
-            $result = $siteConfigModel->getAllRecord();
-            print_g($result);
-            //$this->display('System/sysConfig', $data);
+                '网站设置' => ''
+            ));
+            $this->display('System/sysConfig');
         }
     }
 
