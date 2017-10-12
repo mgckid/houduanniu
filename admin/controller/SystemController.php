@@ -81,8 +81,8 @@ class SystemController extends UserBaseController
                    'description' => $value['description'],
                ];
            }
-//            Form::getInstance()->form_schema($form_init);
-            Form::getInstance()->input_text('标题','title','标题','aaaaa')->textarea('描述','desc','miaoshu','asgahsgjahgsjahg');
+            Form::getInstance()->form_schema($form_init);
+//            Form::getInstance()->input_text('标题','title','标题','aaaaa')->textarea('描述','desc','miaoshu','asgahsgjahgsjahg');
             #面包屑导航
             $this->crumb(array(
                 '系统设置' => U('System/index'),

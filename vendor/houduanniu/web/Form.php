@@ -21,26 +21,29 @@ class Form
     #表单提交地址
     protected $form_action;
     #表单提交方法
-    protected $form_method = 'post';
+    protected $form_method;
     #表单样式
-    protected $form_class = 'form form-horizontal';
+    protected $form_class;
     #表单名称
-    protected $form_name = 'autoform';
+    protected $form_name;
 
 
-    protected function __construct()
+    protected function __construct($form_name = '', $form_method = '', $form_action = '', $form_class = '')
     {
-
+        $this->form_name = !empty($form_name) ? $form_name : 'autoform';
+        $this->form_method = !empty($form_method) ? $form_method : 'post';
+        $this->form_action = !empty($form_action) ? $form_action : $_SERVER['REQUEST_URI'];
+        $this->form_class = !empty($form_class) ? $form_class : 'form form-horizontal';
     }
 
     /**
      * 获取类实例化对象
      * @return $this
      */
-    public static function getInstance()
+    public static function getInstance($form_name = '', $form_method = '', $form_action = '', $form_class = '')
     {
         if (empty(self::$instance)) {
-            self::$instance = new self;
+            self::$instance = new self($form_name, $form_method, $form_action, $form_class);
         }
         return self::$instance;
     }
@@ -76,7 +79,7 @@ class Form
     }
 
     /**
-     * 添加表单提交地址
+     * 设置表单提交地址
      * @access public
      * @author furong
      * @param $action
@@ -90,12 +93,30 @@ class Form
         return $this;
     }
 
+    /**
+     * 设置表单name
+     * @access public
+     * @author furong
+     * @param $name
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function form_name($name)
     {
         $this->form_name = $name;
         return $this;
     }
 
+    /**
+     * 设置表单form class
+     * @access public
+     * @author furong
+     * @param $class
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function form_class($class)
     {
         $this->form_class = $class;
@@ -130,6 +151,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加文本域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function input_text($title, $name, $description = '', $default_value = '')
     {
         $schema = [
@@ -143,6 +176,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加密码域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function input_password($title, $name, $description = '', $default_value = '')
     {
         $schema = [
@@ -156,6 +201,16 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加隐藏域元素
+     * @access public
+     * @author furong
+     * @param $name  input name
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function input_hidden($name, $default_value = '')
     {
         $schema = [
@@ -167,6 +222,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加文件域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function input_file($title, $name, $description = '', $default_value = '')
     {
         $schema = [
@@ -180,6 +247,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加单选域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function radio($title, $name, $enum, $description = '', $default_value = '')
     {
         $schema = [
@@ -194,6 +273,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加多选域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function checkbox($title, $name, $enum, $description = '', $default_value = '')
     {
         $schema = [
@@ -208,6 +299,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加下拉域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function select($title, $name, $enum, $description = '', $default_value = '')
     {
         $schema = [
@@ -222,6 +325,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加多行文本域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function textarea($title, $name, $description = '', $default_value = '')
     {
         $schema = [
@@ -235,6 +350,18 @@ class Form
         return $this;
     }
 
+    /**
+     * 添加富文本编辑器域元素
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name  input name
+     * @param string 描述
+     * @param string 默认值
+     * @return $this
+     * @since
+     * @abstract
+     */
     public function editor($title, $name, $description = '', $default_value = '')
     {
         $schema = [
@@ -257,23 +384,16 @@ class Form
      * @since
      * @abstract
      */
-    public static function  create()
+    public  function  create()
     {
-        $form_schema = self::getInstance()->form_schema;
-        $form_data = self::getInstance()->form_data;
-        $action = !empty(self::getInstance()->form_action) ? self::getInstance()->form_action : U(CONTROLLER_NAME . '/' . ACTION_NAME);
-        $form_name = self::getInstance()->form_name;
-        $method = self::getInstance()->form_method;
-        $form_class = self::getInstance()->form_class;
-
-        $action_str = !empty($action) ? 'action="' . $action . '"' : '';
-        $name_str = !empty($form_name) ? 'name="' . $form_name . '"' : '';
-        $id_str = !empty($form_name) ? 'id="' . $form_name . '"' : '';
-        $method_str = !empty($method) ? 'method="' . $method . '"' : '';
-        $class_str = !empty($form_class) ? 'class="' . $form_class . '"' : '';
-        $inputs_str = !empty($form_schema) ? self::getInstance()->render($form_schema, $form_data) : '';
-        $template = ' <form %s %s %s %s %s> %s';
-        return sprintf($template, $action_str, $name_str, $id_str, $method_str, $class_str, $inputs_str);
+        $form_action_str = !empty(self::getInstance()->form_action) ? 'action="' . self::getInstance()->form_action . '"' : '';
+        $form_name_str = !empty(self::getInstance()->form_name) ? 'name="' . self::getInstance()->form_name . '"' : '';
+        $form_id_str = !empty(self::getInstance()->form_name) ? 'id="' . self::getInstance()->form_name . '"' : '';
+        $form_method_str = !empty(self::getInstance()->form_method) ? 'method="' . self::getInstance()->form_method . '"' : '';
+        $form_class_str = !empty(self::getInstance()->form_class) ? 'class="' . self::getInstance()->form_class . '"' : '';
+        $inputs_str = !empty(self::getInstance()->form_schema) ? self::getInstance()->render(self::getInstance()->form_schema, self::getInstance()->form_data) : '';
+        $template = '<form %s %s %s %s %s> %s';
+        return sprintf($template, $form_action_str, $form_name_str, $form_id_str, $form_method_str, $form_class_str, $inputs_str);
     }
 
     /**
@@ -291,7 +411,7 @@ class Form
         $form_str = '';
         foreach ($form_schema as $value) {
             $title = $value['title'];
-            $description = isset($value['description']) ? $value['description'] :'';
+            $description = isset($value['description']) ? $value['description'] : '';
             /*input属性开始*/
             $type = $value['type'];
             $name = $value['name'];
@@ -336,7 +456,19 @@ class Form
     }
 
 
-    /*改版后*/
+    /**
+     * 渲染文本域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $placholder 输入提示
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_input_text($title, $name, $placholder, $description, $value = '')
     {
         $input_str = $this->render_input('text', $name, 'form-control', $placholder, $value);
@@ -344,12 +476,35 @@ class Form
         return $html;
     }
 
+    /**
+     * 渲染隐藏域结构
+     * @access public
+     * @author furong
+     * @param $name input name
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_input_hidden($name, $value = '')
     {
         $html = $this->render_input('hidden', $name, '', '', $value);
         return $html;
     }
 
+    /**
+     * 渲染密码域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $placholder 输入提示
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_input_password($title, $name, $placholder, $description, $value = '')
     {
         $input_str = $this->render_input('password', $name, 'form-control', $placholder, $value);
@@ -357,6 +512,19 @@ class Form
         return $html;
     }
 
+    /**
+     * 渲染单选域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $enum 选项数据
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_radio($title, $name, $enum, $description, $default_value = '')
     {
         $radis_str = '';
@@ -374,6 +542,19 @@ class Form
         return $html;
     }
 
+    /**
+     * 渲染多选域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $enum 选项数据
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_checkbox($title, $name, $enum, $description, $default_value = '')
     {
         $form_control_str = '';
@@ -385,6 +566,19 @@ class Form
         return $html;
     }
 
+    /**
+     * 渲染多行文本域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $placholder 输入提示
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_textarea($title, $name, $placeholder, $description, $default_value = '')
     {
         $name_str = !empty($name) ? 'name="' . $name . '"' : '';
@@ -399,6 +593,19 @@ class Form
         return $html;
     }
 
+    /**
+     * 渲染富文本编辑器域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $placholder 输入提示
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_editor($title, $name, $placeholder, $description, $default_value = '')
     {
         $name_str = !empty($name) ? 'name="' . $name . '"' : '';
@@ -411,6 +618,18 @@ class Form
         return $html;
     }
 
+    /**
+     * 渲染文件域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
     protected function render_input_file($title, $name, $description, $default_value = '')
     {
         $hiddenInput = $this->render_input('hidden', $name, '', '', $default_value);
@@ -422,14 +641,27 @@ class Form
         return $html;
     }
 
-    protected function render_select($title, $input_name, $option_data, $description, $select_value)
+    /**
+     * 渲染下拉选择域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $enum 选项数据
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
+    protected function render_select($title, $input_name, $enum, $description, $select_value)
     {
         $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
         $class_str = 'class="form-control"';
         $selected_data_str = !empty($select_value) ? 'data-selected="' . $select_value . '"' : '';
         $options_str = '<option value="">请选择</option>';
-        foreach ($option_data as $key => $value) {
+        foreach ($enum as $key => $value) {
             $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
             $selected_str = ($select_value == $value['value']) ? 'selected="true"' : '';
 

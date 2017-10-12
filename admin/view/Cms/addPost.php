@@ -2,7 +2,7 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="col-md-10">
-            <?= \houduanniu\web\Form::create() ?>
+            <?= \houduanniu\web\Form::getInstance()->create() ?>
             <div class="form-group">
                 <label class="col-sm-2 control-label">操作</label>
 
