@@ -391,7 +391,7 @@ class Form
         $form_id_str = !empty($this->form_name) ? 'id="' . $this->form_name . '"' : '';
         $form_method_str = !empty($this->form_method) ? 'method="' . $this->form_method . '"' : '';
         $form_class_str = !empty($this->form_class) ? 'class="' . $this->form_class . '"' : '';
-        $inputs_str = !empty($this->form_schema) ? $this->render($this->form_schema, $this->form_data) : '';
+        $inputs_str = $this->render();
         $template = '<form %s %s %s %s %s> %s';
         return sprintf($template, $form_action_str, $form_name_str, $form_id_str, $form_method_str, $form_class_str, $inputs_str);
     }
@@ -406,48 +406,52 @@ class Form
      * @since
      * @abstract
      */
-    public function render($form_schema, $form_data = [])
+    public function render()
     {
+        $form_schema = $this->form_schema;
+        $form_data = $this->form_data;
         $input_str = '';
-        foreach ($form_schema as $value) {
-            $input_title = isset($value['title']) ? $value['title'] : '';
-            $input_type = isset($value['type']) ? $value['type'] : '';
-            $input_name = isset($value['name']) ? $value['name'] : '';
-            $input_enum = isset($value['enum']) ? $value['enum'] : [];
-            $input_value = isset($form_data[$input_name]) ? $form_data[$input_name] : '';
-            $input_description = isset($value['description']) ? $value['description'] : '';
-            $input_placeholder = !empty($input_title) ? '请输入' . $input_title : '';
+        if (!empty($form_schema) && is_array($form_schema)) {
+            foreach ($form_schema as $value) {
+                $input_title = isset($value['title']) ? $value['title'] : '';
+                $input_type = isset($value['type']) ? $value['type'] : '';
+                $input_name = isset($value['name']) ? $value['name'] : '';
+                $input_enum = isset($value['enum']) ? $value['enum'] : [];
+                $input_value = isset($form_data[$input_name]) ? $form_data[$input_name] : '';
+                $input_description = isset($value['description']) ? $value['description'] : '';
+                $input_placeholder = !empty($input_title) ? '请输入' . $input_title : '';
 
-            switch ($input_type) {
-                case 'hidden':
-                    $input_str .= $this->render_input_hidden($input_name, $input_value);
-                    break;
-                case 'text':
-                    $input_str .= $this->render_input_text($input_title, $input_name, $input_placeholder, $input_description, $input_value);
-                    break;
-                case 'password':
-                    $input_str .= $this->render_input_password($input_title, $input_name, $input_placeholder, $input_description, $input_value);
-                    break;
-                case 'file':
-                    $input_str .= $this->render_input_file($input_title, $input_name, $input_description, $input_value);
-                    break;
-                case 'textarea':
-                    $input_str .= $this->render_textarea($input_title, $input_name, $input_placeholder, $input_description, $input_value);
-                    break;
-                case 'editor':
-                    $input_str .= $this->render_editor($input_title, $input_name, $input_placeholder, $input_description, $input_value);
-                    break;
-                case "radio":
-                    $input_str .= $this->render_radio($input_title, $input_name, $input_enum, $input_description, $input_value);
-                    break;
-                case 'checkboxs':
-                    $input_str .= $this->render_checkbox($input_title, $input_name, $input_enum, $input_description, $input_value);
-                    break;
-                case 'select':
-                    $input_str .= $this->render_select($input_title, $input_name, $input_enum, $input_description, $input_value);
-                    break;
-                default:
-                    throw new \Exception($input_type . '表单类型不存在');
+                switch ($input_type) {
+                    case 'hidden':
+                        $input_str .= $this->render_input_hidden($input_name, $input_value);
+                        break;
+                    case 'text':
+                        $input_str .= $this->render_input_text($input_title, $input_name, $input_placeholder, $input_description, $input_value);
+                        break;
+                    case 'password':
+                        $input_str .= $this->render_input_password($input_title, $input_name, $input_placeholder, $input_description, $input_value);
+                        break;
+                    case 'file':
+                        $input_str .= $this->render_input_file($input_title, $input_name, $input_description, $input_value);
+                        break;
+                    case 'textarea':
+                        $input_str .= $this->render_textarea($input_title, $input_name, $input_placeholder, $input_description, $input_value);
+                        break;
+                    case 'editor':
+                        $input_str .= $this->render_editor($input_title, $input_name, $input_placeholder, $input_description, $input_value);
+                        break;
+                    case "radio":
+                        $input_str .= $this->render_radio($input_title, $input_name, $input_enum, $input_description, $input_value);
+                        break;
+                    case 'checkboxs':
+                        $input_str .= $this->render_checkbox($input_title, $input_name, $input_enum, $input_description, $input_value);
+                        break;
+                    case 'select':
+                        $input_str .= $this->render_select($input_title, $input_name, $input_enum, $input_description, $input_value);
+                        break;
+                    default:
+                        throw new \Exception($input_type . '表单类型不存在');
+                }
             }
         }
         return $input_str;
@@ -467,10 +471,10 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_input_text($title, $name, $placholder, $description, $value = '')
+    protected function render_input_text($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
     {
-        $input_str = $this->render_input('text', $name, 'form-control', $placholder, $value);
-        $html = $this->buildFormGroup($title, $input_str, $description);
+        $input_str = $this->render_input('text', $input_name, 'form-control', $input_placeholder, $input_value);
+        $html = $this->buildFormGroup($input_title, $input_str, $input_description);
         return $html;
     }
 
@@ -484,9 +488,9 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_input_hidden($name, $value = '')
+    protected function render_input_hidden($input_name, $input_value = '')
     {
-        $html = $this->render_input('hidden', $name, '', '', $value);
+        $html = $this->render_input('hidden', $input_name, '', '', $input_value);
         return $html;
     }
 
@@ -503,10 +507,10 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_input_password($title, $name, $placholder, $description, $value = '')
+    protected function render_input_password($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
     {
-        $input_str = $this->render_input('password', $name, 'form-control', $placholder, $value);
-        $html = $this->buildFormGroup($title, $input_str, $description);
+        $input_str = $this->render_input('password', $input_name, 'form-control', $input_placeholder, $input_value);
+        $html = $this->buildFormGroup($input_title, $input_str, $input_description);
         return $html;
     }
 
@@ -523,20 +527,20 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_radio($title, $name, $enum, $description, $default_value = '')
+    protected function render_radio($input_title, $input_name, $input_enum, $input_description, $input_value = '')
     {
         $radis_str = '';
         $type_str = 'type="radio"';
-        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
-        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
-        foreach ($enum as $key => $value) {
-            $checked_str = $value['value'] == $default_value ? 'checked="true"' : '';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+        foreach ($input_enum as $value) {
+            $checked_str = $value['value'] == $input_value ? 'checked="true"' : '';
             $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
             $radio_text_str = $value['name'];
             $template = '<input %s %s %s %s %s /> %s';
             $radis_str .= sprintf($template, $type_str, $name_str, $id_str, $value_str, $checked_str, $radio_text_str);
         }
-        $html = $this->buildFormGroup($title, $radis_str, $description);
+        $html = $this->buildFormGroup($input_title, $radis_str, $input_description);
         return $html;
     }
 
@@ -553,14 +557,14 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_checkbox($title, $name, $enum, $description, $default_value = '')
+    protected function render_checkbox($input_title, $input_name, $input_enum, $input_description, $input_value = '')
     {
         $form_control_str = '';
-        foreach ($enum as $key => $value) {
-            $input_str = $this->render_input('checkbox', $name, '', '', $value) . ' ' . $value;
+        foreach ($input_enum as $value) {
+            $input_str = $this->render_input('checkbox', $input_name, '', '', $value) . ' ' . $value;
             $form_control_str . sprintf('<label class="checkbox-inline">%s</label>', $input_str);
         }
-        $html = $this->buildFormGroup($title, $form_control_str, $description);
+        $html = $this->buildFormGroup($input_title, $form_control_str, $input_description);
         return $html;
     }
 
@@ -577,17 +581,17 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_textarea($title, $name, $placeholder, $description, $default_value = '')
+    protected function render_textarea($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
     {
-        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
-        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
         $class_str = 'class="form-control"';
-        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
-        $value_str = $default_value;
+        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
+        $value_str = $input_value;
         $template = '<textarea %s %s %s %s >%s</textarea>';
 
         $html = sprintf($template, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
-        $html = $this->buildFormGroup($title, $html, $description);
+        $html = $this->buildFormGroup($input_title, $html, $input_description);
         return $html;
     }
 
@@ -604,15 +608,15 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_editor($title, $name, $placeholder, $description, $default_value = '')
+    protected function render_editor($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
     {
-        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
-        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
-        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
-        $value_str = !empty($default_value) ? $default_value : '';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
+        $value_str = !empty($input_value) ? $input_value : '';
         $template = '<textarea %s %s %s style="height:500px;" >%s</textarea>';
         $html = sprintf($template, $name_str, $id_str, $placeholder_str, $value_str);
-        $html = $this->buildFormGroup($title, $html, $description);
+        $html = $this->buildFormGroup($input_title, $html, $input_description);
         return $html;
     }
 
@@ -628,14 +632,14 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_input_file($title, $name, $description, $default_value = '')
+    protected function render_input_file($input_title, $input_name, $input_description, $input_value = '')
     {
-        $hiddenInput = $this->render_input('hidden', $name, '', '', $default_value);
-        $image_url = !empty($default_value) ? getImage($default_value) : '';
+        $hiddenInput = $this->render_input_hidden($input_name, $input_value);
+        $image_url = !empty($input_value) ? getImage($input_value) : '';
         $fileInput = '<input type="file" id="upload_file" data-preview="' . $image_url . '" />';
 
         $html = $hiddenInput . $fileInput;
-        $html = $this->buildFormGroup($title, $html, $description);
+        $html = $this->buildFormGroup($input_title, $html, $input_description);
         return $html;
     }
 
@@ -652,16 +656,16 @@ class Form
      * @since
      * @abstract
      */
-    protected function render_select($title, $input_name, $enum, $description, $select_value)
+    protected function render_select($input_title, $input_name, $input_enum, $input_description, $input_value = '')
     {
         $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
         $class_str = 'class="form-control"';
-        $selected_data_str = !empty($select_value) ? 'data-selected="' . $select_value . '"' : '';
+        $selected_data_str = !empty($input_value) ? 'data-selected="' . $input_value . '"' : '';
         $options_str = '<option value="">请选择</option>';
-        foreach ($enum as $key => $value) {
+        foreach ($input_enum as $value) {
             $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
-            $selected_str = ($select_value == $value['value']) ? 'selected="true"' : '';
+            $selected_str = ($input_value == $value['value']) ? 'selected="true"' : '';
 
             $option = !empty($value['option']) ? $value['option'] : '';
 
@@ -670,7 +674,7 @@ class Form
         }
         $select_template = '<select %s %s %s %s>%s</select>';
         $html = sprintf($select_template, $name_str, $id_str, $class_str, $selected_data_str, $options_str);
-        $html = $this->buildFormGroup($title, $html, $description);
+        $html = $this->buildFormGroup($input_title, $html, $input_description);
         return $html;
     }
 
@@ -686,14 +690,14 @@ class Form
      * @since  2017年7月13日 16:22:14
      * @abstract
      */
-    protected function render_input($type, $name, $input_class, $placeholder, $default_value = '')
+    protected function render_input($input_type, $input_name, $input_class, $input_placeholder, $input__value = '')
     {
-        $type_str = !empty($type) ? 'type="' . $type . '"' : '';
-        $name_str = !empty($name) ? 'name="' . $name . '"' : '';
-        $id_str = !empty($name) ? 'id="' . $name . '"' : '';
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $type_str = !empty($input_type) ? 'type="' . $input_type . '"' : '';
         $class_str = !empty($input_class) ? 'class="' . $input_class . '"' : '';
-        $placeholder_str = !empty($placeholder) ? 'placeholder="' . $placeholder . '"' : '';
-        $value_str = !empty($default_value) ? 'value="' . $default_value . '"' : '';
+        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
+        $value_str = !empty($input__value) ? 'value="' . $input__value . '"' : '';
 
         $template = '<input %s %s %s %s %s %s />';
 
@@ -711,7 +715,7 @@ class Form
      * @since 2017年7月13日 16:56:17
      * @abstract
      */
-    protected function buildFormGroup($title, $input_str, $description, $form_group_class = "", $title_class = "", $input_class = "", $description_class = "")
+    protected function buildFormGroup($input_title, $input_str, $input_description, $form_group_class = "", $title_class = "", $input_class = "", $description_class = "")
     {
         $template = <<<EOT
              <div class="form-group">
@@ -722,7 +726,7 @@ class Form
                 <label class="col-sm-2"> %s</label>
               </div>
 EOT;
-        return sprintf($template, $title, $input_str, $description);
+        return sprintf($template, $input_title, $input_str, $input_description);
     }
 
 
