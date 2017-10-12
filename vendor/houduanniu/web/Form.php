@@ -474,7 +474,7 @@ class Form
     protected function render_input_text($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
     {
         $input_str = $this->render_input('text', $input_name, 'form-control', $input_placeholder, $input_value);
-        $html = $this->buildFormGroup($input_title, $input_str, $input_description);
+        $html = $this->render_form_group($input_title, $input_str, $input_description);
         return $html;
     }
 
@@ -510,113 +510,7 @@ class Form
     protected function render_input_password($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
     {
         $input_str = $this->render_input('password', $input_name, 'form-control', $input_placeholder, $input_value);
-        $html = $this->buildFormGroup($input_title, $input_str, $input_description);
-        return $html;
-    }
-
-    /**
-     * 渲染单选域结构
-     * @access public
-     * @author furong
-     * @param $title 标题
-     * @param $name input name
-     * @param $enum 选项数据
-     * @param $description 描述
-     * @param string $value 默认值
-     * @return string
-     * @since
-     * @abstract
-     */
-    protected function render_radio($input_title, $input_name, $input_enum, $input_description, $input_value = '')
-    {
-        $radis_str = '';
-        $type_str = 'type="radio"';
-        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
-        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
-        foreach ($input_enum as $value) {
-            $checked_str = $value['value'] == $input_value ? 'checked="true"' : '';
-            $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
-            $radio_text_str = $value['name'];
-            $template = '<input %s %s %s %s %s /> %s';
-            $radis_str .= sprintf($template, $type_str, $name_str, $id_str, $value_str, $checked_str, $radio_text_str);
-        }
-        $html = $this->buildFormGroup($input_title, $radis_str, $input_description);
-        return $html;
-    }
-
-    /**
-     * 渲染多选域结构
-     * @access public
-     * @author furong
-     * @param $title 标题
-     * @param $name input name
-     * @param $enum 选项数据
-     * @param $description 描述
-     * @param string $value 默认值
-     * @return string
-     * @since
-     * @abstract
-     */
-    protected function render_checkbox($input_title, $input_name, $input_enum, $input_description, $input_value = '')
-    {
-        $form_control_str = '';
-        foreach ($input_enum as $value) {
-            $input_str = $this->render_input('checkbox', $input_name, '', '', $value) . ' ' . $value;
-            $form_control_str . sprintf('<label class="checkbox-inline">%s</label>', $input_str);
-        }
-        $html = $this->buildFormGroup($input_title, $form_control_str, $input_description);
-        return $html;
-    }
-
-    /**
-     * 渲染多行文本域结构
-     * @access public
-     * @author furong
-     * @param $title 标题
-     * @param $name input name
-     * @param $placholder 输入提示
-     * @param $description 描述
-     * @param string $value 默认值
-     * @return string
-     * @since
-     * @abstract
-     */
-    protected function render_textarea($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
-    {
-        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
-        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
-        $class_str = 'class="form-control"';
-        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
-        $value_str = $input_value;
-        $template = '<textarea %s %s %s %s >%s</textarea>';
-
-        $html = sprintf($template, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
-        $html = $this->buildFormGroup($input_title, $html, $input_description);
-        return $html;
-    }
-
-    /**
-     * 渲染富文本编辑器域结构
-     * @access public
-     * @author furong
-     * @param $title 标题
-     * @param $name input name
-     * @param $placholder 输入提示
-     * @param $description 描述
-     * @param string $value 默认值
-     * @return string
-     * @since
-     * @abstract
-     */
-    protected function render_editor($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
-    {
-        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
-        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
-        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
-        $value_str = !empty($input_value) ? $input_value : '';
-        $template = '<textarea %s %s %s style="height:500px;" >%s</textarea>';
-        $html = sprintf($template, $name_str, $id_str, $placeholder_str, $value_str);
-        $html = $this->buildFormGroup($input_title, $html, $input_description);
+        $html = $this->render_form_group($input_title, $input_str, $input_description);
         return $html;
     }
 
@@ -639,7 +533,106 @@ class Form
         $fileInput = '<input type="file" id="upload_file" data-preview="' . $image_url . '" />';
 
         $html = $hiddenInput . $fileInput;
-        $html = $this->buildFormGroup($input_title, $html, $input_description);
+        $html = $this->render_form_group($input_title, $html, $input_description);
+        return $html;
+    }
+
+    /**
+     * 渲染多行文本域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $placholder 输入提示
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
+    protected function render_textarea($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
+    {
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
+        $class_str = 'class="form-control"';
+        $template = '<textarea %s %s %s %s >%s</textarea>';
+
+        $html = sprintf($template, $name_str, $id_str, $class_str, $placeholder_str, $input_value);
+        return $this->render_form_group($input_title, $html, $input_description);
+    }
+
+    /**
+     * 渲染富文本编辑器域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $placholder 输入提示
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
+    protected function render_editor($input_title, $input_name, $input_placeholder, $input_description, $input_value = '')
+    {
+        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
+        $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
+        $template = '<textarea %s %s %s style="height:500px;" >%s</textarea>';
+        $html = sprintf($template, $name_str, $id_str, $placeholder_str, $input_value);
+        return $this->render_form_group($input_title, $html, $input_description);
+    }
+
+
+    /**
+     * 渲染单选域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $enum 选项数据
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
+    protected function render_radio($input_title, $input_name, $input_enum, $input_description, $input_value = '')
+    {
+        $label_str = '';
+        foreach ($input_enum as $value) {
+            $checked_str = $value['value'] == $input_value ? 'checked="checked"' : '';
+            $input_str = $this->render_input('radio', $input_name, '', '', $value['value'], $checked_str) . $value['name'];
+            $label_str .= $this->render_label('radio-inline', $input_str) . '&nbsp;&nbsp;';
+        }
+        $html = $this->render_form_group($input_title, $label_str, $input_description);
+        return $html;
+    }
+
+    /**
+     * 渲染多选域结构
+     * @access public
+     * @author furong
+     * @param $title 标题
+     * @param $name input name
+     * @param $enum 选项数据
+     * @param $description 描述
+     * @param string $value 默认值
+     * @return string
+     * @since
+     * @abstract
+     */
+    protected function render_checkbox($input_title, $input_name, $input_enum, $input_description, $input_value = '')
+    {
+        $label_str = '';
+        foreach ($input_enum as $value) {
+            $checked_str = $value['value'] == $input_value ? 'checked="checked"' : '';
+            $input_str = $this->render_input('checkbox', $input_name, '', '', $value['value'], $checked_str) . $value['name'];
+            $label_str .= $this->render_label('checkbox-inline', $input_str) . '&nbsp;&nbsp;';
+        }
+        $html = $this->render_form_group($input_title, $label_str, $input_description);
         return $html;
     }
 
@@ -658,23 +651,22 @@ class Form
      */
     protected function render_select($input_title, $input_name, $input_enum, $input_description, $input_value = '')
     {
-        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
-        $class_str = 'class="form-control"';
+        $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $selected_data_str = !empty($input_value) ? 'data-selected="' . $input_value . '"' : '';
-        $options_str = '<option value="">请选择</option>';
+        $class_str = 'class="form-control"';
+
+        $options_str = '<option value="">请选择' . $input_title . '</option>';
         foreach ($input_enum as $value) {
-            $value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
-            $selected_str = ($input_value == $value['value']) ? 'selected="true"' : '';
-
-            $option = !empty($value['option']) ? $value['option'] : '';
-
+            $option_title_str = !empty($value['name']) ? $value['name'] : '';
+            $option_selected_str = ($input_value == $value['value']) ? 'selected="selected"' : '';
+            $option_value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
             $option_template = '<option %s %s >%s</option>';
-            $options_str .= sprintf($option_template, $value_str, $selected_str, $option);
+            $options_str .= sprintf($option_template, $option_value_str, $option_selected_str, $option_title_str);
         }
         $select_template = '<select %s %s %s %s>%s</select>';
         $html = sprintf($select_template, $name_str, $id_str, $class_str, $selected_data_str, $options_str);
-        $html = $this->buildFormGroup($input_title, $html, $input_description);
+        $html = $this->render_form_group($input_title, $html, $input_description);
         return $html;
     }
 
@@ -690,7 +682,7 @@ class Form
      * @since  2017年7月13日 16:22:14
      * @abstract
      */
-    protected function render_input($input_type, $input_name, $input_class, $input_placeholder, $input__value = '')
+    protected function render_input($input_type, $input_name, $input_class, $input_placeholder, $input__value = '', $extra_str = '')
     {
         $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
         $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
@@ -699,9 +691,15 @@ class Form
         $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
         $value_str = !empty($input__value) ? 'value="' . $input__value . '"' : '';
 
-        $template = '<input %s %s %s %s %s %s />';
+        $template = '<input %s %s %s %s %s %s %s/>';
 
-        return sprintf($template, $type_str, $name_str, $id_str, $class_str, $placeholder_str, $value_str);
+        return sprintf($template, $type_str, $name_str, $id_str, $class_str, $placeholder_str, $value_str, $extra_str);
+    }
+
+    protected function render_label($label_class, $label_content)
+    {
+        $template = '<label class="%s">%s</label>';
+        return sprintf($template, $label_class, $label_content);
     }
 
     /**
@@ -715,7 +713,7 @@ class Form
      * @since 2017年7月13日 16:56:17
      * @abstract
      */
-    protected function buildFormGroup($input_title, $input_str, $input_description, $form_group_class = "", $title_class = "", $input_class = "", $description_class = "")
+    protected function render_form_group($input_title, $input_str, $input_description)
     {
         $template = <<<EOT
              <div class="form-group">
