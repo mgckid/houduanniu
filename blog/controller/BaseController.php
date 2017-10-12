@@ -61,9 +61,6 @@ class BaseController extends Controller
     public function curl()
     {
         $container = Application::container();
-        if (ENVIRONMENT == 'develop') {
-            $container['curl']->setOpt(CURLOPT_PROXY, '127.0.0.1:7777');
-        }
         return $container['curl'];
     }
 
