@@ -114,7 +114,7 @@ class BaseModel extends Model
      */
     public function getAllRecord($orm = '', $field = '*')
     {
-        return $this->getOrm($orm)->select_expr($field)->find_array();
+        return $this->getOrm($orm)->where('deleted', 0)->select_expr($field)->find_array();
     }
 
     /**

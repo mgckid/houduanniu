@@ -408,51 +408,49 @@ class Form
      */
     public function render($form_schema, $form_data = [])
     {
-        $form_str = '';
+        $input_str = '';
         foreach ($form_schema as $value) {
-            $title = $value['title'];
-            $description = isset($value['description']) ? $value['description'] : '';
-            /*input属性开始*/
-            $type = $value['type'];
-            $name = $value['name'];
-            $placeholder = '请输入' . $title;
-            $enum = isset($value['enum']) ? $value['enum'] : [];
-            $default_value = isset($form_data[$name]) ? $form_data[$name] : '';
-            /*input属性结束*/
+            $input_title = isset($value['title']) ? $value['title'] : '';
+            $input_type = isset($value['type']) ? $value['type'] : '';
+            $input_name = isset($value['name']) ? $value['name'] : '';
+            $input_enum = isset($value['enum']) ? $value['enum'] : [];
+            $input_value = isset($form_data[$input_name]) ? $form_data[$input_name] : '';
+            $input_description = isset($value['description']) ? $value['description'] : '';
+            $input_placeholder = !empty($input_title) ? '请输入' . $input_title : '';
 
-            $form_group_str = '';
-            switch ($type) {
-                case 'text':
-                    $form_group_str = $this->render_input_text($title, $name, $placeholder, $description, $default_value);
-                    break;
+            switch ($input_type) {
                 case 'hidden':
-                    $form_group_str = $this->render_input_hidden($name, $default_value);
+                    $input_str .= $this->render_input_hidden($input_name, $input_value);
+                    break;
+                case 'text':
+                    $input_str .= $this->render_input_text($input_title, $input_name, $input_placeholder, $input_description, $input_value);
                     break;
                 case 'password':
-                    $form_group_str = $this->render_input_password($title, $name, $placeholder, $description, $default_value);
-                    break;
-                case "radio":
-                    $form_group_str = $this->render_radio($title, $name, $enum, $description, $default_value);
-                    break;
-                case 'checkboxs':
-                    $form_group_str = $this->render_checkbox($title, $name, $enum, $description, $default_value);
-                    break;
-                case 'select':
-                    $form_group_str = $this->render_select($title, $name, $enum, $description, $default_value);
-                    break;
-                case 'textarea':
-                    $form_group_str = $this->render_textarea($title, $name, $placeholder, $description, $default_value);
-                    break;
-                case 'editor':
-                    $form_group_str = $this->render_editor($title, $name, $placeholder, $description, $default_value);
+                    $input_str .= $this->render_input_password($input_title, $input_name, $input_placeholder, $input_description, $input_value);
                     break;
                 case 'file':
-                    $form_group_str = $this->render_input_file($title, $name, $description, $default_value);
+                    $input_str .= $this->render_input_file($input_title, $input_name, $input_description, $input_value);
                     break;
+                case 'textarea':
+                    $input_str .= $this->render_textarea($input_title, $input_name, $input_placeholder, $input_description, $input_value);
+                    break;
+                case 'editor':
+                    $input_str .= $this->render_editor($input_title, $input_name, $input_placeholder, $input_description, $input_value);
+                    break;
+                case "radio":
+                    $input_str .= $this->render_radio($input_title, $input_name, $input_enum, $input_description, $input_value);
+                    break;
+                case 'checkboxs':
+                    $input_str .= $this->render_checkbox($input_title, $input_name, $input_enum, $input_description, $input_value);
+                    break;
+                case 'select':
+                    $input_str .= $this->render_select($input_title, $input_name, $input_enum, $input_description, $input_value);
+                    break;
+                default:
+                    throw new \Exception($input_type . '表单类型不存在');
             }
-            $form_str .= $form_group_str;
         }
-        return $form_str;
+        return $input_str;
     }
 
 
