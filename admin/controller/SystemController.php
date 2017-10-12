@@ -73,15 +73,16 @@ class SystemController extends UserBaseController
             $result = $siteConfigModel->getAllRecord();
             $form_init = [];
            foreach($result as $value){
-               $form_init[$value['name']] = [
-                   'field' => $value['name'],
+               $form_init[] = [
+                   'name' => $value['name'],
                    'title' => $value['description'],
                    'type' => $value['form_type'],
 //                   'enum' => $value['enum'],
                    'description' => $value['description'],
                ];
            }
-            Form::getInstance()->form_schema($form_init);
+//            Form::getInstance()->form_schema($form_init);
+            Form::getInstance()->input_text('标题','title','标题','aaaaa')->textarea('描述','desc','miaoshu','asgahsgjahgsjahg');
             #面包屑导航
             $this->crumb(array(
                 '系统设置' => U('System/index'),
