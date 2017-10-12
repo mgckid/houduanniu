@@ -133,7 +133,7 @@ class Form
      */
     public function form_method_post()
     {
-        self::getInstance()->form_method = 'post';
+        $this->form_method = 'post';
         return $this;
     }
 
@@ -147,7 +147,7 @@ class Form
      */
     public function form_method_get()
     {
-        self::getInstance()->form_method = 'get';
+        $this->form_method = 'get';
         return $this;
     }
 
@@ -384,14 +384,14 @@ class Form
      * @since
      * @abstract
      */
-    public  function  create()
+    public function  create()
     {
-        $form_action_str = !empty(self::getInstance()->form_action) ? 'action="' . self::getInstance()->form_action . '"' : '';
-        $form_name_str = !empty(self::getInstance()->form_name) ? 'name="' . self::getInstance()->form_name . '"' : '';
-        $form_id_str = !empty(self::getInstance()->form_name) ? 'id="' . self::getInstance()->form_name . '"' : '';
-        $form_method_str = !empty(self::getInstance()->form_method) ? 'method="' . self::getInstance()->form_method . '"' : '';
-        $form_class_str = !empty(self::getInstance()->form_class) ? 'class="' . self::getInstance()->form_class . '"' : '';
-        $inputs_str = !empty(self::getInstance()->form_schema) ? self::getInstance()->render(self::getInstance()->form_schema, self::getInstance()->form_data) : '';
+        $form_action_str = !empty($this->form_action) ? 'action="' . $this->form_action . '"' : '';
+        $form_name_str = !empty($this->form_name) ? 'name="' . $this->form_name . '"' : '';
+        $form_id_str = !empty($this->form_name) ? 'id="' . $this->form_name . '"' : '';
+        $form_method_str = !empty($this->form_method) ? 'method="' . $this->form_method . '"' : '';
+        $form_class_str = !empty($this->form_class) ? 'class="' . $this->form_class . '"' : '';
+        $inputs_str = !empty($this->form_schema) ? $this->render($this->form_schema, $this->form_data) : '';
         $template = '<form %s %s %s %s %s> %s';
         return sprintf($template, $form_action_str, $form_name_str, $form_id_str, $form_method_str, $form_class_str, $inputs_str);
     }
