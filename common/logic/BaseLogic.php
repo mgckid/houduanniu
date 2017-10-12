@@ -151,7 +151,7 @@ class BaseLogic extends Controller
                 'title' => $value['field_name'],
                 'type' => $value['form_type'],
                 'enum' => $value['enum'],
-                'description' => '这是描述',
+//                'description' => '这是描述',
             ];
         }
         return $form_init;

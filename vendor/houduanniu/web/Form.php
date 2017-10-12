@@ -660,7 +660,7 @@ class Form
         foreach ($input_enum as $value) {
             $option_title_str = !empty($value['name']) ? $value['name'] : '';
             $option_selected_str = ($input_value == $value['value']) ? 'selected="selected"' : '';
-            $option_value_str = !empty($value['value']) ? 'value="' . $value['value'] . '"' : '';
+            $option_value_str = ($value['value'] === 0 || $value['value'] === '0' || !empty($value['value'])) ? 'value="' . $value['value'] . '"' : '';
             $option_template = '<option %s %s >%s</option>';
             $options_str .= sprintf($option_template, $option_value_str, $option_selected_str, $option_title_str);
         }
@@ -682,17 +682,17 @@ class Form
      * @since  2017年7月13日 16:22:14
      * @abstract
      */
-    protected function render_input($input_type, $input_name, $input_class, $input_placeholder, $input__value = '', $extra_str = '')
+    protected function render_input($input_type, $input_name, $input_class, $input_placeholder, $input_value = '', $extra_str = '')
     {
+
         $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
         $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $type_str = !empty($input_type) ? 'type="' . $input_type . '"' : '';
         $class_str = !empty($input_class) ? 'class="' . $input_class . '"' : '';
         $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
-        $value_str = !empty($input__value) ? 'value="' . $input__value . '"' : '';
+        $value_str = ($input_value === 0 || $input_value === '0' || !empty($input_value)) ? 'value="' . $input_value . '"' : '';
 
         $template = '<input %s %s %s %s %s %s %s/>';
-
         return sprintf($template, $type_str, $name_str, $id_str, $class_str, $placeholder_str, $value_str, $extra_str);
     }
 
