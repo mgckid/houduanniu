@@ -24,7 +24,7 @@ class SystemController extends UserBaseController
     {
         if (IS_POST) {
             $dictionaryLogic = new BaseLogic();
-            $request_data = $dictionaryLogic->getRequestData('site_config','table');
+            $request_data = $dictionaryLogic->getRequestData('site_config', 'table');
             $model = new SiteConfigModel();
             $result = $model->addRecord($request_data);
             if (!$result) {
@@ -33,14 +33,47 @@ class SystemController extends UserBaseController
                 $this->ajaxSuccess();
             }
         } else {
-            $id = isset($_GET['id'])?intval($_GET['id']):0;
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             $siteConfigModel = new SiteConfigModel();
             $result = [];
             if ($id) {
                 $result = $siteConfigModel->getRecordInfoById($id);
             }
             $dictionaryLogic = new BaseLogic();
-            $form_init = $dictionaryLogic->getFormInit('site_config','table');
+            $form_init = $dictionaryLogic->getFormInit('site_config', 'table');
+            Form::getInstance()->form_schema($form_init)->form_data($result);
+            #面包屑导航
+            $this->crumb(array(
+                '系统设置' => U('System/index'),
+                '添加配置变量' => ''
+            ));
+            $this->display('System/addConfig');
+        }
+    }
+    /**
+     * 编辑配置变量
+     * @privilege 编辑配置变量|Admin/System/editConfig|317a590a-7987-11e7-8c47-14dda97b937d|3
+     */
+    public function editConfig(){
+        if (IS_POST) {
+            $dictionaryLogic = new BaseLogic();
+            $request_data = $dictionaryLogic->getRequestData('site_config', 'table');
+            $model = new SiteConfigModel();
+            $result = $model->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail($this->getMessage());
+            } else {
+                $this->ajaxSuccess();
+            }
+        } else {
+            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+            $siteConfigModel = new SiteConfigModel();
+            $result = [];
+            if ($id) {
+                $result = $siteConfigModel->getRecordInfoById($id);
+            }
+            $dictionaryLogic = new BaseLogic();
+            $form_init = $dictionaryLogic->getFormInit('site_config', 'table');
             Form::getInstance()->form_schema($form_init)->form_data($result);
             #面包屑导航
             $this->crumb(array(
@@ -52,7 +85,6 @@ class SystemController extends UserBaseController
     }
 
 
-
     /**
      * 系统配置
      * @privilege 系统配置|Admin/System/sysConfig|3d22cfea-5673-11e7-8c47-14dda97b937d|2
@@ -60,29 +92,37 @@ class SystemController extends UserBaseController
     public function sysConfig()
     {
         if (IS_POST) {
-            $siteConfigModel = new SiteConfigModel();
-            foreach ($_POST as $key => $value) {
-                $condition=array(
-                    'where'=>['name',$key],
-                );
-                $siteConfigModel->updateConfig($condition,['value'=>$value]);
+            $model = new SiteConfigModel();
+            $model->beginTransaction();
+            try {
+                foreach ($_POST as $key => $value) {
+                    $orm = $model->orm()->where('name', $key);
+                    $result = $model->updateConfig($orm, ['value' => $value]);
+                    if (!$result) {
+                        throw new \Exception($this->getMessage());
+                    }
+                }
+                $model->commit();
+                $this->ajaxSuccess();
+            } catch (\Exception $e) {
+                $model->rollBack();
+                $this->ajaxFail($e->getMessage());
             }
-            $this->ajaxSuccess();
         } else {
             $siteConfigModel = new SiteConfigModel();
             $result = $siteConfigModel->getAllRecord();
             $form_init = [];
-           foreach($result as $value){
-               $form_init[] = [
-                   'name' => $value['name'],
-                   'title' => $value['description'],
-                   'type' => $value['form_type'],
-//                   'enum' => $value['enum'],
-                   'description' => $value['description'],
-               ];
-           }
-            Form::getInstance()->form_schema($form_init);
-//            Form::getInstance()->input_text('标题','title','标题','aaaaa')->textarea('描述','desc','miaoshu','asgahsgjahgsjahg');
+            $form_data = [];
+            foreach ($result as $value) {
+                $form_init[] = [
+                    'name' => $value['name'],
+                    'title' => $value['description'],
+                    'type' => $value['form_type'],
+                    'description' => $value['description'],
+                ];
+                $form_data[$value['name']] = $value['value'];
+            }
+            Form::getInstance()->form_schema($form_init)->form_data($form_data);
             #面包屑导航
             $this->crumb(array(
                 '系统设置' => U('System/index'),
@@ -109,7 +149,7 @@ class SystemController extends UserBaseController
         $attr = array(
             'id' => '配置id',
         );
-        $validate = $model->validate()->make($_POST, $rule, [],$attr);
+        $validate = $model->validate()->make($_POST, $rule, [], $attr);
         if (false === $validate->passes()) {
             $this->ajaxFail($validate->messages()->first());
         }
@@ -122,11 +162,16 @@ class SystemController extends UserBaseController
         }
     }
 
-    public function configList(){
+    /**
+     * 配置列表
+     * @privilege 配置列表|Admin/System/configList|627054fe-56ee-11dsh-9ea6-14dda97b937d|2
+     */
+    public function configList()
+    {
         $dictionaryLogic = new BaseLogic();
         $list_init = $dictionaryLogic->getListInit('site_config');
 
-        $model  = new SiteConfigModel();
+        $model = new SiteConfigModel();
         $result = $model->getAllRecord();
 
         $data['list_data'] = $result;
@@ -134,9 +179,9 @@ class SystemController extends UserBaseController
 
         #面包屑导航
         $this->crumb([
-            '广告管理' => U('Advertisement/index'),
-            '广告位列表' => ''
+            '系统设置' => U('Advertisement/index'),
+            '配置列表' => ''
         ]);
-        $this->display('Advertisement/index', $data);
+        $this->display('System/configList', $data);
     }
 }

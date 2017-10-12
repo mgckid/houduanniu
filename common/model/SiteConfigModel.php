@@ -105,12 +105,9 @@ class SiteConfigModel extends BaseModel
         return $this->getConfigInfo($condition, $field);
     }
 
-    public function updateConfig($condition, $data)
+    public function updateConfig($orm, $data)
     {
-        $orm = $this->orm();
-        foreach ($condition as $key => $value) {
-            $orm = call_user_func_array(array($orm, $key), $value);
-        }
+        $orm = $this->getOrm($orm);
         $result = $orm->find_one();
         if (!$result) {
             $this->setMessage('配置项不存在');
