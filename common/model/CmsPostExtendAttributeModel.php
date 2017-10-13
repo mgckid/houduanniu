@@ -45,4 +45,17 @@ class CmsPostExtendAttributeModel extends BaseModel
         }
         return $result;
     }
+
+    /**
+     * 获取所有记录
+     * @access public
+     * @author furong
+     * @return array
+     * @since 2017年7月28日 09:49:20
+     * @abstract
+     */
+    public function getAllRecord($orm = '', $field = '*')
+    {
+        return $this->getOrm($orm)->select_expr($field)->find_array();
+    }
 }
