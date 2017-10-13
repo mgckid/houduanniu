@@ -15,17 +15,17 @@ class Form
 {
     static protected $instance;
     #表单结构数据
-    protected $form_schema;
+    private $form_schema;
     #表单数据
-    protected $form_data;
+    private $form_data;
     #表单提交地址
-    protected $form_action;
+    private $form_action;
     #表单提交方法
-    protected $form_method;
+    private $form_method;
     #表单样式
-    protected $form_class;
+    private $form_class;
     #表单名称
-    protected $form_name;
+    private $form_name;
 
 
     protected function __construct($form_name = '', $form_method = '', $form_action = '', $form_class = '')
@@ -46,6 +46,19 @@ class Form
             self::$instance = new self($form_name, $form_method, $form_action, $form_class);
         }
         return self::$instance;
+    }
+
+    /**
+     * 获取表单结构配置
+     * @access public
+     * @author furong
+     * @return mixed
+     * @since
+     * @abstract
+     */
+    public function get_form_schema()
+    {
+        return $this->form_schema;
     }
 
     /**

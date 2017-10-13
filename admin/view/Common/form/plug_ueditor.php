@@ -1,3 +1,4 @@
+<!--编辑器插件开始-->
 <script type="text/javascript" charset="utf-8" src="/static/admin/js/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8" src="/static/admin/js/ueditor/ueditor.all.min.js"></script>
 <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
@@ -18,3 +19,4 @@
         var ue = UE.getEditor(contentBox, config);
     }
 </script>
+<!--编辑器插件结束-->

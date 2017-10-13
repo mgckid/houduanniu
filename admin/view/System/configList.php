@@ -23,7 +23,7 @@
                         <td><?= !empty($val['enum']) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                     <?php endforeach;?>
                     <td>
-                        <a class="btn btn-success btn-xs" data-power="System/addConfig" href="<?=U('System/addConfig',array('id'=>$value['id']))?>">编辑</a>
+                        <a class="btn btn-success btn-xs" data-power="System/addConfig" href="<?=U('System/editConfig',array('id'=>$value['id']))?>">编辑</a>
                         <a class="btn btn-danger btn-xs" data-power="System/delConfig" href="javascript:void(0)" onclick="del(<?= $value['id'] ?>)">删除</a>
                     </td>
                 </tr>

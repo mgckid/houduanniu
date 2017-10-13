@@ -16,7 +16,7 @@
     </div>
 </div>
 <!--上传 开始-->
-<?= $this->insert('Common/plug_upload_fileinput') ?>
+<?= $this->insert('Common/form/plug_upload_fileinput') ?>
 <script>
     $(function () {
         fileInput('upload_file');

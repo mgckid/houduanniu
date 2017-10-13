@@ -19,7 +19,7 @@
 <!--/panel-->
 <!--js组件 开始-->
 <!--上传 开始-->
-<?= $this->insert('Common/plug_upload_fileinput') ?>
+<?= $this->insert('Common/form/plug_upload_fileinput') ?>
 <script>
     $(function () {
         fileInput('upload_file');
@@ -27,7 +27,7 @@
 </script>
 <!--上传 结束-->
 <!--编辑器 开始-->
-<?= $this->insert('Common/plug_ueditor') ?>
+<?= $this->insert('Common/form/plug_ueditor') ?>
 <script>
     $(function () {
         ueditor('content');

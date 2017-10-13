@@ -17,8 +17,8 @@ use houduanniu\web\Form;
 class SystemController extends UserBaseController
 {
     /**
-     * 添加配置变量
-     * @privilege 添加配置变量|Admin/System/addConfig|317a590a-5664-11e7-8c47-14dda97b937d|3
+     * 添加配置
+     * @privilege 添加配置|Admin/System/addConfig|317a590a-5664-11e7-8c47-14dda97b937d|3
      */
     public function addConfig()
     {
@@ -33,28 +33,24 @@ class SystemController extends UserBaseController
                 $this->ajaxSuccess();
             }
         } else {
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            $siteConfigModel = new SiteConfigModel();
-            $result = [];
-            if ($id) {
-                $result = $siteConfigModel->getRecordInfoById($id);
-            }
             $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('site_config', 'table');
-            Form::getInstance()->form_schema($form_init)->form_data($result);
+            Form::getInstance()->form_schema($form_init);
             #面包屑导航
             $this->crumb(array(
                 '系统设置' => U('System/index'),
-                '添加配置变量' => ''
+                '添加配置' => ''
             ));
             $this->display('System/addConfig');
         }
     }
+
     /**
-     * 编辑配置变量
-     * @privilege 编辑配置变量|Admin/System/editConfig|317a590a-7987-11e7-8c47-14dda97b937d|3
+     * 编辑配置
+     * @privilege 编辑配置|Admin/System/editConfig|317a590a-7987-11e7-8c47-14dda97b937d|3
      */
-    public function editConfig(){
+    public function editConfig()
+    {
         if (IS_POST) {
             $dictionaryLogic = new BaseLogic();
             $request_data = $dictionaryLogic->getRequestData('site_config', 'table');
@@ -68,17 +64,14 @@ class SystemController extends UserBaseController
         } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
             $siteConfigModel = new SiteConfigModel();
-            $result = [];
-            if ($id) {
-                $result = $siteConfigModel->getRecordInfoById($id);
-            }
+            $result = $siteConfigModel->getRecordInfoById($id);
             $dictionaryLogic = new BaseLogic();
             $form_init = $dictionaryLogic->getFormInit('site_config', 'table');
             Form::getInstance()->form_schema($form_init)->form_data($result);
             #面包屑导航
             $this->crumb(array(
                 '系统设置' => U('System/index'),
-                '添加配置变量' => ''
+                '编辑配置' => ''
             ));
             $this->display('System/addConfig');
         }
@@ -86,8 +79,8 @@ class SystemController extends UserBaseController
 
 
     /**
-     * 系统配置
-     * @privilege 系统配置|Admin/System/sysConfig|3d22cfea-5673-11e7-8c47-14dda97b937d|2
+     * 网站配置
+     * @privilege 网站配置|Admin/System/sysConfig|3d22cfea-5673-11e7-8c47-14dda97b937d|2
      */
     public function sysConfig()
     {
