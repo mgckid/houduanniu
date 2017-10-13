@@ -146,7 +146,7 @@ class BaseLogic extends Controller
             if ($value['form_type'] == 'none') {
                 continue;
             }
-            $form_init[] = [
+            $form_init[$value['field_value']] = [
                 'name' => $value['field_value'],
                 'title' => $value['field_name'],
                 'type' => $value['form_type'],

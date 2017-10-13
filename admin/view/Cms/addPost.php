@@ -16,24 +16,6 @@
     </div>
 </div>
 <!--/panel-->
-<!--js组件 开始-->
-<!--上传 开始-->
-<?= $this->insert('Common/form/plug_fileinput') ?>
-<script>
-    $(function () {
-        fileInput('upload_file');
-    })
-</script>
-<!--上传 结束-->
-<!--编辑器 开始-->
-<?= $this->insert('Common/form/plug_ueditor') ?>
-<script>
-    $(function () {
-        ueditor('content');
-    })
-</script>
-<!--编辑器 结束-->
-<!--js组件 结束-->
 
 <!--表单提交 开始-->
 <script>

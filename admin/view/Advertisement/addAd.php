@@ -15,14 +15,6 @@
         </form>
     </div>
 </div>
-<!--上传 开始-->
-<?= $this->insert('Common/form/plug_fileinput') ?>
-<script>
-    $(function () {
-        fileInput('upload_file');
-    })
-</script>
-<!--上传 结束-->
 <script>
     $('#autoform').ajaxForm({
         dataType: 'json',

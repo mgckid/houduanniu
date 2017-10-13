@@ -90,7 +90,7 @@ class AdvertisementController extends UserBaseController
     /**
      * 添加广告
      *
-     * @privilege 添加广告|Admin/Advertisement/addAd|cd34d4cd-2002-11e7-8ad5-9cb3ab404081|2
+     * @privilege 添加广告|Admin/Advertisement/addAd|cd34d4cd-2002-11d8-8ad5-9cb3ab404081|2
      * @access public
      * @author furong
      * @return void
@@ -98,6 +98,54 @@ class AdvertisementController extends UserBaseController
      * @abstract
      */
     public function addAd()
+    {
+        if (IS_POST) {
+            $dictionaryLogic = new BaseLogic();
+            $request_data = $dictionaryLogic->getRequestData('advertisement_list', 'table');
+            $advertisementListModel = new AdvertisementListModel();
+            $result = $advertisementListModel->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail('添加广告失败' . $this->getMessage());
+            } else {
+                $this->ajaxSuccess('添加广告成功');
+            }
+        } else {
+            #获取表单初始数据
+            $dictionaryLogic = new BaseLogic();
+            $form_init = $dictionaryLogic->getFormInit('advertisement_list', 'table');
+            #自定义枚举值
+            {
+                #获取广告位下拉
+                $positionModel = new AdvertisementPositioModel();
+                $postion_result = $positionModel->getAllRecord();
+                foreach ($postion_result as $value) {
+                    $form_init['position_id']['enum'][] = [
+                        'name' => $value['position_name'],
+                        'value' => $value['id'],
+                    ];
+                }
+            }
+            Form::getInstance()->form_schema($form_init);
+            #面包屑导航
+            $this->crumb([
+                '广告管理' => U('Advertisement/index'),
+                '添加广告' => ''
+            ]);
+            $this->display('Advertisement/addAd');
+        }
+    }
+
+    /**
+     * 添加广告
+     *
+     * @privilege 编辑广告|Admin/Advertisement/editAd|cd34d4cd-2002-11e7-8ad5-9cb3ab404081|3
+     * @access public
+     * @author furong
+     * @return void
+     * @since  2017年4月13日 12:39:59
+     * @abstract
+     */
+    public function editAd()
     {
         if (IS_POST) {
             $dictionaryLogic = new BaseLogic();
@@ -118,33 +166,28 @@ class AdvertisementController extends UserBaseController
             #自定义枚举值
             {
                 #获取广告位下拉
-                $AdvertisementPositionModel = new AdvertisementPositioModel();
-                $positionList = $AdvertisementPositionModel->getRecordList('',0, 999, false);
-                $enum = [];
-                foreach ($positionList as $key => $value) {
-                    $enum[] = [
+                $positionModel = new AdvertisementPositioModel();
+                $postion_result = $positionModel->getAllRecord();
+                foreach ($postion_result as $value) {
+                    $form_init['position_id']['enum'][] = [
+                        'name' => $value['position_name'],
                         'value' => $value['id'],
-                        'option' => $value['position_name'],
                     ];
                 }
-                $form_init['position_id']['enum'] = $enum;
             }
 
             $advertisementListModel = new AdvertisementListModel();
-            $adInfo = [];
-            if ($id) {
-                $adInfo = $advertisementListModel->getRecordInfoById($id);
-            }
-
+            $adInfo = $advertisementListModel->getRecordInfoById($id);
             Form::getInstance()->form_schema($form_init)->form_data($adInfo);
             #面包屑导航
             $this->crumb([
                 '广告管理' => U('Advertisement/index'),
-                '添加广告' => ''
+                '编辑广告' => ''
             ]);
             $this->display('Advertisement/addAd');
         }
     }
+
 
     /**
      * 广告列表
