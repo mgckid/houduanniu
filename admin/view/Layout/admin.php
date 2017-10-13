@@ -81,28 +81,25 @@
             <div class="box">
                 <?= $this->section('content') ?>
                 <?php
-                $form_schema = \houduanniu\web\Form::getInstance()->get_form_schema();
-                if (!empty($form_schema) && is_array($form_schema)) {
-                    $file_insert = false;
-                    $editor_insert = false;
-                    foreach ($form_schema as $value) {
-                        switch ($value['type']) {
-                            case "file":
+                    $form_schema = \houduanniu\web\Form::getInstance()->get_form_schema();
+                    if (!empty($form_schema) && is_array($form_schema)) {
+                        $file_insert = false;
+                        $editor_insert = false;
+                        foreach ($form_schema as $value) {
+                            if ($value['type'] == 'file') {
                                 if (!$file_insert) {
-                                    $this->insert('/Common/form/plug_upload_fileinput');
+                                    $this->insert('/Common/form/plug_fileinput');
                                     $file_insert = true;
                                 }
-                                break;
-                            case "editor":
+                            } elseif ($value['type'] == 'editor') {
                                 if (!$editor_insert) {
                                     $this->insert('/Common/form/plug_ueditor');
                                     $editor_insert = true;
                                 }
-                                break;
+                            }
                         }
+                        $this->insert('/Common/form/init', ['form_schema' => $form_schema]);
                     }
-                    $this->insert('/Common/form/init', ['form_schema' => $form_schema]);
-                }
                 ?>
             </div>
             <!-- /.box -->

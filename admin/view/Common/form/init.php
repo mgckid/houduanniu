@@ -12,7 +12,7 @@
         <!--编辑器初始化 开始-->
         <script>
             $(function () {
-                fileInput('<?=$value['name']?>');
+                ueditor('<?=$value['name']?>');
             })
         </script>
         <!--编辑器初始化 结束-->
