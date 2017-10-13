@@ -39,24 +39,6 @@
 </script>
 <!--表单提交 结束-->
 <script>
-    $(function () {
-        //栏目分类
-        var param = {
-            model_name: 'BaseLogic',
-            method_name: 'getCategoryData'
-        };
-        $.post('<?=U('pop/index')?>', param, function (data) {
-            if(data.status==1){
-                var option='';
-                var selected_id = $('#category_id').data('selected');
-                $.each(data.data,function(i,n){
-                    var selected = selected_id== n.id?'selected = "selected"':'';
-                    option = option + '<option value="' + n.id + '" ' + selected + '>'+n.category_name+'</option>'
-                })
-                $('#category_id').append(option);
-            }
-        }, 'json')
-    })
     //分词操作
     $('#fenci').on('click', function () {
         var content = $('[name=content]').val();

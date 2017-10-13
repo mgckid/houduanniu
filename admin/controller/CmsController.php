@@ -119,28 +119,36 @@ class CmsController extends UserBaseController
             }
 
             #获取栏目信息
-            $category_result = [];
             $cmsCategoryModel = new CmsCategoryModel();
             if ($category_id) {
                 $category_result = $cmsCategoryModel->getRecordInfoById($category_id);
+                $model_name = $category_result['model_id'];
             }
 
             #获取模型信息
             $baseLogic = new BaseLogic();
-            $model_name = !empty($model_name) ? $model_name : $category_result['model_id'];
             $model_result = $baseLogic->getModelInfo($model_name);
             if (!$model_result) {
                 trigger_error('内容模型不存在');
             }
             #获取表单初始化数据
             $form_init = $baseLogic->getFormInit($model_result['dictionary_value'], 'model');
+
+            $all_category_result = $cmsCategoryModel->getAllRecord();
+            $list = treeStructForLevel($all_category_result);
+            foreach ($list as $value) {
+                $form_init['category_id']['enum'][] = [
+                    'value' => $value['id'],
+                    'name' => $value['placeHolder'] . $value['category_name'],
+                ];
+            }
+
             #添加文档是默认数据
             $form_data['category_id'] = $category_id;
             $form_data['model_id'] = $model_result['id'];
             $form_data['post_id'] = getItemId();
             Form::getInstance()->form_data($form_data)
                 ->form_schema($form_init);
-
             #面包屑导航
             $this->crumb(array(
                 '内容管理' => U('Cms/index'),
@@ -159,15 +167,14 @@ class CmsController extends UserBaseController
     {
         if (IS_POST) {
             #获取模型信息
-            $model_id = isset($_POST['model_id']) ? intval($_POST['model_id']) : 0;
-            $baseLogic = new BaseLogic();
-            $model_result = $baseLogic->getModelInfo($model_id);
-            if (!$model_result) {
-                $this->ajaxSuccess('内容模型不存在');
-            }
-            $model_name = $model_result['dictionary_value'];
-            $request_data = $baseLogic->getRequestData($model_name, 'model');
+            $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
             $cmsPostModel = new CmsPostModel();
+            $post_result =  $cmsPostModel->getRecordInfoById($id);
+            if (!$post_result) {
+                $this->ajaxSuccess('文档不存在');
+            }
+            $baseLogic = new BaseLogic();
+            $request_data = $baseLogic->getRequestData($post_result['model_id'], 'model');
             $result = $cmsPostModel->addRecord($request_data);
             if (!$result) {
                 $this->ajaxFail('文档添加失败,' . $this->getMessage());
@@ -182,6 +189,16 @@ class CmsController extends UserBaseController
             $post_result = $cmsPostModel->getModelRecordInfoById($id, '*');
             #获取表单初始化数据
             $form_init = $baseLogic->getFormInit($post_result['model_id'], 'model');
+
+            $cmsCategoryModel = new CmsCategoryModel();
+            $all_category_result = $cmsCategoryModel->getAllRecord();
+            $list = treeStructForLevel($all_category_result);
+            foreach ($list as $value) {
+                $form_init['category_id']['enum'][] = [
+                    'value' => $value['id'],
+                    'name' => $value['placeHolder'] . $value['category_name'],
+                ];
+            }
             Form::getInstance()->form_data($post_result)
                 ->form_schema($form_init);
             #获取模型信息

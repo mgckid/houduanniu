@@ -168,6 +168,9 @@ class BaseLogic extends Controller
             }
             $field_definded = $this->getModelDefined($name);
         }
+        if(!$field_definded){
+            throw new \Exception('字段定义不存在');
+        }
         #注册钩子方法
         $hook = $name;
         foreach ($field_definded as $value) {
