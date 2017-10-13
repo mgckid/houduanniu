@@ -5,7 +5,11 @@
     <script src="/static/admin/js/bootstrap-fileinput/js/locales/zh.js"></script>
     <script>
         function fileInput(uploadId) {
-            var inputName = $('#' + uploadId).parent().find('input[type=hidden]').attr('name')
+//            var inputName = $('#' + uploadId).parent().find('input[type=hidden]').attr('name')
+            var inputName = $('#' + uploadId).attr('name')
+            var fileInput =  $('#' + uploadId).siblings('input[type=file]');
+//            console.log(fileInput);
+//            console.log(inputName);
             /**上传组件 配置 开始**/
             var config = {};
             config.language = 'zh';                                             //语言
@@ -28,7 +32,7 @@
             /**上传组件 配置 结束**/
 
             /***上传组件 初始化**/
-            var uploadObj = $('#' + uploadId).fileinput(config);
+            var uploadObj = fileInput.fileinput(config);
 
             /***上传组件 事件处理 开始**/
             //上传成功处理
