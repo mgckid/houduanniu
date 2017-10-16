@@ -11,10 +11,10 @@ namespace app\controller;
 
 use app\model\CmsPostModel;
 
-class testController extends BaseController
+class testController extends UserBaseController
 {
 
-    public function index()
+    public function index1()
     {
         $cmsPostModel = new CmsPostModel();
 
@@ -47,7 +47,9 @@ class testController extends BaseController
             }
             $cmsPostModel->addRecord($post_data);
         }
+    }
 
-
+    public function upload(){
+        $this->display('test/upload');
     }
 }

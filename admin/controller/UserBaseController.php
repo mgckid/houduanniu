@@ -27,9 +27,9 @@ class UserBaseController extends BaseController
         $this->checkLogin();
         if (!$this->checkPower()) {
             if (IS_POST || IS_AJAX) {
-                $this->ajaxFail('没有权限');
+               // $this->ajaxFail('没有权限');
             } else {
-                trigger_error('没有权限');
+               // trigger_error('没有权限');
             }
         };
     }
