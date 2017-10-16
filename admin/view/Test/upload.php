@@ -1,7 +1,7 @@
 <?php $this->layout('Layout/admin'); ?>
 <!-- bootstrap 4.x is supported. You can also use the bootstrap css 3.3.x versions -->
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">-->
-<link href="/static/admin/js/bootstrap-fileinput-master/css/fileinput.min.css" media="all" rel="stylesheet"
+<link href="/static/admin/js/bootstrap-fileinput-master/css/fileinput.css" media="all" rel="stylesheet"
       type="text/css"/>
 <!-- if using RTL (Right-To-Left) orientation, load the RTL CSS file after fileinput.css by uncommenting below -->
 <!-- link href="/static/admin/js/bootstrap-fileinput-master/css/fileinput-rtl.min.css" media="all" rel="stylesheet" type="text/css" /-->
