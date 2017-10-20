@@ -40,18 +40,15 @@
 
 <script>
     $(function () {
-        'use strict';
-        // Change this to the location of your server-side upload handler:
-        var url = window.location.hostname === 'blueimp.github.io' ?
-            '//jquery-file-upload.appspot.com/' : 'server/php/';
-        $('#fileupload').fileupload({
+/*        {
             url: url,
-            dataType: 'json',
+                dataType: 'json',
             done: function (e, data) {
-                $.each(data.result.files, function (index, file) {
-                    $('<p/>').text(file.name).appendTo('#files');
-                });
-            },
+            console.log(data);
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo('#files');
+            });
+        },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
                 $('#progress .progress-bar').css(
@@ -59,7 +56,28 @@
                     progress + '%'
                 );
             }
-        }).prop('disabled', !$.support.fileInput)
+        }*/
+        var url = '<?=U('upload/index')?>';
+        var config = {
+            url: url,
+            dataType: 'json',
+            add:function(e, data){
+                console.log(data);
+            },
+            progress: function(e, data) {
+                console.log(data);
+                // Track Progress
+            },
+            success: function(response, status) {
+                console.log(response,status);
+                // Success callback
+            },
+            error: function(error) {
+                console.log(error);
+                // Error callback
+            }
+        };
+        $('#fileupload').fileupload(config).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
     });
 </script>
