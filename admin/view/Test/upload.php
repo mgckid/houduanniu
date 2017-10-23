@@ -75,13 +75,15 @@
     uploader.init();
     uploader.bind('FilesAdded', function (uploader, files) {
         var file_name = files[0].name; //文件名
+        if(!files[0] || !/image\//.test(files[0].type)) return; //确保文件是图片
+        $('#'+browse_button).hide(0)
         var containerObj = $('#'+browse_button).parent('.container-box');
         var preview_id = 'preview_'+files[0].id;
         var progress_id = 'progress_'+files[0].id;
         containerObj.append('<div id="' + preview_id + '" class="preview"></div>')
         containerObj.append('<div id="' + progress_id + '" class="progress"></div>')
         previewImage(files[0], function (image_source) {
-           console.log($('#'+preview_id));
+            $('#'+preview_id).append('<image src="'+image_source+'"/>')
         })
     });
 
@@ -94,7 +96,6 @@
     //有关mOxie的介绍和说明请看：https://github.com/moxiecode/moxie/wiki/API
     //如果你不想了解那么多的话，那就照抄本示例的代码来得到预览的图片吧
     function previewImage(file,callback){//file为plupload事件监听函数参数中的file对象,callback为预览图片准备完成的回调函数
-        if(!file || !/image\//.test(file.type)) return; //确保文件是图片
         if(file.type=='image/gif'){//gif使用FileReader进行预览,因为mOxie.Image只支持jpg和png
             var fr = new mOxie.FileReader();
             fr.onload = function(){
