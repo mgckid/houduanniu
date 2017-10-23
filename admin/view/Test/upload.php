@@ -1,6 +1,10 @@
 <?php $this->layout('Layout/admin'); ?>
 <script type="text/javascript" src="/static/admin/js/plupload-master/js/plupload.full.min.js"></script>
-
+<style>
+    .container-box{width: 150px;height: 150px;background: #EFEFEF;overflow: hidden}
+    .container-box .add{font-size: 80px; color: #CCCCCC;width: 100%;text-align: center;line-height: 150px;}
+    .container-box .preview{}
+</style>
 
 <div class="panel panel-default">
     <div class="panel-body">
@@ -14,6 +18,9 @@
                     <div class="col-sm-8">
                         <div class="btn-wraper">
                             <div id="container">
+                                <div class="container-box">
+                                    <div class="add" id="choice_file">+</div>
+                                </div>
                                 <a href="#" class="btn btn-success" id="browse" >选择文件...</a>
                                 <a href="#" class="btn btn-info" id="upload-btn" >开始上传</a>
                             </div>
@@ -38,8 +45,9 @@
 </div>
 
 <script>
+    var browse_button = 'choice_file';
     var uploader = new plupload.Uploader({
-        browse_button: 'browse', // this can be an id of a DOM element or the DOM element itself
+        browse_button: browse_button, // this can be an id of a DOM element or the DOM element itself
         url: '<?=U('Upload/index')?>',
         multipart: true,//为true时将以multipart/form-data的形式来上传文件，为false时则以二进制的格式来上传文件。
         multipart_params: {source: 'upload'},//上传时的附加参数，
@@ -65,8 +73,50 @@
 
     });
     uploader.init();
+    uploader.bind('FilesAdded', function (uploader, files) {
+        var file_name = files[0].name; //文件名
+        var containerObj = $('#'+browse_button).parent('.container-box');
+        var preview_id = 'preview_'+files[0].id;
+        var progress_id = 'progress_'+files[0].id;
+        containerObj.append('<div id="' + preview_id + '" class="preview"></div>')
+        containerObj.append('<div id="' + progress_id + '" class="progress"></div>')
+        previewImage(files[0], function (image_source) {
+           console.log($('#'+preview_id));
+        })
+    });
+
+    function _build_preview(){
+
+    }
 
 
+    //plupload中为我们提供了mOxie对象
+    //有关mOxie的介绍和说明请看：https://github.com/moxiecode/moxie/wiki/API
+    //如果你不想了解那么多的话，那就照抄本示例的代码来得到预览的图片吧
+    function previewImage(file,callback){//file为plupload事件监听函数参数中的file对象,callback为预览图片准备完成的回调函数
+        if(!file || !/image\//.test(file.type)) return; //确保文件是图片
+        if(file.type=='image/gif'){//gif使用FileReader进行预览,因为mOxie.Image只支持jpg和png
+            var fr = new mOxie.FileReader();
+            fr.onload = function(){
+                callback(fr.result);
+                fr.destroy();
+                fr = null;
+            }
+            fr.readAsDataURL(file.getSource());
+        }else{
+            var preloader = new mOxie.Image();
+            preloader.onload = function() {
+                preloader.downsize( 300, 300 );//先压缩一下要预览的图片,宽300，高300
+                var imgsrc = preloader.type=='image/jpeg' ? preloader.getAsDataURL('image/jpeg',80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
+                callback && callback(imgsrc); //callback传入的参数为预览图片的url
+                preloader.destroy();
+                preloader = null;
+            };
+            preloader.load( file.getSource() );
+        }
+    }
+
+/*
     //绑定文件添加进队列事件
     uploader.bind('FilesAdded',function(uploader,files){
         for(var i = 0, len = files.length; i<len; i++){
@@ -81,6 +131,7 @@
     uploader.bind('UploadProgress',function(uploader,file){
         $('#file-'+file.id+' .progress').css('width',file.percent + '%');//控制进度条
     });
+*/
 
 /*    uploader.bind('Error', function (up, err) {
         document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
