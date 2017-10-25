@@ -82,6 +82,7 @@
             },
             //选择文件后触发
             FilesAdded: function (uploader, files) {
+                console.log(files);
                 var file_name = files[0].name; //文件名
                 if (!files[0] || !/image\//.test(files[0].type)) return; //确保文件是图片
                 $('#' + browse_button).hide(0)
@@ -110,6 +111,7 @@
             Error: function (uploader, errObject) {
 
             }
+
         }
         /*事件处理结束*/
 

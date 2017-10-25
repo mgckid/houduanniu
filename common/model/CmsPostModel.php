@@ -291,5 +291,26 @@ class CmsPostModel extends BaseModel
         return $return;
     }
 
+    /**
+     * 删除单条记录
+     * @access public
+     * @author furong
+     * @param $id
+     * @return bool
+     * @since 2017年7月28日 09:46:43
+     * @abstract
+     */
+    public function deleteRecordById($id)
+    {
+        $result = $this->getRecordInfoById($id);
+        $data = [
+            $this->pk => $id,
+            'deleted' => 1,
+            'model_id'=>$result['model_id']
+        ];
+        return $this->addRecord($data);
+    }
+
+
 
 }
