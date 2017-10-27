@@ -1,9 +1,13 @@
 <?php $this->layout('Layout/admin'); ?>
 <script type="text/javascript" src="/static/admin/js/plupload-master/js/plupload.full.min.js"></script>
 <style>
-    .container-box{width: 150px;height: 150px;background: #EFEFEF;overflow: hidden}
-    .container-box .add{font-size: 80px; color: #CCCCCC;width: 100%;text-align: center;line-height: 150px;}
-    .container-box .preview{}
+    ul.upload-box{overflow:hidden;_zoom:1;padding-left:0px; }
+    ul.upload-box li{width: 150px;height: 150px;background: #EFEFEF;float:  left;overflow:hidden;border: 4px dashed #ddd;margin-right: 10px; position: relative;margin-bottom: 10px;}
+    ul.upload-box li .add{font-size: 80px; color: #CCCCCC;width: 100%;text-align: center;line-height: 150px;}
+    ul.upload-box li .remove{position: absolute;width: 14px;height: 14px;line-height:14px;text-align:center;background: #E9523F;color:#fff;overflow:hidden;border-radius:5px;right: 0px;top: 17px;}
+    ul.upload-box li .preview{height: 80px;overflow: hidden;}
+    ul.upload-box li .preview img{max-width: 150px;}
+    ul.upload-box li .progress{margin-top: 5px;width: 0px;}
 </style>
 
 <div class="panel panel-default">
@@ -14,19 +18,16 @@
 
                 <div class="form-group">
                     <label class="control-label col-sm-2"> 上传广告图</label>
-
                     <div class="col-sm-8">
-                        <div class="btn-wraper">
-                            <div id="container">
-                                <div class="container-box">
-                                    <div class="add" id="choice_file">+</div>
-                                </div>
-                                <a href="#" class="btn btn-info" id="upload-btn" >开始上传</a>
-                            </div>
-                            <ul id="file-list"></ul>
-                            <!--<pre id="console"></pre>-->
-
-                        </div>
+                        <input type="hidden" name="weixin_image"/>
+                        <ul class="upload-box">
+                            <li>
+                                <div class="add" id="choice_file">+</div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-info" id="upload-btn">开始上传</a>
+                        <ul id="file-list"></ul>
+                        <!--<pre id="console"></pre>-->
                     </div>
                     <label class="col-sm-2"> </label>
                 </div>
@@ -44,9 +45,9 @@
 </div>
 
 <script>
-    var browse_button = 'choice_file';
+    var browse_id = 'choice_file';
     var config = {
-        browse_button: browse_button, // this can be an id of a DOM element or the DOM element itself
+        browse_button: browse_id, // this can be an id of a DOM element or the DOM element itself
         url: '<?=U('Upload/index')?>',
         multipart: true,//为true时将以multipart/form-data的形式来上传文件，为false时则以二进制的格式来上传文件。
         multipart_params: {source: 'upload'},//上传时的附加参数，
@@ -76,37 +77,48 @@
         init: {
             //当Init事件发生后触发
             PostInit: function (uploader) {
+                //上传事件
                 $('#upload-btn').click(function () {
                     uploader.start();
+                })
+                //删除事件
+                $(document).on('click','ul li .remove',function(){
+                    var obj = $(this).parent();
+                    var id = obj.attr('id');
+                    if (id.length == 0) {
+                        return false;
+                    }
+                    var file =    uploader.getFile(id)
+                    uploader.removeFile(file)
+                    obj.remove();
                 })
             },
             //选择文件后触发
             FilesAdded: function (uploader, files) {
                 console.log(files);
-                var file_name = files[0].name; //文件名
+                var name = files[0].name; //文件名
+                var id = files[0].id
+                var add_obj =  $('#' + browse_id).parent();
                 if (!files[0] || !/image\//.test(files[0].type)) return; //确保文件是图片
-                $('#' + browse_button).hide(0)
-                var containerObj = $('#' + browse_button).parent('.container-box');
-                var preview_id = 'preview_' + files[0].id;
-                var progress_id = 'progress_' + files[0].id;
-                containerObj.append('<div id="' + preview_id + '" class="preview"></div>')
-                containerObj.append('<div id="' + progress_id + '" class="progress"></div>')
-                previewImage(files[0], function (image_source) {
-                    $('#' + preview_id).append('<image src="' + image_source + '"/>')
-                })
+                show_container_box(browse_id,files[0])
             },
             //当文件从上传队列移除后触发
             FilesRemoved: function (uploader, files) {
-
+                console.log(files);
             },
             //当队列中的某一个文件上传完成后触发
             FileUploaded: function (uploader, file, responseObject) {
-
+                console.log(file,responseObject);
             },
             //当上传队列中所有文件都上传完成后触发
             UploadComplete: function (uploader, files) {
 
             },
+            //绑定文件上传进度事件
+            UploadProgress: function (uploader, file) {
+                $('#' + file.id + ' .progress').css('width', file.percent + '%');//控制进度条
+            },
+
             //当发生错误时触发
             Error: function (uploader, errObject) {
 
@@ -119,6 +131,19 @@
     var uploader = new plupload.Uploader(config);
     uploader.init();
 
+    function show_container_box(browse_id, file) {
+        var add_obj = $('#' + browse_id).parent();
+        var id = file.id;
+        var html = '<li id="' + id + '">';
+        html += '<div class="preview"></div>'
+        html += '<div class="progress progress-xs progress-bar progress-bar-success progress-bar-striped"></div>'
+        html += '<div class="remove">x</div>'
+        html += '</li>';
+        add_obj.before(html);
+        previewImage(file, function (image_source) {
+            $('#' + id).find('.preview').html('<image src="' + image_source + '"/>')
+        })
+    }
     
     //plupload中为我们提供了mOxie对象
     //有关mOxie的介绍和说明请看：https://github.com/moxiecode/moxie/wiki/API
@@ -145,30 +170,6 @@
         }
     }
 
-/*
-    //绑定文件添加进队列事件
-    uploader.bind('FilesAdded',function(uploader,files){
-        for(var i = 0, len = files.length; i<len; i++){
-            var file_name = files[i].name; //文件名
-            //构造html来更新UI
-            var html = '<li id="file-' + files[i].id +'"><p class="file-name">' + file_name + '</p><p class="progress"></p></li>';
-            $(html).appendTo('#file-list');
-        }
-    });
-
-    //绑定文件上传进度事件
-    uploader.bind('UploadProgress',function(uploader,file){
-        $('#file-'+file.id+' .progress').css('width',file.percent + '%');//控制进度条
-    });
-*/
-
-/*    uploader.bind('Error', function (up, err) {
-        document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
-    });*/
-    //上传按钮
-//    $('#upload-btn').click(function(){
-//        uploader.start();
-//    });
 </script>
 
 
