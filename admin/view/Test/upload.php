@@ -19,14 +19,13 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2"> 上传广告图</label>
                     <div class="col-sm-8">
-                        <input type="hidden" name="weixin_image"/>
-                        <ul class="upload-box">
+                        <input type="hidden" value="ef66a575806a6edfe65a5875c8b6485b.jpg" data-preview="/upload/ef66a575806a6edfe65a5875c8b6485b.jpg" name="weixin_image"/>
+              <!--          <ul class="upload-box">
                             <li>
-                                <div class="add" id="choice_file">+</div>
+                                <div class="add" id="weixin_image">+</div>
                             </li>
                         </ul>
-                        <a href="#" class="btn btn-info" id="upload-btn">开始上传</a>
-                        <ul id="file-list"></ul>
+                        <ul id="file-list"></ul>-->
                         <!--<pre id="console"></pre>-->
                     </div>
                     <label class="col-sm-2"> </label>
@@ -45,7 +44,15 @@
 </div>
 
 <script>
-    var browse_id = 'choice_file';
+    var browse_id = 'weixin_image';
+    var max_file_upload = 1;
+
+    build_upload_box(browse_id);
+//    show_uploaded_preview(browse_id);
+
+    var image = $('input[name=' + browse_id + ']').val();
+    var image_url = $('input[name=' + browse_id + ']').data('preview');
+
     var config = {
         browse_button: browse_id, // this can be an id of a DOM element or the DOM element itself
         url: '<?=U('Upload/index')?>',
@@ -78,9 +85,11 @@
             //当Init事件发生后触发
             PostInit: function (uploader) {
                 //上传事件
-                $('#upload-btn').click(function () {
+                $(document).on('click','#upload-btn',function(){
                     uploader.start();
                 })
+                //初始化预览
+                uploader.trigger('FilesAdded',image);
                 //删除事件
                 $(document).on('click','ul li .remove',function(){
                     var obj = $(this).parent();
@@ -91,24 +100,29 @@
                     var file =    uploader.getFile(id)
                     uploader.removeFile(file)
                     obj.remove();
+                    check_show_select_btn(max_file_upload,browse_id);
+                    check_show_upload_btn();
                 })
             },
             //选择文件后触发
             FilesAdded: function (uploader, files) {
-                console.log(files);
-                var name = files[0].name; //文件名
-                var id = files[0].id
-                var add_obj =  $('#' + browse_id).parent();
-                if (!files[0] || !/image\//.test(files[0].type)) return; //确保文件是图片
-                show_container_box(browse_id,files[0])
+                show_file_select_preview(browse_id,files[0])
+                check_show_select_btn(max_file_upload,browse_id);
+                check_show_upload_btn();
             },
             //当文件从上传队列移除后触发
             FilesRemoved: function (uploader, files) {
-                console.log(files);
+
             },
             //当队列中的某一个文件上传完成后触发
             FileUploaded: function (uploader, file, responseObject) {
-                console.log(file,responseObject);
+                var res = responseObject.response;
+                res = eval('('+res+')');
+                if (res.status == 1) {
+                    var name = max_file_upload == 1 ? browse_id : browse_id + '[]';
+                    var html = '<input type="hidden" name="' + name + '" value="' + res.data.name + '"/>';
+                    $('#' + file.id).append(html);
+                }
             },
             //当上传队列中所有文件都上传完成后触发
             UploadComplete: function (uploader, files) {
@@ -129,12 +143,12 @@
 
     };
     var uploader = new plupload.Uploader(config);
-    uploader.init();
+   uploader.init();
 
-    function show_container_box(browse_id, file) {
+    function show_file_select_preview(browse_id, file) {
         var add_obj = $('#' + browse_id).parent();
         var id = file.id;
-        var html = '<li id="' + id + '">';
+        var html = '<li id="' + id + '" class="instance">';
         html += '<div class="preview"></div>'
         html += '<div class="progress progress-xs progress-bar progress-bar-success progress-bar-striped"></div>'
         html += '<div class="remove">x</div>'
@@ -149,6 +163,7 @@
     //有关mOxie的介绍和说明请看：https://github.com/moxiecode/moxie/wiki/API
     //如果你不想了解那么多的话，那就照抄本示例的代码来得到预览的图片吧
     function previewImage(file,callback){//file为plupload事件监听函数参数中的file对象,callback为预览图片准备完成的回调函数
+        if (!file || !/image\//.test(file.type)) return; //确保文件是图片
         if(file.type=='image/gif'){//gif使用FileReader进行预览,因为mOxie.Image只支持jpg和png
             var fr = new mOxie.FileReader();
             fr.onload = function(){
@@ -168,6 +183,44 @@
             };
             preloader.load( file.getSource() );
         }
+    }
+
+    function check_show_select_btn(max_file_upload, browse_id) {
+        if ($('ul li.instance').length >= max_file_upload) {
+            $('#' + browse_id).parent().hide(0);
+        } else {
+            $('#' + browse_id).parent().show(0);
+        }
+    }
+    
+    function check_show_upload_btn(){
+        if($('ul li.instance').length >=1){
+            var html = '<a class="btn btn-success" id="upload-btn" >开始上传</a>';
+            $('.upload-box').after(html)
+        }else{
+            $('#upload-btn').remove();
+        }
+    }
+
+    function build_upload_box(browse_id){
+        var obj =  $('input[name='+browse_id+']');
+        var html = '<ul class="upload-box">';
+        html += '<li>';
+        html += '<div class="add" id="' + browse_id + '">+</div>';
+        html += '</li>';
+        html += '</ul>';
+        obj.after(html);
+    }
+
+    function show_uploaded_preview(browse_id){
+        var obj =  $('input[name='+browse_id+']');
+        var html = '<li class="instance">';
+        html += '<div class="preview"></div>'
+        html += '<div class="progress progress-xs progress-bar progress-bar-success progress-bar-striped"></div>'
+        html += '<div class="remove">x</div>'
+        html += '</li>';
+        obj.wrap(html);
+        $('.upload-box').prepend($('.instance'));
     }
 
 </script>
