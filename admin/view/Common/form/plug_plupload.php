@@ -197,7 +197,7 @@
                 $('.upload-box ul li.instance').append('<div class="preview"></div><div class="remove">x</div>');
                 $('.upload-box ul li.instance').last().after('<li><div class="add" id="' + browse_id + '">+</div></li>');
                 $.each($('.upload-box ul li.instance'), function (i, n) {
-                    var file_url = $(this).find('input[type=hidden]').data('preview');
+                    var file_url = '/upload/'+$(this).find('input[type=hidden]').val();
                     preview_image(file_url, function (url) {
                         $('.upload-box ul li.instance').eq(i).find('.preview').html('<image src="' + url + '"/>')
                     })
