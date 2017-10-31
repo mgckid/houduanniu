@@ -1,4 +1,3 @@
-<?php $this->layout('Layout/admin'); ?>
 <script type="text/javascript" src="/static/admin/js/plupload-master/js/plupload.full.min.js"></script>
 <style>
     .upload-box ul{overflow:hidden;_zoom:1;padding-left:0px; }
@@ -9,46 +8,6 @@
     .upload-box ul li .preview img{max-width: 150px;}
     .upload-box ul li .progress{margin-top: 5px;width: 0px;}
 </style>
-
-<div class="panel panel-default">
-    <div class="panel-body">
-        <div class="col-md-12">
-            <form action="" name="autoform" id="autoform" method="post" class="form form-horizontal"><input
-                    type="hidden" name="id" id="id"/>
-
-                <div class="form-group">
-                    <label class="control-label col-sm-2"> 上传广告图</label>
-                    <div class="col-sm-8">
-                        <input type="hidden"   name="weixin_image"/>
-              <!--
-                        <ul id="file-list"></ul>-->
-                        <!--<pre id="console"></pre>-->
-                    </div>
-                    <label class="col-sm-2"> </label>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-2"> 上传微信</label>
-                    <div class="col-sm-8">
-                        <input type="hidden" value="99d4a2a79886c9425268999e9091f81e.jpg" data-preview="/upload/99d4a2a79886c9425268999e9091f81e.jpg" name="weibo_image"/>
-                        <!--
-                                  <ul id="file-list"></ul>-->
-                        <!--<pre id="console"></pre>-->
-                    </div>
-                    <label class="col-sm-2"> </label>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">操作</label>
-
-                    <div class="col-sm-10">
-                        <button class="btn btn-success " data-power="System/addConfig">保存</button>
-                        <button type="reset" class="btn btn-danger ml10">重置</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <script>
     function init_upload(input_name_arr) {
         var max_file_upload = 1;
@@ -247,8 +206,5 @@
             check_show_select_btn(max_file_upload, browse_id);
         }
     }
-    init_upload(['weixin_image', 'weibo_image']);
+   // init_upload(['weixin_image', 'weibo_image']);
 </script>
-
-
-

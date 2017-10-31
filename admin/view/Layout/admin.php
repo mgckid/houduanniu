@@ -88,7 +88,7 @@
                         foreach ($form_schema as $value) {
                             if ($value['type'] == 'file') {
                                 if (!$file_insert) {
-                                    $this->insert('/Common/form/plug_fileinput');
+                                    $this->insert('/Common/form/plug_plupload');
                                     $file_insert = true;
                                 }
                             } elseif ($value['type'] == 'editor') {

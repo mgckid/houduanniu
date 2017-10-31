@@ -543,9 +543,9 @@ class Form
     {
         $hiddenInput = $this->render_input_hidden($input_name, $input_value);
         $image_url = !empty($input_value) ? getImage($input_value) : '';
-        $fileInput = '<input type="file" id="upload_file" data-preview="' . $image_url . '" />';
+      //  $fileInput = '<input type="file" id="upload_file" data-preview="' . $image_url . '" />';
 
-        $html = $hiddenInput . $fileInput;
+        $html = $hiddenInput ;
         $html = $this->render_form_group($input_title, $html, $input_description);
         return $html;
     }

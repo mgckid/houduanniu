@@ -3,7 +3,7 @@
         <!--上传初始化 开始-->
         <script>
             $(function () {
-                fileInput('<?=$value['name']?>');
+                init_upload(['<?=$value['name']?>']);
             })
         </script>
         <!--上传初始化 结束-->
