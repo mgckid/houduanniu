@@ -58,7 +58,7 @@ class Form
      */
     public function get_form_schema()
     {
-        return $this->form_schema;
+        return $this->form_schema?$this->form_schema:[];
     }
 
     /**

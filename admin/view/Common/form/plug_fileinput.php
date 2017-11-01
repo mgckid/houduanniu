@@ -83,4 +83,13 @@
             /**上传组件 私有方法 结束**/
         }
     </script>
+    <script>
+        //插件实例化
+        $(function () {
+            var field = <?=$field?>;
+            $.each(field, function (i, n) {
+                fileInput(n);
+            })
+        })
+    </script>
     <!--上传插件 结束-->

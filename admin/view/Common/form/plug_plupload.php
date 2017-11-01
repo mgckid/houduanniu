@@ -1,3 +1,4 @@
+<!--plupload上传插件 开始-->
 <script type="text/javascript" src="/static/admin/js/plupload-master/js/plupload.full.min.js"></script>
 <style>
     .upload-box ul{overflow:hidden;_zoom:1;padding-left:0px; }
@@ -208,3 +209,11 @@
         }
     }
 </script>
+<script>
+    //插件实例化
+    $(function () {
+        var field = <?=$field?>;
+        init_upload(field)
+    })
+</script>
+<!--plupload上传插件结束-->

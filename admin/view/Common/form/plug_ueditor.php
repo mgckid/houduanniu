@@ -19,4 +19,13 @@
         var ue = UE.getEditor(contentBox, config);
     }
 </script>
+<script>
+    //插件实例化
+    $(function () {
+        var field = <?=$field?>;
+            $.each(field, function (i, n) {
+                ueditor(n);
+            })
+    })
+</script>
 <!--编辑器插件 结束-->
