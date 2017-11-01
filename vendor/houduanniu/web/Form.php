@@ -698,15 +698,15 @@ class Form
     protected function render_input($input_type, $input_name, $input_class, $input_placeholder, $input_value = '', $extra_str = '')
     {
 
-        $id_str = !empty($input_name) ? 'id="' . $input_name . '"' : '';
+
         $name_str = !empty($input_name) ? 'name="' . $input_name . '"' : '';
         $type_str = !empty($input_type) ? 'type="' . $input_type . '"' : '';
         $class_str = !empty($input_class) ? 'class="' . $input_class . '"' : '';
         $placeholder_str = !empty($input_placeholder) ? 'placeholder="' . $input_placeholder . '"' : '';
         $value_str = ($input_value === 0 || $input_value === '0' || !empty($input_value)) ? 'value="' . $input_value . '"' : '';
 
-        $template = '<input %s %s %s %s %s %s %s/>';
-        return sprintf($template, $type_str, $name_str, $id_str, $class_str, $placeholder_str, $value_str, $extra_str);
+        $template = '<input %s %s %s %s %s %s/>';
+        return sprintf($template, $type_str, $name_str, $class_str, $placeholder_str, $value_str, $extra_str);
     }
 
     protected function render_label($label_class, $label_content)

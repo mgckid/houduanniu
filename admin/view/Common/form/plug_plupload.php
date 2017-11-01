@@ -47,9 +47,9 @@
                         //指定id
                         $('#' + browse_id).parents('.upload-box').attr('id', uploader.id);
                         //点击上传
-                        $(document).on('click', '#' + uploader.id + ' .upload-btn', function () {
-                            uploader.start();
-                        })
+//                        $(document).on('click', '#' + uploader.id + ' .upload-btn', function () {
+//                            uploader.start();
+//                        })
                         //点击删除
                         $(document).on('click', '.upload-box li .remove', function () {
                             var obj = $(this).parent();
@@ -70,14 +70,15 @@
                             }
                             obj.remove();
                             check_show_select_btn(max_file_upload, browse_id);
-                            check_show_upload_btn(browse_id);
+//                            check_show_upload_btn(browse_id);
                         })
                     },
                     //选择文件后触发
                     FilesAdded: function (uploader, files) {
                         show_file_select_preview(browse_id, files[0])
                         check_show_select_btn(max_file_upload, browse_id);
-                        check_show_upload_btn(browse_id);
+//                        check_show_upload_btn(browse_id);
+                        uploader.start();
                     },
                     //当文件从上传队列移除后触发
                     FilesRemoved: function (uploader, files) {
@@ -187,15 +188,15 @@
         function build_upload_box(browse_id) {
             var obj = $('input[name=' + browse_id + ']');
             var html = '<div class="upload-box"><ul></ul></div>';
-            obj.last().after(html);
+            obj.parent().append(html);
+            obj.parent().find('.upload-box ul').append('<li><div class="add" id="' + browse_id + '">+</div></li>');
             if (!obj.val()) {//没有初始化数据
                 obj.remove();
-                $('.upload-box ul').append('<li><div class="add" id="' + browse_id + '">+</div></li>');
             } else {//有初始化数据
-                obj.parent().find('.upload-box ul').append(obj)
+//                $('.upload-box ul li.instance').last().after('<li><div class="add" id="' + browse_id + '">+</div></li>');
+                obj.parent().find('.upload-box ul').prepend(obj)
                 obj.wrap('<li class="instance"></li>');
-                $('.upload-box ul li.instance').append('<div class="preview"></div><div class="remove">x</div>');
-                $('.upload-box ul li.instance').last().after('<li><div class="add" id="' + browse_id + '">+</div></li>');
+                obj.parent('.instance').append('<div class="preview"></div><div class="remove">x</div>');
                 $.each($('.upload-box ul li.instance'), function (i, n) {
                     var file_url = '/upload/'+$(this).find('input[type=hidden]').val();
                     preview_image(file_url, function (url) {
@@ -206,5 +207,4 @@
             check_show_select_btn(max_file_upload, browse_id);
         }
     }
-   // init_upload(['weixin_image', 'weibo_image']);
 </script>
