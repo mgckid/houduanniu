@@ -88,6 +88,9 @@ class Application
                 require $value;
             }
         }
+        self::hooks()->add_action('test',function(){
+            phpinfo();die();
+        });
         #运行程序
         $controller_name = 'app\\' . self::config()->get('DIR_CONTROLLER') . '\\' . CONTROLLER_NAME . self::config()->get('EXT_CONTROLLER');
         if (!class_exists($controller_name)) {
@@ -210,5 +213,18 @@ class Application
     static function templateEngine()
     {
         return self::container()['templateEngine'];
+    }
+
+    /**
+     * 钩子组件
+     * @access public
+     * @author furong
+     * @return \houduanniu\base\Hooks
+     * @since
+     * @abstract
+     */
+    static function hooks()
+    {
+        return self::container()['hooks'];
     }
 }

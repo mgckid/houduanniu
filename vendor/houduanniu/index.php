@@ -84,6 +84,9 @@ try {
     #注册路由数据
     $container['request_data'] = $container['config']->get('request_data');
 
+    #注册钩子组件
+    $container['hooks'] = $container['config']->get('hooks');
+
     $container['run_application'] = $container['config']->get('run_application');
 
     $container['error_handler_set'];

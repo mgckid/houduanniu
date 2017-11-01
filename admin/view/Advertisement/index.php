@@ -22,7 +22,7 @@
                             <td><?= !empty($val['enum']) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                         <?php endforeach;?>
                         <td>
-                            <a class="btn btn-success btn-xs" data-power="Advertisement/addPosition"  href="<?= U('Advertisement/addPosition', array('id' => $value['id'])) ?>">编辑</a>
+                            <a class="btn btn-success btn-xs" data-power="Advertisement/editPosition"  href="<?= U('Advertisement/editPosition', array('id' => $value['id'])) ?>">编辑</a>
                             <a class="btn btn-danger btn-xs" data-power="Advertisement/delPosition"   href="javascript:void(0)" onclick="delPosition(<?=$value['id']?>)">删除</a>
                         </td>
                     </tr>

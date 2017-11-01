@@ -42,6 +42,13 @@ class Config extends \Noodlehaus\Config
                 $cache = new Cache();
                 return $cache->setCachePath($cache_dir);
             },
+            /*hooks钩子组件注入*/
+            'hooks' => function ($c) {
+                $hooks = new  \houduanniu\base\Hooks();
+                $hooks->add_action('After_Hooks_Setup',$hooks);
+                return $hooks;
+            },
+            /*流程设置*/
             'flow_set'=>function($container){
                 #当前模块名称常量
                 defined('MODULE_NAME') or define('MODULE_NAME', $container['request_data']['module']);

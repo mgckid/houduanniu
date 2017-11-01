@@ -22,7 +22,8 @@
                         <td><?= !empty($val['enum']) ? $val['enum'][$value[$key]] : $value[$key] ?></td>
                     <?php endforeach;?>
                     <td>
-                        <a class="btn btn-success btn-xs" data-power="Advertisement/addad"  href="<?= U('Advertisement/addad', array('id' => $val['id'])) ?>">编辑</a>
+                        <a class="btn btn-success btn-xs" data-power="Advertisement/editad"  href="<?= U('Advertisement/editad', array('id' => $value['id'])) ?>">编辑</a>
+                        <a class="btn btn-danger btn-xs" data-power="Advertisement/delAd"   href="javascript:void(0)" onclick="delAd(<?=$value['id']?>)">删除</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -33,3 +34,25 @@
         <!--/分页-->
     </div>
 </div>
+<script>
+    //删除广告位
+    function delAd(id) {
+        if ('number' != typeof (id)) {
+            //id = [id];
+            return false;
+        }
+        layer.confirm('您确定要删除选中的广告么？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.post('<?= U("Advertisement/delAd") ?>', {id: id}, function (data) {
+                layer.alert(data.msg)
+                if (data.status == 1) {
+                    $('#position' + id).remove();
+                }
+            }, 'json');
+        }, function () {
+            return
+        });
+    }
+</script>
+

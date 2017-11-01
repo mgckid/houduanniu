@@ -40,6 +40,38 @@ class AdvertisementController extends UserBaseController
             }
 
         } else {
+            $logic = new BaseLogic();
+            $form_init = $logic->getFormInit('advertisement_position', 'table');
+
+            Form::getInstance()->form_schema($form_init);
+            #面包屑导航
+            $this->crumb([
+                '广告管理' => U('Advertisement/index'),
+                '添加广告位' => ''
+            ]);
+            $this->display('Advertisement/addPosition');
+        }
+    }
+
+    /**
+     * 编辑广告位
+     * @privilege 编辑广告位|Admin/Advertisement/editPosition|9cffab54-becf-11e7-a5e9-14dda97b937d|3
+     */
+    public function editPosition()
+    {
+        if (IS_POST) {
+            $logic = new BaseLogic();
+            $request_data = $logic->getRequestData('advertisement_position', 'table');
+
+            $advertisementPositionModel = new AdvertisementPositioModel();
+            $result = $advertisementPositionModel->addRecord($request_data);
+            if (!$result) {
+                $this->ajaxFail('广告位添加失败');
+            } else {
+                $this->ajaxSuccess('广告位添加成功');
+            }
+
+        } else {
             $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
             $logic = new BaseLogic();
@@ -52,7 +84,7 @@ class AdvertisementController extends UserBaseController
             #面包屑导航
             $this->crumb([
                 '广告管理' => U('Advertisement/index'),
-                '添加广告位' => ''
+                '编辑广告位' => ''
             ]);
             $this->display('Advertisement/addPosition');
         }
@@ -136,7 +168,7 @@ class AdvertisementController extends UserBaseController
     }
 
     /**
-     * 添加广告
+     * 编辑广告
      *
      * @privilege 编辑广告|Admin/Advertisement/editAd|cd34d4cd-2002-11e7-8ad5-9cb3ab404081|3
      * @access public
@@ -222,7 +254,6 @@ class AdvertisementController extends UserBaseController
         $page = new Page($count, $p, $pageSize);
         $result = $advertisementListModel->getAdvertisementList(array(), $page->getOffset(), $pageSize, false);
 
-
         $data['adList'] = $result;
         $data['pages'] = $page->getPageStruct();
         $data['list_init'] = $list_init;
@@ -280,5 +311,41 @@ class AdvertisementController extends UserBaseController
         }
     }
 
+    /**
+     * 删除广告
+     *
+     * @privilege 删除广告位|Admin/Advertisement/delad|3ed45bed-bed0-11e7-a5e9-14dda97b937d|3
+     * @access public
+     * @author furong
+     * @return void
+     * @since  2017年4月13日 12:39:59
+     * @abstract
+     */
+    public function delAd()
+    {
+        if (!IS_POST) {
+            $this->ajaxFail('非法请求');
+        }
+        $advertisementListModel = new AdvertisementListModel();
+        #验证
+        $rule = array(
+            'id' => 'required|numeric|integer',
+        );
+        $attr = array(
+            'id' => '广告ID',
+        );
+        $validate = $advertisementListModel->validate()->make($_POST, $rule, [], $attr);
+        if (false === $validate->passes()) {
+            $this->ajaxFail($validate->messages()->first());
+        }
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        #删除广告位
+        $result = $advertisementListModel->deleteRecordById($id);
+        if (!$result) {
+            $this->ajaxFail('删除失败');
+        } else {
+            $this->ajaxSuccess('删除成功');
+        }
+    }
 
 }
