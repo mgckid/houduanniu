@@ -88,9 +88,6 @@ class Application
                 require $value;
             }
         }
-        self::hooks()->add_action('test',function(){
-            phpinfo();die();
-        });
         #运行程序
         $controller_name = 'app\\' . self::config()->get('DIR_CONTROLLER') . '\\' . CONTROLLER_NAME . self::config()->get('EXT_CONTROLLER');
         if (!class_exists($controller_name)) {

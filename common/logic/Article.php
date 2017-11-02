@@ -29,20 +29,7 @@ class Article extends BaseLogic
         return true;
     }
 
-    protected function getImageFromContent($content)
-    {
-        //匹配IMG标签
-        $content = htmlspecialchars_decode($content);
-        $img_pattern = "/<\s*img\s+[^>]*?src\s*=\s*(\'|\")(.*?)\\1[^>]*?\/?\s*>/i";
-        preg_match_all($img_pattern, $content, $img_out);
-        return $img_out[2];
-    }
 
-    protected function getImageUrlFromUrl($url)
-    {
-        $_url = explode('/', $url);
-        return end($_url);
-    }
 
 
     public function title_alias()

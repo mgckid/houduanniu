@@ -20,6 +20,7 @@ use app\model\CmsCategoryModel;
 use app\model\DictionaryTableModel;
 use app\model\DictionaryAttributeModel;
 use Hook\Hook;
+use Overtrue\Pinyin\Pinyin;
 
 class BaseLogic extends Controller
 {
@@ -171,25 +172,24 @@ class BaseLogic extends Controller
         if(!$field_definded){
             throw new \Exception('字段定义不存在');
         }
-        #注册钩子方法
-        $hook = $name;
-        foreach ($field_definded as $value) {
-            $function = 'app\\logic\\' . ucfirst($hook) . '::' . $value['field_value'];
-            Hook::getInstance()->add_action($hook, $function);
-        }
+
         #获取验证规则
         $validate_rule = [];
         $name_map = [];
+        $request_data=[];
         foreach ($field_definded as $value) {
             if (!empty($value['validate_rule']) && $value['form_type'] != 'none') {
                 $validate_rule[$value['field_value']] = $value['validate_rule'];
                 $name_map[$value['field_value']] = $value['field_name'];
             }
+            if (isset($_REQUEST[$value['field_value']])) {
+                $request_data[$value['field_value']] = $_REQUEST[$value['field_value']];
+            }
         }
         #验证输入数据
         if (!empty($validate_rule)) {
             $model = new Model();
-            $validate = $model->validate()->make($_REQUEST, $validate_rule, [], $name_map);
+            $validate = $model->validate()->make($request_data, $validate_rule, [], $name_map);
             if (false === $validate->passes()) {
                 if (IS_POST || IS_AJAX) {
                     $this->ajaxFail($validate->messages()->first());
@@ -198,9 +198,13 @@ class BaseLogic extends Controller
                 }
             }
         }
-        #执行钩子方法
-        Hook::getInstance()->do_action($hook);
-        #获取提交表单数据
+        #注册钩子
+        $function_to_add = $name.'_request_data_filter';
+        if (method_exists($this, $function_to_add)) {
+            Application::hooks()->add_filter('request_data_filter', [$this, $function_to_add], 10, 10);
+        }
+
+     /*   #获取提交表单数据
         $request_data = [];
         $input_fields = array_column($field_definded, 'field_value');
         foreach ($_REQUEST as $key => $value) {
@@ -208,6 +212,7 @@ class BaseLogic extends Controller
                 $request_data[$key] = $value;
             }
         }
+        print_g($field_definded);
         #格式化数据
         foreach ($field_definded as $value) {
             if (isset($request_data[$value['field_value']])) {
@@ -226,7 +231,9 @@ class BaseLogic extends Controller
                         break;
                 }
             }
-        }
+        }*/
+        #执行钩子
+        $request_data = Application::hooks()->apply_filters('request_data_filter', $request_data);
         return $request_data;
     }
 
@@ -344,6 +351,39 @@ class BaseLogic extends Controller
             ];
         }
         return $data;
+    }
+
+    public function article_request_data_filter($data)
+    {
+        if (!isset($data['content']) || empty($data['content'])) {
+            $data['content'] = htmlspecialchars($data['content']);
+        }
+        if (isset($data['main_image']) && empty($data['main_image'])) {
+            $img = $this->getImageFromContent($data['content']);
+            if ($img) {
+                $data['main_image'] = $this->getImageUrlFromUrl(current($img));
+            }
+        }
+        if (!isset($data['title_alias']) || empty($data['title_alias'])) {
+            $pinyin = new Pinyin();
+            $data['title_alias'] = htmlspecialchars(join('-', $pinyin->convert($data['title'])));
+        }
+        return $data;
+    }
+
+    protected function getImageFromContent($content)
+    {
+        //匹配IMG标签
+        $content = htmlspecialchars_decode($content);
+        $img_pattern = "/<\s*img\s+[^>]*?src\s*=\s*(\'|\")(.*?)\\1[^>]*?\/?\s*>/i";
+        preg_match_all($img_pattern, $content, $img_out);
+        return $img_out[2];
+    }
+
+    protected function getImageUrlFromUrl($url)
+    {
+        $_url = explode('/', $url);
+        return end($_url);
     }
 
 
