@@ -15,13 +15,12 @@ class Config extends \Noodlehaus\Config
     {
         return array(
             /*框架自定义配置 开始*/
-            /*http请求组件依赖注入*/
-            'request' => function ($c) {
-                return new \houduanniu\base\Request($c['config']->all());
-            },
-            /*http请求路由数据*/
+            /*时区设置*/
+            'timezone_set'=>'PRC',
+            /*http请求路由打包数据*/
             'request_data' => function ($c) {
-                return $c['request']->run();
+                $request =  new \houduanniu\base\Request($c['config']->all());
+                return $request->run();
             },
             /*模版引擎组件依赖注入*/
             'templateEngine' => function ($c) {
@@ -48,87 +47,8 @@ class Config extends \Noodlehaus\Config
                 $hooks->add_action('After_Hooks_Setup',$hooks);
                 return $hooks;
             },
-            /*流程设置*/
-            'flow_set'=>function($container){
-                #当前模块名称常量
-                defined('MODULE_NAME') or define('MODULE_NAME', $container['request_data']['module']);
-                #当前控制器名称常量
-                defined('CONTROLLER_NAME') or define('CONTROLLER_NAME', $container['request_data']['controller']);
-                #当前方法名称常量
-                defined('ACTION_NAME') or define('ACTION_NAME', $container['request_data']['action']);
-                #当前模块路径
-                defined('APP_PATH') or define('APP_PATH', PROJECT_PATH . '/' . strtolower(MODULE_NAME));
-
-                $loader = $container['loader'];
-                #添加应用类文件加载位置
-                $appPath = array(
-                    APP_PATH,
-                    COMMON_PATH,
-                );
-                $loader->addPrefix('app', $appPath);
-                #添加公共第三方扩展类夹在位置
-                $common_vendor_class_map = COMMON_PATH . '/vendor/class_map.php';
-                if (file_exists($common_vendor_class_map)) {
-                    $class_map_result = require($common_vendor_class_map);
-                    if (is_array($class_map_result) && !empty($class_map_result)) {
-                        foreach ($class_map_result as $key => $value) {
-                            $loader->addPrefix($key, $value);
-                        }
-                    }
-                }
-                #添加应用第三方扩展类夹在位置
-                $app_vendor_class_map = APP_PATH . '/vendor/class_map.php';
-                if (file_exists($app_vendor_class_map)) {
-                    $class_map_result = require($app_vendor_class_map);
-                    if (is_array($class_map_result) && !empty($class_map_result)) {
-                        foreach ($class_map_result as $key => $value) {
-                            $loader->addPrefix($key, $value);
-                        }
-                    }
-                }
-                #添加应用配置
-                if (is_dir(APP_PATH . '/config')) {
-                    unset($container['config']);
-                    $container['config'] = function ($c) {
-                        $config_path = [
-                            COMMON_PATH . '/config',
-                            APP_PATH . '/config',
-                        ];
-                        return new \houduanniu\base\Config($config_path);
-                    };
-                }
-                #添加应用依赖注入
-                $app_container = $container['config']->get('DEPENDENCY_INJECTION_MAP');
-                if (!empty($app_container)) {
-                    foreach ($app_container as $key => $value) {
-                        $container[$key] = $value;
-                    }
-                }
-                #加载应用依赖脚本
-                $require_script = $container['config']->get('REQUIRE_SCRIPT_MAP');
-                if (!empty($require_script)) {
-                    foreach ($require_script as $value) {
-                        require $value;
-                    }
-                }
-                #运行程序
-                $controller_name = 'app\\' . $container['config']->get('DIR_CONTROLLER') . '\\' . CONTROLLER_NAME . $container['config']->get('EXT_CONTROLLER');
-                Application::container($container);
-                if (!class_exists($controller_name)) {
-                    throw new NotFoundException('控制器不存在');
-                } elseif (!method_exists($controller_name, ACTION_NAME)) {
-                    throw new NotFoundException('方法不存在');
-                } else {
-                    #执行方法
-                    call_user_func(array(new $controller_name, ACTION_NAME));
-                }
-            },
-            /*时区设置*/
-            'timezone_set'=>function($c){
-                date_default_timezone_set('PRC');
-             },
             /*错误处理组件*/
-            'error_handler_set'=>function($c){
+            'error_handler_set'=>function(){
                 set_error_handler('errorHandle');
             },
             /*应用组件依赖注入*/
