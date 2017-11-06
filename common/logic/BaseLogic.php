@@ -287,8 +287,13 @@ class BaseLogic extends Controller
             $this->setMessage('源数据不能为空');
             return false;
         }
-        $siteInfo = Application::container()['siteInfo'];
-        $token = $siteInfo['cfg_BosonNLP_TOKEN'];
+        $siteConfigModel = new \app\model\SiteConfigModel();
+        $result = $siteConfigModel->getConfigList([], 'name,value');
+        $site_info = [];
+        foreach ($result as $value) {
+            $site_info[$value['name']] = $value['value'];
+        }
+        $token = $site_info['cfg_BosonNLP_TOKEN'];
         if (empty($token)) {
             $this->setMessage('请先设置玻森分词api Token');
             return false;
