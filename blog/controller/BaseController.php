@@ -61,6 +61,16 @@ class BaseController extends Controller
     public function curl()
     {
         $container = Application::container();
+        if (!$container->offsetExists('curl')) {
+            $container['curl'] = function ($c) {
+                $curl = new \Curl\Curl();
+                if (ENVIRONMENT == 'develop') {
+                    $curl->setOpt(CURLOPT_PROXY, '127.0.0.1:7777');
+                }
+                $curl->setOpt(CURLOPT_TIMEOUT, 60);
+                return $curl;
+            };
+        };
         return $container['curl'];
     }
 

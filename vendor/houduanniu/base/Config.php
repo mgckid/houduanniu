@@ -51,8 +51,7 @@ class Config extends \Noodlehaus\Config
             'error_handler_set'=>function(){
                 set_error_handler('errorHandle');
             },
-            /*应用组件依赖注入*/
-            'DEPENDENCY_INJECTION_MAP' => [],
+
             /*应用加载脚本*/
             'REQUIRE_SCRIPT_MAP' => [],
             /*框架自定义配置 结束*/

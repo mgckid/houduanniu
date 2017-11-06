@@ -26,7 +26,12 @@ class BaseController extends Controller
 
     public function getSiteInfo()
     {
-        $site_info = Application::container()['siteInfo'];
+        $siteConfigModel = new \app\model\SiteConfigModel();
+        $result = $siteConfigModel->getConfigList([], 'name,value');
+        $site_info = [];
+        foreach ($result as $value) {
+            $site_info[$value['name']] = $value['value'];
+        }
         return $site_info;
     }
 
@@ -48,7 +53,13 @@ class BaseController extends Controller
      */
     public function session()
     {
-        return Application::container()['session'];
+        $container = Application::container();
+        if (!$container->offsetExists('session')) {
+            $container['session'] = function ($c) {
+                return (new \Aura\Session\SessionFactory())->newInstance($_COOKIE);
+            };
+        }
+        return $container['session'];
     }
 
     /**
@@ -57,7 +68,16 @@ class BaseController extends Controller
      */
     function segment()
     {
-        return Application::container()['segment'];
+        $container = Application::container();
+        if (!$container->offsetExists('segment')) {
+            $container['segment'] = function ($c) {
+                $session = $this->session();
+                $session->setCookieParams(array('lifetime' => 1800 * 24));
+                $segment_key = Application::config()->get('SEGMENT_KEY');
+                return $session->getSegment($segment_key);
+            };
+        }
+        return $container['segment'];
     }
 
 
