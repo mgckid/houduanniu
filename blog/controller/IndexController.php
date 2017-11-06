@@ -29,7 +29,6 @@ class IndexController extends BaseController
                 'page_size' => $page_size
             ];
             $result = $this->apiRequest('post/latestPost', $param, 'Api');
-
             if ($result['code'] == 200) {
                 $count = $result['data']['count'];
                 $list_data = $result['data']['list'];

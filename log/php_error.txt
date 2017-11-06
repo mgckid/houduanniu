@@ -1,0 +1,22 @@
+[06-Nov-2017 09:30:11 PRC] PHP Fatal error:  Uncaught TypeError: Argument 2 passed to houduanniu\web\View::render() must be of the type array, null given, called in D:\www\github\houduanniu\vendor\houduanniu\web\View.php on line 56 and defined in D:\www\github\houduanniu\vendor\houduanniu\web\View.php:65
+Stack trace:
+#0 D:\www\github\houduanniu\vendor\houduanniu\web\View.php(56): houduanniu\web\View::render('Index/index', NULL)
+#1 D:\www\github\houduanniu\blog\controller\BaseController.php(149): houduanniu\web\View::display('Index/index', NULL)
+#2 D:\www\github\houduanniu\blog\controller\IndexController.php(49): app\controller\BaseController->display('Index/index', NULL, Array)
+#3 [internal function]: app\controller\IndexController->index()
+#4 D:\www\github\houduanniu\vendor\houduanniu\base\Application.php(109): call_user_func(Array)
+#5 D:\www\github\houduanniu\vendor\houduanniu\index.php(78): houduanniu\base\Application::run(Object(Pimple\Container))
+#6 D:\www\github\houduanniu\web\index.php(35): require('D:\\www\\github\\h...')
+#7 {main}
+  thrown in D:\www\github\houduanniu\vendor\houduanniu\web\View.php on line 65
+[06-Nov-2017 09:32:27 PRC] PHP Fatal error:  Uncaught TypeError: Argument 2 passed to houduanniu\web\View::render() must be of the type array, null given, called in D:\www\github\houduanniu\vendor\houduanniu\web\View.php on line 56 and defined in D:\www\github\houduanniu\vendor\houduanniu\web\View.php:65
+Stack trace:
+#0 D:\www\github\houduanniu\vendor\houduanniu\web\View.php(56): houduanniu\web\View::render('Index/index', NULL)
+#1 D:\www\github\houduanniu\blog\controller\BaseController.php(149): houduanniu\web\View::display('Index/index', NULL)
+#2 D:\www\github\houduanniu\blog\controller\IndexController.php(49): app\controller\BaseController->display('Index/index', NULL, Array)
+#3 [internal function]: app\controller\IndexController->index()
+#4 D:\www\github\houduanniu\vendor\houduanniu\base\Application.php(109): call_user_func(Array)
+#5 D:\www\github\houduanniu\vendor\houduanniu\index.php(77): houduanniu\base\Application::run(Object(Pimple\Container))
+#6 D:\www\github\houduanniu\web\index.php(35): require('D:\\www\\github\\h...')
+#7 {main}
+  thrown in D:\www\github\houduanniu\vendor\houduanniu\web\View.php on line 65

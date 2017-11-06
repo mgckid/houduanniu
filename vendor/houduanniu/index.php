@@ -32,16 +32,19 @@ defined('COMMON_PATH') or define('COMMON_PATH', PROJECT_PATH . '/common');
 
 #载入函数库
 require FRAMEWORK_PATH . '/function.php';
-
-#错误报告级别(默认全部)
-if (ENVIRONMENT == 'develop') {
-    error_reporting(E_ALL);
-    ini_set('display_errors', true);
-    ini_set('error_log', PROJECT_PATH . '/log/phperror.txt');
-} elseif (ENVIRONMENT == 'product') {
-    error_reporting(E_ALL ^ E_NOTICE);
-    ini_set('display_errors', true);
-    ini_set('error_log', PROJECT_PATH . '/log/phperror.txt');
+#错误处理设置
+{
+    set_error_handler('errorHandle');
+    #错误报告级别(默认全部)
+    if (ENVIRONMENT == 'develop') {
+        error_reporting(E_ALL);
+        ini_set('display_errors', true);
+    } elseif (ENVIRONMENT == 'product') {
+        error_reporting(E_ALL ^ E_NOTICE);
+        ini_set('display_errors', false);
+        ini_set('log_errors', true);
+        ini_set('error_log', PROJECT_PATH . '/log/php_error.txt');
+    }
 }
 
 try {
@@ -53,14 +56,11 @@ try {
     #注册框架配置组件
     $common_config = is_dir(COMMON_PATH . '/config') ? COMMON_PATH . '/config' : [];
     $config = new \houduanniu\base\Config($common_config);
-
-    set_error_handler('errorHandle');
     date_default_timezone_set($config->get('timezone_set'));
 
     $container = \houduanniu\base\Application::container();
     $container['loader'] = $loader;
     $container['config'] = $config;
-
 
     #注册缓存组件
     $container['cache'] = $config->get('cache');
@@ -74,8 +74,8 @@ try {
     $container['request_data'] = $config->get('request_data');
     #注册钩子组件
     $container['hooks'] = $config->get('hooks');
-
-
+    
+    #运行应用
     \houduanniu\base\Application::run($container);
 } catch (\Exception $e) {
     errorPage($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
