@@ -2,7 +2,7 @@
 
 namespace app\controller;
 
-use app\library\Ueditor\Uploader;
+use Ueditor\Uploader;
 
 /**
  * @privilege 百度编辑器操作|Admin/Ueditor|c23b5b93-200a-11e7-8ad5-9cb3ab404081|3
