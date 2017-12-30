@@ -63,7 +63,7 @@ class BaseController extends Controller
         $container = Application::container();
         if (!$container->offsetExists('curl')) {
             $container['curl'] = function ($c) {
-                $curl = new \Curl\Curl();
+                $curl = new Curl();
                 if (ENVIRONMENT == 'develop') {
                     $curl->setOpt(CURLOPT_PROXY, '127.0.0.1:7777');
                 }
@@ -155,7 +155,7 @@ class BaseController extends Controller
             $reg['siteNavgation'] = $result['data'];
         }
         View::addData($reg);
-        View::setDirectory(PROJECT_PATH . '/' . strtolower(MODULE_NAME) . '/' . C('DIR_VIEW'));
+        View::setDirectory(APP_PATH . '/' . strtolower(MODULE_NAME) . '/' . C('DIR_VIEW'));
         View::display($view, $data);
     }
 

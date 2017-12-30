@@ -42,7 +42,7 @@ class Application
         #当前方法名称常量
         defined('ACTION_NAME') or define('ACTION_NAME', $container['request_data']['action']);
         #当前模块路径
-        defined('APP_PATH') or define('APP_PATH', PROJECT_PATH . '/' . strtolower(MODULE_NAME));
+        defined('APP_PATH') or define('APP_PATH', APP_PATH . '/' . strtolower(MODULE_NAME));
 
 
         $loader = $container['loader'];

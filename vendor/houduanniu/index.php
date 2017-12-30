@@ -19,7 +19,7 @@ define('IS_GET', strtolower($_SERVER['REQUEST_METHOD']) == 'get' ? true : false)
 #是否post请求
 define('IS_POST', ($_SERVER['REQUEST_METHOD'] == 'POST' && (empty($_SERVER['HTTP_REFERER']) || preg_replace("~https?:\/\/([^\:\/]+).*~i", "\\1", $_SERVER['HTTP_REFERER']) == preg_replace("~([^\:]+).*~", "\\1", $_SERVER['HTTP_HOST']))) ? true : FALSE);
 #项目路径
-defined('PROJECT_PATH') or define('PROJECT_PATH', dirname($_SERVER['DOCUMENT_ROOT']));
+defined('APP_PATH') or define('APP_PATH', dirname($_SERVER['DOCUMENT_ROOT']));
 #框架组件路径
 defined('FRAMEWORK_PATH') or define('FRAMEWORK_PATH', __DIR__);
 #框架组件路径
@@ -27,7 +27,7 @@ defined('VENDOR_PATH') or define('VENDOR_PATH', dirname(FRAMEWORK_PATH));
 #当前域名
 defined('HTTP_HOST') or define('HTTP_HOST', $_SERVER['HTTP_HOST']);
 #公共模块路径
-defined('COMMON_PATH') or define('COMMON_PATH', PROJECT_PATH . '/common');
+defined('COMMON_PATH') or define('COMMON_PATH', APP_PATH . '/common');
 /*框架常量设置 结束*/
 
 #载入函数库
@@ -43,7 +43,7 @@ require FRAMEWORK_PATH . '/function.php';
         error_reporting(E_ALL ^ E_NOTICE);
         ini_set('display_errors', false);
         ini_set('log_errors', true);
-        ini_set('error_log', PROJECT_PATH . '/log/php_error.txt');
+        ini_set('error_log', APP_PATH . '/log/php_error.txt');
     }
 }
 
